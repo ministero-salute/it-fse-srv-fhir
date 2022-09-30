@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -65,21 +64,18 @@ class XslTransformRepositoryTest extends AbstractTest {
     private final String TEST_DEL_ROOT = "Root_DEL"; 
     private final String TEST_DEL_VERSION = "Version_DEL"; 
     
-    
-    
 	@Autowired
     protected XslTransformRepo repository;
 	
     @BeforeAll
     public void setup() throws Exception {
-		this.dropTestSchema();
+		this.dropCollections();
         this.initTestRepository();
     }
 
-    
     @Test
     void insertTest() throws Exception {
-    	XslTransformETY ety = new XslTransformETY(); 
+    	XslTransformETY ety = new XslTransformETY();
     	
     	ety.setNameXslTransform(TEST_INS_XSLT);
     	ety.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
@@ -88,7 +84,7 @@ class XslTransformRepositoryTest extends AbstractTest {
     	ety.setInsertionDate(new Date()); 
     	ety.setLastUpdateDate(new Date()); 
 
-    	repository.insert(ety); 
+    	repository.insert(ety);
     	
     	XslTransformETY retrievedEty = repository.findByTemplateIdRootAndVersion(TEST_INS_ROOT, TEST_INS_VERSION); 
     	
@@ -300,8 +296,4 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(true, existsEty); 
     }
     
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    }
 }

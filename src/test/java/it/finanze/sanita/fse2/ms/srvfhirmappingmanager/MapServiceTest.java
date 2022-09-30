@@ -8,7 +8,6 @@
 
 	import java.io.IOException;
 
-	import org.junit.jupiter.api.AfterAll;
 	import org.junit.jupiter.api.BeforeAll;
 	import org.junit.jupiter.api.DisplayName;
 	import org.junit.jupiter.api.MethodOrderer;
@@ -53,15 +52,6 @@
 		public void  setup() throws IOException{
 			this.setupTestEntities();
 		}
-
-
-
-		@AfterAll 
-		public void teardown() {
-			this.clearTestEntities();
-		}
-
-
 
 		@Test
 		@DisplayName(" Find Doc By Id Test")

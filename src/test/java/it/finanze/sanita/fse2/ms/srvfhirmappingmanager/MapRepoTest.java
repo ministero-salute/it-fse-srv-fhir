@@ -38,7 +38,7 @@ class MapRepoTest extends AbstractTest {
 
     @BeforeAll
     public void setup() throws Exception {
-        this.dropTestSchema();
+        this.dropCollections();
     }
 
     @BeforeEach

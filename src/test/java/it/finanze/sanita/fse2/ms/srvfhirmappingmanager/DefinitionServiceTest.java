@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -53,12 +52,6 @@ class DefinitionServiceTest extends AbstractTest {
         mongo.dropCollection(DefinitionETY.class);
         dataPreparation();
     }
-
-    @AfterAll
-    void tearDown() {
-       mongo.dropCollection(DefinitionETY.class);
-    }
-
 
     @Test
     @DisplayName("Find Doc by ID")

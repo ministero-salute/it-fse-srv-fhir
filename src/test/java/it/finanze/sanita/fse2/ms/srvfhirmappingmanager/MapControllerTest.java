@@ -14,7 +14,6 @@ import java.util.Date;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,10 +66,7 @@ class MapControllerTest extends AbstractTest {
         mongo.dropCollection(MapETY.class);
         dataPreparation();
     }
-    @AfterAll
-    public void tearDown(){
-        mongo.dropCollection(MapETY.class);
-    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "CdaItToBundle.map",

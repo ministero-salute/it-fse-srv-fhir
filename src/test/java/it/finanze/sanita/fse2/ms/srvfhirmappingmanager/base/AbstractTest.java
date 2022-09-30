@@ -332,7 +332,7 @@ public abstract class AbstractTest {
         populateXslTransform();
     }
 
-    protected void dropTestSchema() {
+    protected void dropCollections() {
         mongo.dropCollection(XslTransformETY.class);
         mongo.dropCollection(MapETY.class);
         mongo.dropCollection(ValuesetETY.class);

@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -93,7 +92,7 @@ class XslTransformServiceTest extends AbstractTest {
     
     @BeforeAll
     public void setup() throws Exception {
-		this.dropTestSchema();
+		this.dropCollections();
         this.initTestRepository();
     } 
     
@@ -466,13 +465,5 @@ class XslTransformServiceTest extends AbstractTest {
 		assertEquals(date, parsedEty.getLastUpdateDate()); 
 
 	} 
-	
-
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
-    
-    
     
 }

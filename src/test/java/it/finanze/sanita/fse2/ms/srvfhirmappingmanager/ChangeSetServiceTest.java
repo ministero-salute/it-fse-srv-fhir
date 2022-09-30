@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +60,6 @@ class ChangeSetServiceTest extends AbstractTest{
     @Autowired
     private IMapSRV serviceMP;
 
-    
-    
     @BeforeAll
     void setup() throws ParseException{
         mongo.dropCollection(XslTransformETY.class);
@@ -70,14 +67,6 @@ class ChangeSetServiceTest extends AbstractTest{
         mongo.dropCollection(DefinitionETY.class);
         mongo.dropCollection(MapETY.class);
 
-    }
-
-    @AfterAll
-    void tearDown() {
-       mongo.dropCollection(XslTransformETY.class);
-       mongo.dropCollection(ValuesetETY.class);
-       mongo.dropCollection(DefinitionETY.class);
-       mongo.dropCollection(MapETY.class);
     }
     
     @Test

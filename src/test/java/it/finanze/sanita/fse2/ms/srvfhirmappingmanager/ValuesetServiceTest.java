@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -55,12 +54,6 @@ public class ValuesetServiceTest extends AbstractTest {
         mongo.dropCollection(ValuesetETY.class);
         dataPreparation();
     }
-
-    @AfterEach
-    void tearDown() {
-       mongo.dropCollection(ValuesetETY.class);
-    }
-
 
     @Test
     @DisplayName("Find Doc by ID")
