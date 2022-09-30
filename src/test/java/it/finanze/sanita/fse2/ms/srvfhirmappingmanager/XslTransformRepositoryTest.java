@@ -69,7 +69,7 @@ class XslTransformRepositoryTest extends AbstractTest {
 	
     @BeforeAll
     public void setup() throws Exception {
-		this.dropCollections();
+		mongo.dropCollection(XslTransformETY.class);
         this.initTestRepository();
     }
 

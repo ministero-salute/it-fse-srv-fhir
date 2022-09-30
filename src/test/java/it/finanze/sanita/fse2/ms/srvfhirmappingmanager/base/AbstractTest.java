@@ -188,7 +188,7 @@ public abstract class AbstractTest {
     }
 
     @Autowired
-    public MongoTemplate mongo;
+    protected MongoTemplate mongo;
 
     protected AbstractTest() {
 
@@ -330,13 +330,6 @@ public abstract class AbstractTest {
         createXsltTestSchema();
 
         populateXslTransform();
-    }
-
-    protected void dropCollections() {
-        mongo.dropCollection(XslTransformETY.class);
-        mongo.dropCollection(MapETY.class);
-        mongo.dropCollection(ValuesetETY.class);
-        mongo.dropCollection(DefinitionETY.class);
     }
 
     public static MockMultipartFile createFakeFile(String filename) {

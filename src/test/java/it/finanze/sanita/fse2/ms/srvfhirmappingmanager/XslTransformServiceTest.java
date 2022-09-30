@@ -19,6 +19,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,8 +31,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlread
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl.XsltransformSRV; 
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl.XsltransformSRV;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -88,14 +88,11 @@ class XslTransformServiceTest extends AbstractTest {
     @Autowired 
     XsltransformSRV xslTransformService; 
     
-
-    
     @BeforeAll
     public void setup() throws Exception {
-		this.dropCollections();
+		mongo.dropCollection(XslTransformETY.class);
         this.initTestRepository();
-    } 
-    
+    }
     
     @Test
     void insertTest() throws Exception{

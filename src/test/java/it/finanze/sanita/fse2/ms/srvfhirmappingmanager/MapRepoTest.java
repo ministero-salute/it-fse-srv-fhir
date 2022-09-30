@@ -37,8 +37,8 @@ class MapRepoTest extends AbstractTest {
     private MapRepo repository;
 
     @BeforeAll
-    public void setup() throws Exception {
-        this.dropCollections();
+    public void setup() {
+        mongo.dropCollection(MapETY.class);
     }
 
     @BeforeEach
