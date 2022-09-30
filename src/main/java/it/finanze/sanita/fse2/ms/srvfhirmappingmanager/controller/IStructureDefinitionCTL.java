@@ -63,7 +63,7 @@ public interface IStructureDefinitionCTL {
 			@ApiResponse(responseCode = "409", description = "Duplicated extension identifier", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))})
-	UploadDefinitionResDTO uploadDefinition(@Parameter(description = "Version identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Version cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") String version,@RequestPart("file") MultipartFile[] files)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
+	UploadDefinitionResDTO uploadDefinition(@RequestPart("file") MultipartFile[] files)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
 
 
 	@PutMapping(value = "/{name}", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE })

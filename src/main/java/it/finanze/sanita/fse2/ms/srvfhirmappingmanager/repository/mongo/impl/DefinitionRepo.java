@@ -88,30 +88,18 @@ public class DefinitionRepo implements IDefinitionRepo {
 
     @Override
     public DefinitionETY updateDocByName(DefinitionETY current, DefinitionETY newest) throws OperationException {
-        // Create bulk operation
         BulkOperations ops = mongo.bulkOps(UNORDERED, DefinitionETY.class);
-        // Create query to match the required file
         Query query = new Query();
-        query.addCriteria(
-            where("_id").is(new ObjectId(current.getId()))
-        );
-        query.addCriteria(
-            where("deleted").is(false)
-        );
-        // Set fields to modify
+        query.addCriteria(where("_id").is(new ObjectId(current.getId())));
+        query.addCriteria(where("deleted").is(false));
         Update update = new Update();
         update.set(FIELD_LAST_UPDATE, new Date());
         update.set("deleted", true);
-        // Creating query to mark as deleted the old file
         ops.updateOne(query, update);
-        // Creating query to insert the new ones
         ops.insert(newest);
-        // Now, we reach the database instance with the queries
         try {
-            // Execute
             ops.execute();
         }catch (MongoException e) {
-            // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException("Unable to update definition by name" , e);
         }
         return newest;

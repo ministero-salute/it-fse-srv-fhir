@@ -33,8 +33,8 @@ public class StructureDefinitionCTL extends AbstractCTL implements IStructureDef
     }
 
     @Override
-    public UploadDefinitionResDTO uploadDefinition(String version, MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
-        definitionSRV.insertDocsByName(version, files);
+    public UploadDefinitionResDTO uploadDefinition(MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+        definitionSRV.insertDocsByName(null, files);
         return new UploadDefinitionResDTO(getLogTraceInfo());
     }
 
