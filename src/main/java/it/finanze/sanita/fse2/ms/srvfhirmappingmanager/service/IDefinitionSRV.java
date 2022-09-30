@@ -10,8 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IDefinitionSRV extends IChangeSetSRV<DefinitionCS> {
     DefinitionDTO findDocById(String id) throws OperationException, DocumentNotFoundException;
+    
     DefinitionDTO findDocByName(String name) throws OperationException, DocumentNotFoundException;
+    
     String insertDocByName(String name, String version, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, DataProcessingException;
+    
     String updateDocByName(String name, MultipartFile file) throws OperationException, DocumentNotFoundException, DataProcessingException;
+    
     String deleteDocByName(String name) throws OperationException, DocumentNotFoundException;
+    
+    void insertDocsByName(String version, MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
 }

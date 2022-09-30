@@ -6,8 +6,10 @@ import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNOR
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,4 +232,30 @@ public class DefinitionRepo implements IDefinitionRepo {
         }
         return objects;
     }
+
+	@Override
+	public void insertAll(List<DefinitionETY> entities) throws OperationException {
+		try {
+			mongo.insertAll(entities);
+		} catch (MongoException e) {
+			throw new OperationException("Unable to insert structure definition by name", e);
+		}
+	}
+
+	 
+	@Override
+	public List<String> isDocumentsInserted(List<String> names) throws OperationException {
+		List<String> filesAlreadyPresent = new ArrayList<>();
+		try {
+			Query query = new Query();
+			query.addCriteria(where("name_valueset").in(names).and("deleted").is(false));
+			List<DefinitionETY> valuesetFounded = mongo.find(query, DefinitionETY.class);
+			if(!valuesetFounded.isEmpty()) {
+				filesAlreadyPresent = valuesetFounded.stream().map(e->e.getFilenameDefinition()).collect(Collectors.toList());
+			}
+		} catch(MongoException e) {
+			throw new OperationException("Unable to verify if given document is inserted" , e);
+		}
+		return filesAlreadyPresent;
+	}
 }

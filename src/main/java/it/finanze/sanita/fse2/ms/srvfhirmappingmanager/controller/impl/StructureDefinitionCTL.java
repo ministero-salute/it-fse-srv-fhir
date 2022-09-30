@@ -1,7 +1,11 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IDefinitionCTL;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IStructureDefinitionCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.definition.DeleteDefinitionResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.definition.GetDefinitionResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.definition.UpdateDefinitionResDTO;
@@ -13,13 +17,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFou
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
 
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 @RestController
-public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
+public class StructureDefinitionCTL extends AbstractCTL implements IStructureDefinitionCTL {
 
     /**
      * Document service layer
@@ -34,9 +33,9 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
     }
 
     @Override
-    public UploadDefinitionResDTO uploadDefinition(String version, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
-        String filename = definitionSRV.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , version, file);
-        return new UploadDefinitionResDTO(getLogTraceInfo(), new UploadDefinitionResDTO.Payload(filename));
+    public UploadDefinitionResDTO uploadDefinition(String version, MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+        definitionSRV.insertDocsByName(version, files);
+        return new UploadDefinitionResDTO(getLogTraceInfo());
     }
 
     @Override
