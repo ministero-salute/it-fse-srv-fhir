@@ -38,7 +38,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         // Create query
         Query query = new Query();
         query.addCriteria(
-            where(FIELD_NAME).is(name).and(FIELD_DELETED).is(false)
+            where(FIELD_NAME).is(name).and("deleted").is(false)
         );
         try {
             // Execute
@@ -58,7 +58,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         // Create query
         Query query = new Query();
         query.addCriteria(
-            Criteria.where(FIELD_NAME).is(name).and(FIELD_DELETED).is(false)
+            Criteria.where(FIELD_NAME).is(name).and("deleted").is(false)
         );
         try {
             // Execute
@@ -94,12 +94,12 @@ public class DefinitionRepo implements IDefinitionRepo {
             where(FIELD_ID).is(new ObjectId(current.getId()))
         );
         query.addCriteria(
-            where(FIELD_DELETED).is(false)
+            where("deleted").is(false)
         );
         // Set fields to modify
         Update update = new Update();
         update.set(FIELD_LAST_UPDATE, new Date());
-        update.set(FIELD_DELETED, true);
+        update.set("deleted", true);
         // Creating query to mark as deleted the old file
         ops.updateOne(query, update);
         // Creating query to insert the new ones
@@ -122,11 +122,11 @@ public class DefinitionRepo implements IDefinitionRepo {
         // Create query
         Query query = new Query();
         query.addCriteria(where(FIELD_NAME).is(name));
-        query.addCriteria(where(FIELD_DELETED).is(false));
+        query.addCriteria(where("deleted").is(false));
         // Create update definition
         Update update = new Update();
         update.set(FIELD_LAST_UPDATE, new Date());
-        update.set(FIELD_DELETED, true);
+        update.set("deleted", true);
         // Get doc
         out = findDocByName(name);
         try {
@@ -147,7 +147,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         // Create query
         Query query = new Query();
         query.addCriteria(
-            Criteria.where(FIELD_ID).is(id).and(FIELD_DELETED).is(false)
+            Criteria.where(FIELD_ID).is(id).and("deleted").is(false)
         );
         try {
             // Execute
@@ -172,7 +172,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         List<DefinitionETY> objects;
         // Create query
         Query q = Query.query(
-            Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and(FIELD_DELETED).ne(true)
+            Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and("deleted").ne(true)
         );
         try {
             // Execute
@@ -199,7 +199,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         Query q = Query.query(
             Criteria.where(FIELD_LAST_UPDATE).gt(lastUpdate)
                 .and(FIELD_INSERTION_DATE).lte(lastUpdate)
-                .and(FIELD_DELETED).is(true)
+                .and("deleted").is(true)
         );
         try {
             // Execute
@@ -222,7 +222,7 @@ public class DefinitionRepo implements IDefinitionRepo {
         // Working var
         List<DefinitionETY> objects;
         // Create query
-        Query q = query(where(FIELD_DELETED).ne(true));
+        Query q = query(where("deleted").ne(true));
         try {
             // Execute
             objects = mongo.find(q, DefinitionETY.class);

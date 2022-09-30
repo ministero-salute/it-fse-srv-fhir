@@ -1,6 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_DELETED;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_INSERTION_DATE;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_LAST_UPDATE;
 
@@ -25,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class ValuesetETY {
 
     public static final String FIELD_ID = "_id";
-    public static final String FIELD_NAME = "name_valueset";
+//    public static final String FIELD_NAME = "name_valueset";
     public static final String FIELD_FILENAME = "filename_valueset";
     public static final String FIELD_CONTENT = "content_valueset";
 
@@ -35,7 +34,7 @@ public class ValuesetETY {
     @Field(name = FIELD_FILENAME)
     private String filenameValueset;
 
-    @Field(name = FIELD_NAME)
+    @Field(name = "name_valueset")
     private String nameValueset;
 
     @Field(name = FIELD_CONTENT)
@@ -47,7 +46,7 @@ public class ValuesetETY {
     @Field(name = FIELD_LAST_UPDATE)
     private Date lastUpdateDate;
 
-    @Field(name = FIELD_DELETED)
+    @Field(name = "deleted")
     private boolean deleted;
 
     public void setMultipartContentValueset(MultipartFile file) throws DataProcessingException {
@@ -58,7 +57,7 @@ public class ValuesetETY {
         }
     }
 
-    public static ValuesetETY fromMultipart(String name, MultipartFile file) throws DataProcessingException {
+    public static ValuesetETY fromMultipart(String name,MultipartFile file) throws DataProcessingException {
         ValuesetETY entity = new ValuesetETY();
         Date now = new Date();
         entity.setFilenameValueset(file.getOriginalFilename());

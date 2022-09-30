@@ -46,7 +46,7 @@ public class DefinitionETY {
     @Field(name = FIELD_LAST_UPDATE)
     private Date lastUpdateDate;
 
-    @Field(name = FIELD_DELETED)
+    @Field(name = "deleted")
     private boolean deleted;
 
     public void setMultipartContentDefinition(MultipartFile file) throws DataProcessingException {

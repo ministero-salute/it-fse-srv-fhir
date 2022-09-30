@@ -11,6 +11,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IValuesetRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,25 +30,19 @@ public class ValuesetSRV implements IValuesetSRV {
 
     @Override
     public ValuesetDTO findDocById(String id) throws OperationException, DocumentNotFoundException {
-        // Get document
         ValuesetETY doc = repository.findDocById(id);
-        // Verify data
         if (doc == null) {
             throw new DocumentNotFoundException("The requested document does not exists");
         }
-        // Bye bye
         return ValuesetDTO.fromEntity(doc);
     }
 
     @Override
     public ValuesetDTO findDocByName(String name) throws OperationException, DocumentNotFoundException {
-        // Get document
         ValuesetETY doc = repository.findDocByName(name);
-        // Verify data
         if (doc == null) {
             throw new DocumentNotFoundException("The requested document does not exists");
         }
-        // Bye bye
         return ValuesetDTO.fromEntity(doc);
     }
 
@@ -62,32 +58,41 @@ public class ValuesetSRV implements IValuesetSRV {
         // Return the filename
         return doc.getFilenameValueset();
     }
+    
+    @Override
+    public void insertDocsByName(MultipartFile[] files) throws OperationException, DocumentAlreadyPresentException, DataProcessingException {
+
+    	List<String> filesToCheck = new ArrayList<>();
+    	List<ValuesetETY> filesToAdd = new ArrayList<>();
+    	for(MultipartFile file : files) {
+    		String name = FilenameUtils.removeExtension(file.getOriginalFilename());
+    		filesToCheck.add(name);
+    		filesToAdd.add(ValuesetETY.fromMultipart(name, file));
+    	}
+        if(!repository.isDocumentsInserted(filesToCheck).isEmpty()) {
+        	 String duplicatedFiles = filesToCheck.stream().collect(Collectors.joining(", "));
+            throw new DocumentAlreadyPresentException("Cannot insert the given document, it already exists:" + duplicatedFiles);
+        }
+        // Insert it
+        repository.insertAll(filesToAdd);
+    }
 
     @Override
     public String updateDocByName(String name, MultipartFile file) throws OperationException, DocumentNotFoundException, DataProcessingException {
-        // Get document
         ValuesetETY doc = repository.findDocByName(name);
-        // Check if given document already exists
         if(doc == null) {
-            // Let the caller know about it
             throw new DocumentNotFoundException("Unable to update the given document, it does not exists");
         }
-        // Update it
         doc = repository.updateDocByName(doc, ValuesetETY.fromMultipart(name, file));
-        // Return filename
         return doc.getFilenameValueset();
     }
 
     @Override
     public String deleteDocByName(String name) throws OperationException, DocumentNotFoundException {
-        // Check if given document already exists
         if(!repository.isDocumentInserted(name)) {
-            // Let the caller know about it
             throw new DocumentNotFoundException("Unable to delete the given document, it does not exists");
         }
-        // Update it
         ValuesetETY doc = repository.deleteDocByName(name);
-        // Return filename
         return doc.getFilenameValueset();
     }
 
@@ -100,15 +105,12 @@ public class ValuesetSRV implements IValuesetSRV {
      */
     @Override
     public List<ChangeSetDTO<ValuesetCS>> getInsertions(Date lastUpdate) throws OperationException {
-        // Retrieve insertions
         List<ValuesetETY> insertions;
-        // Verify no null value has been provided
         if(lastUpdate != null) {
             insertions = repository.getInsertions(lastUpdate);
-        }else{
+        } else{
             insertions = repository.getEveryActiveDocument();
         }
-        // Iterate and populate
         return insertions.stream().map(ChangeSetUtility::toChangeset).collect(Collectors.toList());
     }
 
@@ -121,13 +123,9 @@ public class ValuesetSRV implements IValuesetSRV {
      */
     @Override
     public List<ChangeSetDTO<ValuesetCS>> getDeletions(Date lastUpdate) throws OperationException {
-        // Create empty container
         List<ChangeSetDTO<ValuesetCS>> changes = new ArrayList<>();
-        // Verify no null value has been provided
         if(lastUpdate != null) {
-            // Retrieve deletions
             List<ValuesetETY> deletions = repository.getDeletions(lastUpdate);
-            // Iterate and populate
             changes = deletions.stream().map(ChangeSetUtility::toChangeset).collect(Collectors.toList());
         }
         return changes;

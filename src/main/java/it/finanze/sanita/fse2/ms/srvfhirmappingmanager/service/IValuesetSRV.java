@@ -9,9 +9,17 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IValuesetSRV extends IChangeSetSRV<ValuesetCS> {
+	
     ValuesetDTO findDocById(String id) throws OperationException, DocumentNotFoundException;
+    
     ValuesetDTO findDocByName(String name) throws OperationException, DocumentNotFoundException;
+    
     String insertDocByName(String name, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, DataProcessingException;
+    
     String updateDocByName(String name, MultipartFile file) throws OperationException, DocumentNotFoundException, DataProcessingException;
+    
     String deleteDocByName(String name) throws OperationException, DocumentNotFoundException;
+    
+    void insertDocsByName(MultipartFile[] files) throws OperationException, DocumentAlreadyPresentException, DataProcessingException;
+    
 }

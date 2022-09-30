@@ -1,6 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_GET_ONE_BY_ID_FULL;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -156,9 +155,9 @@ public final class MockRequests {
         return get(baseUrl + "/changeset/map/status?lastUpdate="+queryDate).contentType(MediaType.APPLICATION_JSON_VALUE);
     } 
     
-    public static MockHttpServletRequestBuilder getMapByIdMockRequest(String name) {
-        return get(API_GET_ONE_BY_ID_FULL,name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    } 
+//    public static MockHttpServletRequestBuilder getMapByIdMockRequest(String name) {
+//        return get(API_GET_ONE_BY_ID_FULL,name).contentType(MediaType.APPLICATION_JSON_VALUE);
+//    } 
 
     public static MockHttpServletRequestBuilder deleteMapMockRequest(String name, String baseUrl) {
         return delete(baseUrl + "/map/"+name)

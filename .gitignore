@@ -158,3 +158,4 @@ target/test-classes/it/finanze/sanita/fse2/ms/srvfhirmappingmanager/XslTransform
 target/test-classes/it/finanze/sanita/fse2/ms/srvfhirmappingmanager/XslTransformRepositoryTest.class
 target/test-classes/it/finanze/sanita/fse2/ms/srvfhirmappingmanager/XslTransformServiceTest.class
 target/test-classes/xslTransform/vaccination.xsl
+/target/

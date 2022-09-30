@@ -1,6 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.deleteMapMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getMapByIdMockRequest;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getMapByNameMockRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -9,8 +8,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.text.ParseException;
 import java.util.Date;
+
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
@@ -36,6 +37,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
+
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
@@ -48,7 +50,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 /**
  * Test ChangeSet generation at service level
  */
-// @Slf4j
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -108,13 +109,7 @@ class MapControllerTest extends AbstractTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_VALUE));
     }
-    @Test
-    @DisplayName("Get Map By ID Fail Test")
-    void getMapByIdFailTest() throws Exception {
-        String IdB = MAP_ID_C;
-        mvc.perform(getMapByIdMockRequest(IdB)).andExpectAll(
-                status().is4xxClientError());
-    }
+  
     @Test
     @DisplayName("Upload Map Test")
     void uploadMapTest() throws Exception {
@@ -127,10 +122,6 @@ class MapControllerTest extends AbstractTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
-
-
-
-
 
 
     @Test

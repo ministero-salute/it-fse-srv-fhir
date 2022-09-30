@@ -1,13 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_GET_ONE_BY_ID;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_PATH_EXTS;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_PATH_ID_VAR;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_PATH_NAME_VAR;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_VALUESET_MAPPER;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsRoutes.API_VALUESET_TAG;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN; 
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -47,21 +41,19 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
  *
  * @author G. Baittiner
  */
-@RequestMapping(path = API_VALUESET_MAPPER)
-@Tag(name = API_VALUESET_TAG)
+@RequestMapping(path = "/v1/valueset")
+@Tag(name = "Valueset")
 @Validated
 public interface IValuesetCTL {
 
-	@GetMapping(API_PATH_EXTS)
+	@GetMapping("/{name}")
 	@Operation(summary = "Get Value Set by Name", description = "A description about Value Set Controller")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ChangeSetResDTO.class))),
 			@ApiResponse(responseCode = "400", description = "Invalid parameters", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
 	})
-	GetValuesetResDTO getValuesetByName(
-			@PathVariable(name = API_PATH_NAME_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Name does not match the expected size") String name)
-			throws DocumentNotFoundException, OperationException;
+	GetValuesetResDTO getValuesetByName(@PathVariable(name = "name") @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Name does not match the expected size") String name)throws DocumentNotFoundException, OperationException;
 
 
 	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -71,12 +63,11 @@ public interface IValuesetCTL {
 			@ApiResponse(responseCode = "400", description = "Invalid parameters", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "409", description = "Duplicated extension identifier", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
-	})
-	UploadValuesetResDTO uploadValueset(@RequestPart("file") MultipartFile file)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
+			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))})
+	UploadValuesetResDTO uploadValueset(@RequestPart("file") MultipartFile[] file)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
 
-			
-	@PutMapping(value = API_PATH_EXTS, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+
+	@PutMapping(value = "/{name}", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE })
 	@Operation(summary = "Update Value Set ", description = "A description about Value Set Updating")
 	@ApiResponses(value = {
@@ -86,16 +77,13 @@ public interface IValuesetCTL {
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
 	})
-
-
-
-
 	UpdateValuesetResDTO updateValueset(
-			@PathVariable(name = API_PATH_NAME_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Name does not match the expected size") String name,
+			@PathVariable(name = "name") @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Name does not match the expected size") String name,
 			@RequestPart("file") MultipartFile file)
-			throws DocumentNotFoundException, OperationException, DataProcessingException;
+					throws DocumentNotFoundException, OperationException, DataProcessingException;
 
-			@DeleteMapping(API_PATH_EXTS)
+	
+	@DeleteMapping("/{name}")
 	@Operation(summary = "Delete Value Set ", description = "A description about Value Set Deleteing")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ChangeSetResDTO.class))),
@@ -104,22 +92,19 @@ public interface IValuesetCTL {
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
 	})
-	
 	DeleteValuesetResDTO deleteValueset(
-			@PathVariable(name = API_PATH_NAME_VAR) @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String name)
-			throws DocumentNotFoundException, OperationException;
+			@PathVariable(name = "name") @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String name)
+					throws DocumentNotFoundException, OperationException;
 
-			@GetMapping(API_GET_ONE_BY_ID)
+	@GetMapping("/id/{id}")
 	@Operation(summary = "Get Value Set by Id", description = "A description about Value Getting by Id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ChangeSetResDTO.class))),
 			@ApiResponse(responseCode = "400", description = "Invalid parameters", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "409", description = "Duplicated extension identifier", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
-	})
-	
+			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))})
 	GetValuesetResDTO getValuesetById(
-			@PathVariable(name = API_PATH_ID_VAR) @ValidObjectId @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String id)
-			throws DocumentNotFoundException, OperationException;
+			@PathVariable(name = "id") @ValidObjectId @Parameter(description = "Extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String id)
+					throws DocumentNotFoundException, OperationException;
 }

@@ -1,6 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_DELETED;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_INSERTION_DATE;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_LAST_UPDATE;
 
@@ -56,7 +55,7 @@ public class MapETY {
     @Field(name = FIELD_LAST_UPDATE)
     private Date lastUpdateDate;
 
-    @Field(name = FIELD_DELETED)
+    @Field(name = "deleted")
     private boolean deleted;
 
     public void setContentMap(MultipartFile file) throws DataProcessingException {
