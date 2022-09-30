@@ -114,17 +114,14 @@ class ResponseDTOTest extends AbstractTest {
 	void xslTransformResponseDtoTest() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		XslTransformResponseDTO dto = new XslTransformResponseDTO(logTraceInfoDto, IN_TX_ID_TEST); 
+		XslTransformResponseDTO dto = new XslTransformResponseDTO(logTraceInfoDto); 
 		
 		assertEquals(XslTransformResponseDTO.class, dto.getClass()); 
 		assertEquals(String.class, dto.getSpanID().getClass()); 
 		assertEquals(String.class, dto.getTraceID().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass());  
 		
 		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
-		
 	}
 	
 	@Test

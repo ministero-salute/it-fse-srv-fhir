@@ -1,8 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 
-import java.util.UUID;
-
-
 public final class StringUtility {
 
 	/**
@@ -25,10 +22,5 @@ public final class StringUtility {
 		}
 		return out;
 	} 
-	
-	public static String generateTransactionUID() {
-	
-		return UUID.randomUUID().toString();
-	}
-
+	 
 }

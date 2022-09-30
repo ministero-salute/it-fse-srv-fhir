@@ -62,9 +62,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 
 		log.info(Constants.Logs.CALLED_API_POST_XSL_TRANSFORM); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(); 
 		Date date = new Date(); 
-		
 		XslTransformBodyDTO xslTransformFromBody = getXsltJSONObject(request.getParameter("body")); 
 		
 		if(!contentXslTransform.isEmpty() && xslTransformFromBody!=null) {
@@ -78,10 +76,10 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 
 			xslTransformService.insert(xslTransform);
 
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 
 		}
-		return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NO_CONTENT); 
+		return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
 	}
 
 	@Override
@@ -89,7 +87,6 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			XslTransformBodyDTO body, MultipartFile contentXslTransform) throws IOException, OperationException {
 		log.info(Constants.Logs.CALLED_API_PUT_XSL_TRANSFORM); 
 		
-		final String transactionId = StringUtility.generateTransactionUID();
 		Date date = new Date(); 
 
 		boolean hasBeenUpdated = false; 
@@ -110,10 +107,10 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 		}
 		
 		if(hasBeenUpdated) {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		else {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NO_CONTENT); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
 		} 
 		
 	}
@@ -122,13 +119,12 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 	@Override
 	public ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
 		log.info(Constants.Logs.CALLED_API_DELETE_XSL_TRANSFORM); 
-		final String transactionId = StringUtility.generateTransactionUID();
 		boolean existsXslTransform = xslTransformService.delete(templateIdRoot, version); 	
 		if(existsXslTransform) {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		else {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NOT_FOUND); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.NOT_FOUND); 
 		}
 	} 
 	

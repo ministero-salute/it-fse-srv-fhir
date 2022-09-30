@@ -248,7 +248,7 @@ public class DefinitionRepo implements IDefinitionRepo {
 		List<String> filesAlreadyPresent = new ArrayList<>();
 		try {
 			Query query = new Query();
-			query.addCriteria(where("name_valueset").in(names).and("deleted").is(false));
+			query.addCriteria(where("name_definition").in(names).and("deleted").is(false));
 			List<DefinitionETY> valuesetFounded = mongo.find(query, DefinitionETY.class);
 			if(!valuesetFounded.isEmpty()) {
 				filesAlreadyPresent = valuesetFounded.stream().map(e->e.getFilenameDefinition()).collect(Collectors.toList());
