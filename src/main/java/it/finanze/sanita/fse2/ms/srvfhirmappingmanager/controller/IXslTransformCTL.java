@@ -56,7 +56,7 @@ public interface IXslTransformCTL extends Serializable {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> addXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("content_xsl_transform") MultipartFile contentXSLT) 
+    ResponseEntity<XslTransformResponseDTO> addXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("file") MultipartFile contentXSLT) 
     throws IOException, OperationException, DocumentAlreadyPresentException;
     
     @PutMapping(value = "/xslt",  produces = {
@@ -67,7 +67,7 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Aggiornamento XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> updateXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("content_xsl_transform") MultipartFile contentXSLT) 
+    ResponseEntity<XslTransformResponseDTO> updateXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("file") MultipartFile contentXSLT) 
     throws IOException, OperationException;
     
     @DeleteMapping(value = "/xslt/root/{templateIdRoot}/version/{version}",  produces = {

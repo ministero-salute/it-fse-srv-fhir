@@ -12,6 +12,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlread
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,9 +37,9 @@ public class ValuesetCTL extends AbstractCTL implements IValuesetCTL {
     }
 
     @Override
-    public UploadValuesetResDTO uploadValueset(String name, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+    public UploadValuesetResDTO uploadValueset(MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
         // Insert document
-        String filename = service.insertDocByName(name, file);
+        String filename = service.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()), file);
         // Return response
         return new UploadValuesetResDTO(getLogTraceInfo(), new UploadValuesetResDTO.Payload(filename));
     }

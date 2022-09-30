@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.ValidationCFG;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IXslTransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltResponseDTO;
@@ -30,13 +29,10 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentD
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.OperationLogEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.ResultLogEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.UIDModeEnum;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.logging.ElasticLoggerHelper;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -50,24 +46,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 	
+	/**
+	 * Serial version uid.
+	 */
+	private static final long serialVersionUID = -4658843113005895201L;
+	
 	@Autowired
 	private transient IXslTransformSRV xslTransformService; 
-	
-	@Autowired
-	private ElasticLoggerHelper elasticLogger; 
-	
-	@Autowired
-	private ValidationCFG validationCFG;
+
 	
 	
 	@Override
 	public ResponseEntity<XslTransformResponseDTO> addXslTransform(HttpServletRequest request, 
-			      @RequestBody XslTransformBodyDTO body, @RequestPart("content_xsl_transform") MultipartFile contentXslTransform) throws IOException, OperationException, DocumentAlreadyPresentException {
+			      @RequestBody XslTransformBodyDTO body, @RequestPart("file") MultipartFile contentXslTransform) throws IOException, OperationException, DocumentAlreadyPresentException {
 
 		log.info(Constants.Logs.CALLED_API_POST_XSL_TRANSFORM); 
-		elasticLogger.info(Constants.Logs.CALLED_API_POST_XSL_TRANSFORM, OperationLogEnum.POST_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy())); 
+		final String transactionId = StringUtility.generateTransactionUID(); 
 		Date date = new Date(); 
 		
 		XslTransformBodyDTO xslTransformFromBody = getXsltJSONObject(request.getParameter("body")); 
@@ -86,19 +81,15 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
 
 		}
-		 	
-		
 		return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NO_CONTENT); 
-
 	}
 
 	@Override
 	public ResponseEntity<XslTransformResponseDTO> updateXslTransform(HttpServletRequest request,
 			XslTransformBodyDTO body, MultipartFile contentXslTransform) throws IOException, OperationException {
 		log.info(Constants.Logs.CALLED_API_PUT_XSL_TRANSFORM); 
-		elasticLogger.info(Constants.Logs.CALLED_API_PUT_XSL_TRANSFORM, OperationLogEnum.PUT_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy()));
+		final String transactionId = StringUtility.generateTransactionUID();
 		Date date = new Date(); 
 
 		boolean hasBeenUpdated = false; 
@@ -130,14 +121,9 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 
 	@Override
 	public ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
-		
 		log.info(Constants.Logs.CALLED_API_DELETE_XSL_TRANSFORM); 
-		elasticLogger.info(Constants.Logs.CALLED_API_DELETE_XSL_TRANSFORM, OperationLogEnum.DELETE_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
-		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy()));
-		
+		final String transactionId = StringUtility.generateTransactionUID();
 		boolean existsXslTransform = xslTransformService.delete(templateIdRoot, version); 	
-		
 		if(existsXslTransform) {
 			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
 		} 
@@ -151,10 +137,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
 		
 		log.info(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION); 
-		elasticLogger.info(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION, OperationLogEnum.QUERY_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
-				
 		XslTransformDTO response =  xslTransformService.findByTemplateIdRootAndVersion(templateIdRoot, version); 		
-		
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	} 
 	
@@ -162,7 +145,6 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 	public ResponseEntity<GetXsltResponseDTO> getXslTransform(HttpServletRequest request) throws OperationException {
 		
 		log.info(Constants.Logs.CALLED_API_GET_XSL_TRANSFORM);  
-		elasticLogger.info(Constants.Logs.CALLED_API_GET_XSL_TRANSFORM, OperationLogEnum.QUERY_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
 		
 		GetXsltResponseDTO response = new GetXsltResponseDTO(); 
 		List<XslTransformDTO> responseArray = xslTransformService.findAll();
@@ -189,14 +171,9 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 
 	@Override
 	public ResponseEntity<GetDocumentResDTO> getXslTransformById(HttpServletRequest request, String id) throws OperationException, DocumentNotFoundException {
-
 		log.info(Constants.Logs.CALLED_API_QUERY_ID); 
-		elasticLogger.info(Constants.Logs.CALLED_API_GET_BY_ID_XSL_TRANSFORM, OperationLogEnum.QUERY_BY_ID_XSL_TRANSFORM, ResultLogEnum.OK, new Date()); 
-
 		XslTransformDocumentDTO doc =  xslTransformService.findById(id); 
-
 		return new ResponseEntity<>(new GetDocumentResDTO(getLogTraceInfo(), doc), HttpStatus.OK);
-
 	}
 	
 	

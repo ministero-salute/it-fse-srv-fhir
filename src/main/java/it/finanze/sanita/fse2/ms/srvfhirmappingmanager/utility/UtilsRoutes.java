@@ -1,5 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 
+
+
 public class UtilsRoutes {
     /**
      * Private constructor to disallow to access from other classes
@@ -10,6 +12,8 @@ public class UtilsRoutes {
     public static final String API_VALUESET = "valueset";
     public static final String API_MAP= "map";
     public static final String API_DEFINITION = "definition";
+    public static final String API_SCHEMA = "schema";
+
     public static final String API_VALUESET_MAPPER = "/" + API_VERSION + "/" + API_VALUESET;
     public static final String API_DEFINITION_MAPPER = "/" + API_VERSION + "/" + API_DEFINITION;
     public static final String API_MAP_MAPPER = "/" + API_VERSION + "/" + API_MAP;
@@ -22,4 +26,13 @@ public class UtilsRoutes {
 
     public static final String API_GET_ONE_BY_ID = API_PATH_ID_VAR + API_ID_EXTS;
     public static final String API_PATH_EXTS = "/{" + API_PATH_NAME_VAR + "}";
+    
+    public static final String API_DOCUMENT_MAPPER = "/" + API_VERSION + "/" + API_SCHEMA;
+    public static final String API_GET_ONE_BY_ID_FULL = API_DOCUMENT_MAPPER + "/" + API_GET_ONE_BY_ID;
+    public static final String API_GET_ONE_BY_NAME_FULL = API_MAP_MAPPER+"/"+ API_PATH_NAME_VAR;
+    public static final String API_PUT_BY_EXTS = API_PATH_EXTS;
+
+    public static final String API_PUT_BY_EXTS_FULL = API_DOCUMENT_MAPPER + API_PUT_BY_EXTS;
+
+
 }

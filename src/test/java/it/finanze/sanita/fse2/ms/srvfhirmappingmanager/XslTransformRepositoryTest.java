@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,9 +24,11 @@ import org.springframework.test.context.ActiveProfiles;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest
-@ComponentScan
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
 class XslTransformRepositoryTest extends AbstractTest {
@@ -74,9 +77,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     	XslTransformETY ety = new XslTransformETY(); 
     	
     	ety.setNameXslTransform(TEST_INS_XSLT);
-    	ety.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	ety.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	ety.setTemplateIdRoot(TEST_INS_ROOT);
-    	ety.setTemplateIdExtension(TEST_INS_VERSION);
+    	ety.setVersion(TEST_INS_VERSION);
     	ety.setInsertionDate(new Date()); 
     	ety.setLastUpdateDate(new Date()); 
 
@@ -88,13 +91,13 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(Binary.class, retrievedEty.getContentXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEty.getNameXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEty.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEty.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, retrievedEty.getVersion().getClass()); 
     	assertEquals(Date.class, retrievedEty.getInsertionDate().getClass()); 
     	assertEquals(Date.class, retrievedEty.getLastUpdateDate().getClass()); 
     	
     	assertEquals(TEST_INS_XSLT, retrievedEty.getNameXslTransform()); 
     	assertEquals(TEST_INS_ROOT, retrievedEty.getTemplateIdRoot()); 
-    	assertEquals(TEST_INS_VERSION, retrievedEty.getTemplateIdExtension()); 
+    	assertEquals(TEST_INS_VERSION, retrievedEty.getVersion()); 
 
     } 
     
@@ -105,16 +108,16 @@ class XslTransformRepositoryTest extends AbstractTest {
     	List<XslTransformETY> etyList= new ArrayList<XslTransformETY>(); 
 
     	etyA.setNameXslTransform(TEST_INS_MANY_XSLT_A);
-    	etyA.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	etyA.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	etyA.setTemplateIdRoot(TEST_INS_MANY_ROOT_A);
-		etyA.setTemplateIdExtension(TEST_INS_MANY_VERSION_A);
+		etyA.setVersion(TEST_INS_MANY_VERSION_A);
     	etyA.setInsertionDate(new Date()); 
     	etyA.setLastUpdateDate(new Date()); 
     	
     	etyB.setNameXslTransform(TEST_INS_MANY_XSLT_B);
-    	etyB.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	etyB.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	etyB.setTemplateIdRoot(TEST_INS_MANY_ROOT_B);
-		etyB.setTemplateIdExtension(TEST_INS_MANY_VERSION_B);
+		etyB.setVersion(TEST_INS_MANY_VERSION_B);
     	etyB.setInsertionDate(new Date()); 
     	etyB.setLastUpdateDate(new Date()); 
     	
@@ -131,23 +134,23 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(Binary.class, retrievedEtyA.getContentXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEtyA.getNameXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEtyA.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEtyA.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, retrievedEtyA.getVersion().getClass()); 
     	assertEquals(Date.class, retrievedEtyA.getLastUpdateDate().getClass()); 
     	assertEquals(Date.class, retrievedEtyA.getInsertionDate().getClass()); 
     	assertEquals(XslTransformETY.class, retrievedEtyB.getClass()); 
     	assertEquals(Binary.class, retrievedEtyB.getContentXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEtyB.getNameXslTransform().getClass()); 
     	assertEquals(String.class, retrievedEtyB.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEtyB.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, retrievedEtyB.getVersion().getClass()); 
     	assertEquals(Date.class, retrievedEtyB.getInsertionDate().getClass()); 
     	assertEquals(Date.class, retrievedEtyB.getLastUpdateDate().getClass());
     	
     	assertEquals(TEST_INS_MANY_XSLT_A, retrievedEtyA.getNameXslTransform()); 
     	assertEquals(TEST_INS_MANY_ROOT_A, retrievedEtyA.getTemplateIdRoot()); 
-    	assertEquals(TEST_INS_MANY_VERSION_A, retrievedEtyA.getTemplateIdExtension()); 
+    	assertEquals(TEST_INS_MANY_VERSION_A, retrievedEtyA.getVersion()); 
     	assertEquals(TEST_INS_MANY_XSLT_B, retrievedEtyB.getNameXslTransform()); 
     	assertEquals(TEST_INS_MANY_ROOT_B, retrievedEtyB.getTemplateIdRoot()); 
-    	assertEquals(TEST_INS_MANY_VERSION_B, retrievedEtyB.getTemplateIdExtension()); 
+    	assertEquals(TEST_INS_MANY_VERSION_B, retrievedEtyB.getVersion()); 
     	
     } 
     
@@ -158,9 +161,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     	XslTransformETY etyToUpdate = new XslTransformETY(); 
     	
     	etyToUpdate.setNameXslTransform(TEST_UPD_XSLT);
-    	etyToUpdate.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	etyToUpdate.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	etyToUpdate.setTemplateIdRoot(TEST_UPD_ROOT);
-		etyToUpdate.setTemplateIdExtension(TEST_UPD_VERSION);
+		etyToUpdate.setVersion(TEST_UPD_VERSION);
     	etyToUpdate.setInsertionDate(new Date());
     	etyToUpdate.setLastUpdateDate(new Date());
 
@@ -173,7 +176,7 @@ class XslTransformRepositoryTest extends AbstractTest {
     	ety.setNameXslTransform(TEST_UPD_XSLT);
     	ety.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING_UPDATED.getBytes()));
     	ety.setTemplateIdRoot(TEST_UPD_ROOT);
-		ety.setTemplateIdExtension(TEST_UPD_VERSION);
+		ety.setVersion(TEST_UPD_VERSION);
     	ety.setInsertionDate(new Date()); 
     	ety.setLastUpdateDate(new Date());
 
@@ -196,7 +199,7 @@ class XslTransformRepositoryTest extends AbstractTest {
     	ety1.setNameXslTransform(TEST_UPD_XSLT_NE);
     	ety1.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING_UPDATED.getBytes()));
     	ety1.setTemplateIdRoot(TEST_UPD_ROOT_NE);
-		ety1.setTemplateIdExtension(TEST_UPD_VERSION_NE);
+		ety1.setVersion(TEST_UPD_VERSION_NE);
     	ety1.setInsertionDate(new Date()); 
     	ety1.setLastUpdateDate(new Date());
 
@@ -212,9 +215,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     	XslTransformETY etyToDelete = new XslTransformETY(); 
     	
     	etyToDelete.setNameXslTransform(TEST_DEL_XSLT);
-    	etyToDelete.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	etyToDelete.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	etyToDelete.setTemplateIdRoot(TEST_DEL_ROOT);
-		etyToDelete.setTemplateIdExtension(TEST_DEL_VERSION);
+		etyToDelete.setVersion(TEST_DEL_VERSION);
     	etyToDelete.setInsertionDate(new Date()); 
     	etyToDelete.setLastUpdateDate(new Date());
 
@@ -226,7 +229,7 @@ class XslTransformRepositoryTest extends AbstractTest {
 
     	assertNull(retrievedEty.getNameXslTransform()); 
     	assertNull(retrievedEty.getTemplateIdRoot()); 
-    	assertNull(retrievedEty.getTemplateIdExtension()); 
+    	assertNull(retrievedEty.getVersion()); 
     	assertNull(retrievedEty.getInsertionDate()); 
     	assertNull(retrievedEty.getLastUpdateDate()); 
 
@@ -239,9 +242,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     	XslTransformETY etyToRetrieve = new XslTransformETY(); 
     	
     	etyToRetrieve.setNameXslTransform(TEST_ID_XSLT);
-    	etyToRetrieve.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+    	etyToRetrieve.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	etyToRetrieve.setTemplateIdRoot(TEST_ID_ROOT);
-    	etyToRetrieve.setTemplateIdExtension(TEST_ID_VERSION);
+    	etyToRetrieve.setVersion(TEST_ID_VERSION);
     	etyToRetrieve.setInsertionDate(new Date());
     	etyToRetrieve.setLastUpdateDate(new Date());
 
@@ -255,13 +258,13 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(Binary.class, ety.getContentXslTransform().getClass()); 
     	assertEquals(String.class, ety.getNameXslTransform().getClass()); 
     	assertEquals(String.class, ety.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, ety.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, ety.getVersion().getClass()); 
     	assertEquals(Date.class, ety.getInsertionDate().getClass()); 
     	assertEquals(Date.class, ety.getLastUpdateDate().getClass()); 
     	
     	assertEquals("Root_A", ety.getNameXslTransform()); 
     	assertEquals("Root_A", ety.getTemplateIdRoot()); 
-    	assertEquals( "Version_A", ety.getTemplateIdExtension()); 
+    	assertEquals( "Version_A", ety.getVersion()); 
 
     }
     
@@ -278,7 +281,7 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(Binary.class, ety.getContentXslTransform().getClass()); 
     	assertEquals(String.class, ety.getNameXslTransform().getClass()); 
     	assertEquals(String.class, ety.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, ety.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, ety.getVersion().getClass()); 
     	assertEquals(Date.class, ety.getInsertionDate().getClass()); 
     	assertEquals(Date.class, ety.getLastUpdateDate().getClass()); 
     

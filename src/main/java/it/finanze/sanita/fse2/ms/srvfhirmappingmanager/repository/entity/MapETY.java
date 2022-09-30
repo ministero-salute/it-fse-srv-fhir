@@ -1,22 +1,28 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_DELETED;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_INSERTION_DATE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_LAST_UPDATE;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Date;
+
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
-
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "#{@structureMapBean}")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class MapETY {
 
     public static final String FIELD_ID = "_id";
@@ -69,6 +75,18 @@ public class MapETY {
         entity.setContentMap(file);
         entity.setTemplateIdRoot(root);
         entity.setTemplateIdExtension(extension);
+        entity.setInsertionDate(now);
+        entity.setLastUpdateDate(now);
+        return entity;
+    }
+    
+    public static MapETY fromPath(Path path, String extension, String root,MultipartFile file) throws DataProcessingException {
+        MapETY entity = new MapETY();
+        Date now = new Date();
+        entity.setNameMap(path.getFileName().toString());
+        entity.setContentMap(file);
+        entity.setTemplateIdExtension(extension);
+        entity.setTemplateIdRoot(root);
         entity.setInsertionDate(now);
         entity.setLastUpdateDate(now);
         return entity;

@@ -70,8 +70,8 @@ public class OpenApiCFG {
 				final Schema<MediaType> schema = item.getPost().getRequestBody().getContent().get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE).getSchema();
 
 				schema.additionalProperties(false);
-				if(schema.getProperties().get(Constants.App.CONTENT_XSL_TRANSFORM) != null){
-					schema.getProperties().get(Constants.App.CONTENT_XSL_TRANSFORM).setMaxLength(customOpenapi.getFileMaxLength());
+				if(schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE) != null){
+					schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE).setMaxLength(customOpenapi.getFileMaxLength());
 				}
 				
 
@@ -82,8 +82,8 @@ public class OpenApiCFG {
 				final Schema<MediaType> schema = item.getPut().getRequestBody().getContent().get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE).getSchema();
 
 				schema.additionalProperties(false);
-				if(schema.getProperties().get(Constants.App.CONTENT_XSL_TRANSFORM) != null){
-					schema.getProperties().get(Constants.App.CONTENT_XSL_TRANSFORM).setMaxLength(customOpenapi.getFileMaxLength());
+				if(schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE) != null){
+					schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE).setMaxLength(customOpenapi.getFileMaxLength());
 				}
 				
 

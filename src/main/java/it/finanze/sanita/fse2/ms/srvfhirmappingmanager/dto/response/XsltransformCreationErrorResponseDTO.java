@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class XsltransformCreationErrorResponseDTO extends ErrorResponseDTO {
 	
+	
 	@Schema(description = "Identificativo della transazione in errore")
 	@Size(min = 0, max = 100)
 	private String transactionId;

@@ -25,7 +25,7 @@ public class DefinitionDTO {
             e.getNameDefinition(),
             UtilsMisc.encodeBase64(e.getContentDefinition().getData()),
             e.getVersionDefinition(),
-            UtilsMisc.convertToOffsetDateTime(e.getLastUpdateDate())
+            e.getLastUpdateDate()!= null ? UtilsMisc.convertToOffsetDateTime(e.getLastUpdateDate()) : null
         );
     }
 

@@ -1,22 +1,27 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_DELETED;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_INSERTION_DATE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.FIELD_LAST_UPDATE;
+
+import java.io.IOException;
+import java.util.Date;
+
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
-
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "#{@valueSetBean}")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ValuesetETY {
 
     public static final String FIELD_ID = "_id";
@@ -45,7 +50,7 @@ public class ValuesetETY {
     @Field(name = FIELD_DELETED)
     private boolean deleted;
 
-    public void setContentValueset(MultipartFile file) throws DataProcessingException {
+    public void setMultipartContentValueset(MultipartFile file) throws DataProcessingException {
         try {
             this.contentValueset = new Binary(file.getBytes());
         } catch (IOException e) {
@@ -58,7 +63,19 @@ public class ValuesetETY {
         Date now = new Date();
         entity.setFilenameValueset(file.getOriginalFilename());
         entity.setNameValueset(name);
-        entity.setContentValueset(file);
+        entity.setMultipartContentValueset(file);
+        entity.setInsertionDate(now);
+        entity.setLastUpdateDate(now);
+        return entity;
+    }
+    
+    
+    public static ValuesetETY fromPath(String name,MultipartFile file) throws DataProcessingException {
+    	ValuesetETY entity = new ValuesetETY();
+        Date now = new Date();
+        entity.setNameValueset(name);
+        entity.setFilenameValueset(file.getOriginalFilename());
+        entity.setMultipartContentValueset(file);
         entity.setInsertionDate(now);
         entity.setLastUpdateDate(now);
         return entity;

@@ -6,6 +6,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createDocumentNotFoundError;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createGenericError;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createOperationError;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createRootNotValidError;
 
 import javax.validation.ConstraintViolationException;
 
@@ -20,9 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -53,6 +52,25 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         log.error("HANDLER handleDocumentNotFoundException()", ex);
         // Create error DTO
         ErrorResponseDTO out = createDocumentNotFoundError(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        // Bye bye
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
+    /**
+     * Handles exceptions thrown by a root value that does not conform to the accepted ones.
+     *
+     * @param ex exception
+     */
+    @ExceptionHandler(RootNotValidException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleRootNotValidException(RootNotValidException ex) {
+        // Log me
+        log.warn("HANDLER handleRootNotValidException()");
+        log.error("HANDLER handleRootNotValidException()", ex);
+        // Create error DTO
+        ErrorResponseDTO out = createRootNotValidError(getLogTraceInfo(), ex);
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);

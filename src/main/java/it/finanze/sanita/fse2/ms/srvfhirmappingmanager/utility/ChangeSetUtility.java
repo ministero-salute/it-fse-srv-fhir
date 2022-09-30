@@ -22,7 +22,7 @@ public final class ChangeSetUtility {
 	 * @return
 	 */
 	public static ChangeSetDTO<XSLTransformCS> xslTransformToChangeset(XslTransformETY entity) {
-		return new ChangeSetDTO<>(entity.getId(), new XSLTransformCS(entity.getTemplateIdRoot(), entity.getTemplateIdExtension()));
+		return new ChangeSetDTO<>(entity.getId(), new XSLTransformCS(entity.getTemplateIdRoot(), entity.getVersion()));
     }
 
 	public static ChangeSetDTO<ValuesetCS> toChangeset(ValuesetETY entity) {

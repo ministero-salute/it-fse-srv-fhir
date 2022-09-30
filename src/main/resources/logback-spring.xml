@@ -19,14 +19,7 @@
 			</Pattern>
 		</layout>
 	</appender>
-
-	<!-- <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender"> 
-		<file>${LOGS}/${FILE_NAME}.log</file> <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
-		<Pattern>${CONSOLE_LOG_PATTERN}</Pattern> </encoder> <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> 
-		rollover daily and when the file reaches 10 MegaBytes <fileNamePattern>${LOGS}/archived/${FILE_NAME}-%d{yyyy-MM-dd}.%i.log 
-		</fileNamePattern> <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"> 
-		<maxFileSize>10MB</maxFileSize> </timeBasedFileNamingAndTriggeringPolicy> 
-		</rollingPolicy> </appender> -->
+ 
 
 	<appender name="json"
 		class="ch.qos.logback.core.ConsoleAppender">
@@ -45,36 +38,11 @@
 			</layout>
 		</encoder>
 	</appender>
-
-
-	<!-- Elastic Logstash Encoder -->
-	<if condition='property("log.elastic-search.enable").equals("true")'>
-		<then>
-			<logger name="elastic-logger" level="${log.elastic.level}"
-				additivity="false">
-				<appender name="elastic"
-					class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-					<destination>${log.logstash.url}</destination>
-					<encoder
-						class="net.logstash.logback.encoder.LogstashEncoder">
-						<provider
-							class="net.logstash.logback.composite.loggingevent.ArgumentsJsonProvider" />
-					</encoder>
-				</appender>
-			</logger>
-		</then>
-	</if>
+	
 
 	<!-- LOG everything at INFO level -->
 	<root level="${APP_LOGGING_ROOT_LEVEL:-INFO}">
-		<!--<appender-ref ref="RollingFile" /> -->
 		<appender-ref ref="${log.output.format}" />
 	</root>
-
-	<!-- LOG "it.ibm*" package <logger name="it.ibm" level="${APP_LOGGING_LEVEL:-INFO}" 
-		additivity="false"> -->
-	<!-- to enabled rolling file appender uncomment next line -->
-	<!-- <appender-ref ref="RollingFile" /> -->
-	<!-- <appender-ref ref="json" /> </logger> -->
-
+ 
 </configuration> 

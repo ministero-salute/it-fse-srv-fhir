@@ -13,7 +13,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.ErrorLogEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.OperationLogEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.ResultLogEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.UIDModeEnum;
 
 @SpringBootTest
 @ComponentScan
@@ -57,16 +56,6 @@ class EnumTest extends AbstractTest {
 
 		assertEquals("OK", resultLogEnum.getCode()); 
 		assertEquals("Operazione eseguita con successo", resultLogEnum.getDescription()); 
-
-	} 
-	
-	@Test
-	void uidModeEnumTest() {
-		UIDModeEnum uidModeEnum = UIDModeEnum.UUID_UUID; 
-		
-		assertEquals(UIDModeEnum.class, uidModeEnum.getClass()); 
-		assertEquals(Integer.class, uidModeEnum.getId().getClass()); 
-
 
 	} 
 	

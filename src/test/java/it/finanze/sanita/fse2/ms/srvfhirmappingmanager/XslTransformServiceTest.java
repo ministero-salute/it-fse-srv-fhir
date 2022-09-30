@@ -14,8 +14,10 @@ import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,12 +32,18 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFou
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl.XsltransformSRV; 
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 
-@SpringBootTest
+// @SpringBootTest
+// @ComponentScan
+// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+// @ActiveProfiles(Constants.Profile.TEST)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 class XslTransformServiceTest extends AbstractTest {
 	
     // Test Data 
@@ -43,44 +51,44 @@ class XslTransformServiceTest extends AbstractTest {
     private final String TEST_XSLT_NAME = "testName"; 
     private final String TEST_XSLT_ROOT = "testRoot"; 
 	private final String TEST_XSLT_VERSION = "testVersion";
-    private final Binary TEST_XSLT_CONTENT = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
 
     private final String TEST_XSLT_NAME_INS = "testNameIns"; 
     private final String TEST_XSLT_ROOT_INS = "testRootIns"; 
     private final String TEST_XSLT_VERSION_INS = "testVersionIns"; 
-    private final Binary TEST_XSLT_CONTENT_INS = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_INS = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     private final String TEST_XSLT_NAME_INS_THROW = "testNameInsThrow"; 
     private final String TEST_XSLT_ROOT_INS_THROW = "testRootInsThrow"; 
-    private final Binary TEST_XSLT_CONTENT_INS_THROW = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_INS_THROW = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     private final String TEST_XSLT_NAME_INS_1 = "testNameIns_1"; 
     private final String TEST_XSLT_ROOT_INS_1 = "testRootIns_1"; 
     private final String TEST_XSLT_VERSION_INS_1 = "testVersionIns_1"; 
-    private final Binary TEST_XSLT_CONTENT_INS_1 = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_INS_1 = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     private final String TEST_XSLT_NAME_INS_2 = "testNameIns_2"; 
     private final String TEST_XSLT_ROOT_INS_2 = "testRootIns_2"; 
     private final String TEST_XSLT_VERSION_INS_2 = "testVersionIns_2"; 
-    private final Binary TEST_XSLT_CONTENT_INS_2 = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_INS_2 = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     private final String TEST_XSLT_NAME_INS_3 = "testNameIns_3"; 
     private final String TEST_XSLT_ROOT_INS_3 = "testRootIns_3"; 
 	private final String TEST_XSLT_VERSION_INS_3 = "testVersionIns_3";
-    private final Binary TEST_XSLT_CONTENT_INS_3 = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_INS_3 = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     private final String TEST_XSLT_NAME_DEL = "testNameToDel"; 
     private final String TEST_XSLT_ROOT_DEL = "testRootDel"; 
     private final String TEST_XSLT_VERSION_DEL = "testVersionDel"; 
-    private final Binary TEST_XSLT_CONTENT_DEL= new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_DEL= new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     private final String TEST_XSLT_NAME_QUERY = "testNameQuery"; 
     private final String TEST_XSLT_ROOT_QUERY = "testRootQuery"; 
     private final String TEST_XSLT_VERSION_QUERY = "testVersionQuery"; 
-    private final Binary TEST_XSLT_CONTENT_QUERY = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_QUERY = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     private final String TEST_XSLT_NAME_QUERY_DEL = "testNameQueryDel"; 
     private final String TEST_XSLT_ROOT_QUERY_DEL = "testRootQueryDel"; 
     private final String TEST_XSLT_VERSION_QUERY_DEL = "testVersionQueryDel"; 
-    private final Binary TEST_XSLT_CONTENT_QUERY_DEL = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()); 
+    private final Binary TEST_XSLT_CONTENT_QUERY_DEL = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()); 
     
     @Autowired 
     XsltransformSRV xslTransformService; 
@@ -365,7 +373,7 @@ class XslTransformServiceTest extends AbstractTest {
 		XslTransformEty.setNameXslTransform(TEST_XSLT_NAME); 
 		XslTransformEty.setTemplateIdRoot(TEST_XSLT_ROOT); 
 		XslTransformEty.setContentXslTransform(TEST_XSLT_CONTENT); 
-		XslTransformEty.setTemplateIdExtension(TEST_XSLT_VERSION);
+		XslTransformEty.setVersion(TEST_XSLT_VERSION);
 		XslTransformEty.setInsertionDate(date); 
 		XslTransformEty.setLastUpdateDate(date); 
 		
@@ -405,7 +413,7 @@ class XslTransformServiceTest extends AbstractTest {
 		XslTransformEty.setNameXslTransform(TEST_XSLT_NAME); 
 		XslTransformEty.setTemplateIdRoot(TEST_XSLT_ROOT); 
 		XslTransformEty.setContentXslTransform(TEST_XSLT_CONTENT); 
-		XslTransformEty.setTemplateIdExtension(TEST_XSLT_VERSION);
+		XslTransformEty.setVersion(TEST_XSLT_VERSION);
 		XslTransformEty.setInsertionDate(date); 
 		XslTransformEty.setLastUpdateDate(date); 
 
@@ -449,14 +457,14 @@ class XslTransformServiceTest extends AbstractTest {
 		assertEquals(XslTransformETY.class, parsedEty.getClass()); 
 		assertEquals(String.class, parsedEty.getNameXslTransform().getClass()); 
 		assertEquals(String.class, parsedEty.getTemplateIdRoot().getClass()); 
-		assertEquals(String.class, parsedEty.getTemplateIdExtension().getClass()); 
+		assertEquals(String.class, parsedEty.getVersion().getClass()); 
 		assertEquals(Binary.class, parsedEty.getContentXslTransform().getClass()); 
 		assertEquals(Date.class, parsedEty.getInsertionDate().getClass()); 
 		assertEquals(Date.class, parsedEty.getLastUpdateDate().getClass()); 
 
 		assertEquals(TEST_XSLT_NAME, parsedEty.getNameXslTransform()); 
 		assertEquals(TEST_XSLT_ROOT, parsedEty.getTemplateIdRoot()); 
-		assertEquals(TEST_XSLT_VERSION, parsedEty.getTemplateIdExtension()); 
+		assertEquals(TEST_XSLT_VERSION, parsedEty.getVersion()); 
 		assertEquals(TEST_XSLT_CONTENT, parsedEty.getContentXslTransform()); 
 		assertEquals(date, parsedEty.getInsertionDate()); 
 		assertEquals(date, parsedEty.getLastUpdateDate()); 

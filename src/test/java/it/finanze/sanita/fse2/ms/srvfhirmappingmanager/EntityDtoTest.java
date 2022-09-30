@@ -22,7 +22,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetDocumentR
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 
-@SpringBootTest
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
@@ -33,7 +34,7 @@ class EntityDtoTest extends AbstractTest {
     private final String TEST_XSLT_NAME = "NAME_XSLT"; 
     private final String TEST_XSLT_ROOT = "ROOT_XSLT"; 
     private final String TEST_XSLT_VERSION = "VERSION_XSLT"; 
-    private final Binary TEST_XSLT_CONTENT = new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes());  
+    private final Binary TEST_XSLT_CONTENT = new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes());  
 
     
     // Test Cases 
@@ -79,7 +80,7 @@ class EntityDtoTest extends AbstractTest {
     	xslTransform.setNameXslTransform(TEST_XSLT_NAME); 
     	xslTransform.setContentXslTransform(TEST_XSLT_CONTENT); 
     	xslTransform.setTemplateIdRoot(TEST_XSLT_ROOT); 
-		xslTransform.setTemplateIdExtension(TEST_XSLT_VERSION);
+		xslTransform.setVersion(TEST_XSLT_VERSION);
     	xslTransform.setInsertionDate(dateNow); 
     	xslTransform.setLastUpdateDate(dateNow); 
     	
@@ -88,7 +89,7 @@ class EntityDtoTest extends AbstractTest {
     	assertEquals(String.class, xslTransform.getNameXslTransform().getClass()); 
     	assertEquals(Binary.class, xslTransform.getContentXslTransform().getClass()); 
     	assertEquals(String.class, xslTransform.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, xslTransform.getTemplateIdExtension().getClass()); 
+    	assertEquals(String.class, xslTransform.getVersion().getClass()); 
     	assertEquals(Date.class, xslTransform.getInsertionDate().getClass()); 
     	assertEquals(Date.class, xslTransform.getLastUpdateDate().getClass()); 
     	
@@ -96,7 +97,7 @@ class EntityDtoTest extends AbstractTest {
     	assertEquals(TEST_XSLT_NAME, xslTransform.getNameXslTransform()); 
     	assertEquals(TEST_XSLT_CONTENT, xslTransform.getContentXslTransform()); 
     	assertEquals(TEST_XSLT_ROOT, xslTransform.getTemplateIdRoot()); 
-    	assertEquals(TEST_XSLT_VERSION, xslTransform.getTemplateIdExtension()); 
+    	assertEquals(TEST_XSLT_VERSION, xslTransform.getVersion()); 
     	assertEquals(dateNow, xslTransform.getInsertionDate()); 
     	assertEquals(dateNow, xslTransform.getLastUpdateDate()); 
 

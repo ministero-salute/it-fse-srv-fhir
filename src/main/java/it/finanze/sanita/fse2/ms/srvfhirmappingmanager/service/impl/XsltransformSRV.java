@@ -45,7 +45,7 @@ public class XsltransformSRV implements IXslTransformSRV {
 			XslTransformETY ety = parseDtoToEty(dto); 
 			
 			XslTransformETY xslTransformIfPresent = xslTransformRepo.findByTemplateIdRootAndVersion(
-						ety.getTemplateIdRoot(), ety.getTemplateIdExtension()); 
+						ety.getTemplateIdRoot(), ety.getVersion()); 
 			
 			if(!ObjectUtils.isEmpty(xslTransformIfPresent.getId())) {
 				log.error(Constants.Logs.ERROR_XSL_TRANSFORM_ALREADY_PRESENT);
@@ -141,7 +141,7 @@ public class XsltransformSRV implements IXslTransformSRV {
 		output.setNameXslTransform(xslTransformEty.getNameXslTransform()); 
 		output.setContentXslTransform(xslTransformEty.getContentXslTransform()); 
 		output.setTemplateIdRoot(xslTransformEty.getTemplateIdRoot());
-		output.setVersion(xslTransformEty.getTemplateIdExtension());
+		output.setVersion(xslTransformEty.getVersion());
 		output.setInsertionDate(xslTransformEty.getInsertionDate()); 
 		output.setDeleted(xslTransformEty.isDeleted()); 
 		
@@ -157,7 +157,7 @@ public class XsltransformSRV implements IXslTransformSRV {
 		output.setId(xslTransformDto.getId());
 		output.setNameXslTransform(xslTransformDto.getNameXslTransform()); 
 		output.setContentXslTransform(xslTransformDto.getContentXslTransform()); 
-		output.setTemplateIdExtension(xslTransformDto.getVersion());
+		output.setVersion(xslTransformDto.getVersion());
 		output.setTemplateIdRoot(xslTransformDto.getTemplateIdRoot());
 		output.setInsertionDate(xslTransformDto.getInsertionDate()); 
 		output.setDeleted(xslTransformDto.isDeleted()); 

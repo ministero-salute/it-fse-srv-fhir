@@ -16,7 +16,7 @@ public final class Constants {
 		/**
 		 * Base path.
 		 */
-		public static final String BASE = "it.sanita.srvfhirmappingmanager";
+		public static final String BASE = "it.finanze.sanita.fse2.ms.srvfhirmappingmanager";
 
 		/**
 		 * Controller path.
@@ -63,8 +63,9 @@ public final class Constants {
 	}
  
 	public static final class Profile {
-		public static final String TEST = "test";
-		public static final String TEST_PREFIX = "test_";
+		public static final String TEST = "TEST";
+        public static final String TEST_PREFIX = "test_";
+
 
 		/** 
 		 * Constructor.
@@ -74,6 +75,20 @@ public final class Constants {
 		}
 
 	}
+	
+	   public static final class Collections {
+
+	        /**
+	         * Schema collection name
+	         */
+	        public static final String MAP_COLLECTION = "structure-map";
+
+	        /**
+	         * Private constructor to disallow to access from other classes
+	         */
+	        private Collections() {}
+	    }
+	
 
 	public static final class App {
 		
@@ -89,11 +104,11 @@ public final class Constants {
 		
 		public static final String TEMPLATE_ID_ROOT = "template_id_root"; 
 		
-		public static final String TEMPLATE_ID_EXTENSION = "template_id_extension"; 
+		public static final String VERSION = "version"; 
 		
 		public static final String DELETED = "deleted"; 
 
-		public static final String CONTENT_XSL_TRANSFORM = "content_xsl_transform";
+		public static final String CONTENT_MULTIPART_FILE = "file";
 
 		public static final String LAST_UPDATE_DATE = "last_update_date";
 		

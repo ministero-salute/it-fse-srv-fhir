@@ -40,7 +40,7 @@ public class XslTransformDocumentDTO implements Serializable {
 				e.getTemplateIdRoot(),
 				e.getNameXslTransform(),
 				UtilsMisc.encodeBase64(e.getContentXslTransform().getData()),
-				e.getTemplateIdExtension(),
+				e.getVersion(),
 				UtilsMisc.convertToOffsetDateTime(e.getLastUpdateDate()));
 	}
 

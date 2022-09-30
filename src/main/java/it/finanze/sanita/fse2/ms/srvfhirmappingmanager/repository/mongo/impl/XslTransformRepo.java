@@ -59,7 +59,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 	@Override
 	public boolean update(XslTransformETY ety) throws OperationException {
 
-        boolean removed = remove(ety.getTemplateIdRoot(), ety.getTemplateIdExtension());
+        boolean removed = remove(ety.getTemplateIdRoot(), ety.getVersion());
 
         if(removed){
             XslTransformETY inserted = insert(ety);
@@ -73,7 +73,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
     public boolean remove(final String templateIdRoot, final String version) throws OperationException {
         try {
             Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-                    .and(Constants.App.TEMPLATE_ID_EXTENSION).is(version));
+                    .and(Constants.App.VERSION).is(version));
 
             // Template ID Root and Version uniquely determine a XSLT, we can use findOne
             // and take the first element
@@ -86,7 +86,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 
                 mongoTemplate.updateFirst(
                         Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(xslTransform.getTemplateIdRoot())
-                                .and(Constants.App.TEMPLATE_ID_EXTENSION).is(xslTransform.getTemplateIdExtension())
+                                .and(Constants.App.VERSION).is(xslTransform.getVersion())
                                 .and(Constants.App.DELETED).ne(true)),
                         update, XslTransformETY.class);
 
@@ -110,7 +110,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 
         try {
             etyList = mongoTemplate.find(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-                    .and(Constants.App.TEMPLATE_ID_EXTENSION).is(version).and(Constants.App.DELETED).ne(true)),
+                    .and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)),
                     XslTransformETY.class);
 
         } catch (MongoException e) {

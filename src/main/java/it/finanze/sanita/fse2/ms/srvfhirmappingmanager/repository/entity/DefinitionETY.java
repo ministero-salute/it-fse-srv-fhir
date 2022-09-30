@@ -49,7 +49,7 @@ public class DefinitionETY {
     @Field(name = FIELD_DELETED)
     private boolean deleted;
 
-    public void setContentDefinition(MultipartFile file) throws DataProcessingException {
+    public void setMultipartContentDefinition(MultipartFile file) throws DataProcessingException {
         try {
             this.contentDefinition = new Binary(file.getBytes());
         } catch (IOException e) {
@@ -62,10 +62,25 @@ public class DefinitionETY {
         Date now = new Date();
         entity.setFilenameDefinition(file.getOriginalFilename());
         entity.setNameDefinition(name);
-        entity.setContentDefinition(file);
+        entity.setMultipartContentDefinition(file);
         entity.setVersionDefinition(version);
         entity.setInsertionDate(now);
         entity.setLastUpdateDate(now);
+        return entity;
+    }
+    
+    
+    
+    public static DefinitionETY fromPath(String name,String version, MultipartFile file) throws DataProcessingException {
+    	DefinitionETY entity = new DefinitionETY();
+        Date now = new Date();
+        entity.setNameDefinition(name);
+        entity.setFilenameDefinition(file.getOriginalFilename());
+        entity.setMultipartContentDefinition(file);
+        entity.setInsertionDate(now);
+        entity.setLastUpdateDate(now);
+        entity.setDeleted(false);
+        entity.setVersionDefinition(version);
         return entity;
     }
 

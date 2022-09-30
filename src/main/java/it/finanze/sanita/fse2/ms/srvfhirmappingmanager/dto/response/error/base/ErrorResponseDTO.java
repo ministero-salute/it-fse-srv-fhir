@@ -53,7 +53,7 @@ public class ErrorResponseDTO extends ResponseDTO {
 	private Integer status;
 	
 	@Schema(description = "URI che potrebbe fornire ulteriori informazioni riguardo l'occorrenza del problema")
-	@Size(min = 0, max = 100)
+	@Size(min = 0, max = 255)
 	private String instance;
 
 	public ErrorResponseDTO(final LogTraceInfoDTO traceInfo, final String inType, final String inTitle, final String inDetail, final Integer inStatus, final String inInstance) {

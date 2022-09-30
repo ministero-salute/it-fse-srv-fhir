@@ -10,27 +10,39 @@ import java.util.List;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.DefinitionCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.MapCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.ValuesetCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.XSLTransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.DefinitionETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 
 
 /**
  * Test ChangeSet generation at service level
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
@@ -38,16 +50,54 @@ class ChangeSetServiceTest extends AbstractTest{
 
     @Autowired
     private IXslTransformSRV xslTransformSRV;
+    
+    @Autowired
+    private IValuesetSRV serviceVS;
+    
+    @Autowired
+    private IDefinitionSRV serviceDF;
+    
 
-    @BeforeEach
-    void setup() {
+    @Autowired
+    private IMapSRV serviceMP;
+
+    
+    
+    @BeforeAll
+    void setup() throws ParseException{
         mongo.dropCollection(XslTransformETY.class);
+        mongo.dropCollection(ValuesetETY.class);
+        mongo.dropCollection(DefinitionETY.class);
+        mongo.dropCollection(MapETY.class);
+
     }
 
     @AfterAll
     void tearDown() {
        mongo.dropCollection(XslTransformETY.class);
+       mongo.dropCollection(ValuesetETY.class);
+       mongo.dropCollection(DefinitionETY.class);
+       mongo.dropCollection(MapETY.class);
     }
+    
+    @Test
+    @DisplayName("Test ValueSet Changeset Service")
+    void testValuesetChangeset() throws ParseException, OperationException {
+    	valuesetDataPreparation();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date queryDate = sdf.parse("2022-06-01T10:00:00");
+
+        List<ChangeSetDTO<ValuesetCS>> allValueset = serviceVS.getInsertions(null);
+        assertEquals(4, allValueset.size());
+
+        List<ChangeSetDTO<ValuesetCS>> insertions = serviceVS.getInsertions(queryDate);
+        assertEquals(2, insertions.size());
+
+        List<ChangeSetDTO<ValuesetCS>> deletions = serviceVS.getDeletions(queryDate);
+        assertEquals(1, deletions.size());
+    	
+    } 
 
     @Test
     @DisplayName("Test XSLT ChangeSet Service")
@@ -68,6 +118,108 @@ class ChangeSetServiceTest extends AbstractTest{
         
     }
 
+
+    @Test
+    @DisplayName("Test Get Definition ChangeSet Service")
+
+    void    GetDefinitionChangeSetTest() throws ParseException, DataProcessingException, OperationException {
+    		DefinitionDataPreparation();
+    		
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date queryDate = sdf.parse("2022-06-01T10:00:00");
+
+            List<ChangeSetDTO<DefinitionCS>> allValueset = serviceDF.getInsertions(null);
+            assertEquals(4, allValueset.size());
+
+            List<ChangeSetDTO<DefinitionCS>> insertions = serviceDF.getInsertions(queryDate);
+            assertEquals(2, insertions.size());
+
+            List<ChangeSetDTO<ValuesetCS>> deletions = serviceVS.getDeletions(queryDate);
+            assertEquals(1, deletions.size());
+    }
+
+    @Test
+    @DisplayName("Test Map ChangeSet Service")
+
+    void GetMapChangesetTest() throws ParseException, DataProcessingException, OperationException {
+    	MapChangesetDataPreparation();
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date queryDate = sdf.parse("2022-06-01T10:00:00");
+    	
+    	List<ChangeSetDTO<MapCS>> allValueset = serviceMP.getInsertions(null);
+        assertEquals(4, allValueset.size());
+
+        List<ChangeSetDTO<MapCS>> insertions = serviceMP.getInsertions(queryDate);
+        assertEquals(2, insertions.size());
+
+       
+        List<ChangeSetDTO<MapCS>> deletions = serviceMP.getDeletions(queryDate);
+        assertEquals(1, deletions.size());
+
+    }
+    
+    
+    private void valuesetDataPreparation() throws ParseException {
+
+    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+         Date insertionDate = sdf.parse("2022-06-18T10:00:00");
+         Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
+         Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
+         
+         ValuesetETY valuesetA = new ValuesetETY();
+         valuesetA.setFilenameValueset(VALUESET_TEST_FILENAME_A);
+         valuesetA.setNameValueset(VALUESET_TEST_NAME_A);
+         valuesetA.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
+         valuesetA.setInsertionDate(oldInsertionDate);
+
+         ValuesetETY valuesetB = new ValuesetETY();
+         valuesetB.setFilenameValueset(VALUESET_TEST_FILENAME_B);
+         valuesetB.setNameValueset(VALUESET_TEST_NAME_B);
+         valuesetB.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
+         valuesetB.setInsertionDate(insertionDate);
+         
+         ValuesetETY valuesetC = new ValuesetETY();
+         valuesetC.setFilenameValueset(VALUESET_TEST_FILENAME_C);
+         valuesetC.setNameValueset(VALUESET_TEST_NAME_C);
+         valuesetC.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
+         valuesetC.setInsertionDate(insertionDate);
+         valuesetC.setLastUpdateDate(lastUpdate);
+
+         ValuesetETY valuesetD = new ValuesetETY();
+         valuesetD.setFilenameValueset(VALUESET_TEST_FILENAME_D);
+         valuesetD.setNameValueset(VALUESET_TEST_NAME_D);
+         valuesetD.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
+         valuesetD.setInsertionDate(oldInsertionDate);
+         valuesetD.setLastUpdateDate(lastUpdate);
+
+         ValuesetETY valuesetE = new ValuesetETY();
+         valuesetE.setFilenameValueset(VALUESET_TEST_FILENAME_E);
+         valuesetE.setNameValueset(VALUESET_TEST_NAME_E);
+         valuesetE.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
+         valuesetE.setInsertionDate(oldInsertionDate);
+         valuesetE.setLastUpdateDate(lastUpdate);
+         valuesetE.setDeleted(true);
+         
+                
+        mongo.save(valuesetA);
+        mongo.save(valuesetB);
+        mongo.save(valuesetC);
+        mongo.save(valuesetD);
+        mongo.save(valuesetE);
+
+
+
+
+        //  mongo.insert(valuesetA, VALUESET_TEST_COLLECTION);
+        //  mongo.insert(valuesetB, VALUESET_TEST_COLLECTION);
+        //  mongo.insert(valuesetC, VALUESET_TEST_COLLECTION);
+        //  mongo.insert(valuesetD, VALUESET_TEST_COLLECTION);
+        //  mongo.insert(valuesetE, VALUESET_TEST_COLLECTION);
+         
+    }
+    
+
     private void xslTransformDataPreparation() throws ParseException {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -78,48 +230,177 @@ class ChangeSetServiceTest extends AbstractTest{
 
         XslTransformETY xslTransformA = new XslTransformETY(); 
     	xslTransformA.setNameXslTransform(XSLT_TEST_NAME_A); 
-     	xslTransformA.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+     	xslTransformA.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	xslTransformA.setTemplateIdRoot(XSLT_TEST_ROOT_A); 
-        xslTransformA.setTemplateIdExtension(XSLT_TEST_VERSION_A);
+        xslTransformA.setVersion(XSLT_TEST_VERSION_A);
         xslTransformA.setInsertionDate(oldInsertionDate);
     	
     	XslTransformETY xslTransformB = new XslTransformETY(); 
     	xslTransformB.setNameXslTransform(XSLT_TEST_NAME_B); 
-     	xslTransformB.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+     	xslTransformB.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	xslTransformB.setTemplateIdRoot(XSLT_TEST_ROOT_B); 
-        xslTransformB.setTemplateIdExtension(XSLT_TEST_VERSION_B);
+        xslTransformB.setVersion(XSLT_TEST_VERSION_B);
         xslTransformB.setInsertionDate(insertionDate);
     	
     	XslTransformETY xslTransformC = new XslTransformETY(); 
     	xslTransformC.setNameXslTransform(XSLT_TEST_NAME_C); 
-     	xslTransformC.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+     	xslTransformC.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	xslTransformC.setTemplateIdRoot(XSLT_TEST_ROOT_C); 
-        xslTransformC.setTemplateIdExtension(XSLT_TEST_VERSION_C);
+        xslTransformC.setVersion(XSLT_TEST_VERSION_C);
         xslTransformC.setInsertionDate(insertionDate);
         xslTransformC.setLastUpdateDate(lastUpdate);
 
         XslTransformETY xslTransformD = new XslTransformETY(); 
     	xslTransformD.setNameXslTransform(XSLT_TEST_NAME_D); 
-     	xslTransformD.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+     	xslTransformD.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	xslTransformD.setTemplateIdRoot(XSLT_TEST_ROOT_D); 
-        xslTransformD.setTemplateIdExtension(XSLT_TEST_VERSION_D);
+        xslTransformD.setVersion(XSLT_TEST_VERSION_D);
         xslTransformD.setInsertionDate(oldInsertionDate);
         xslTransformD.setLastUpdateDate(lastUpdate);
 
         XslTransformETY xslTransformE = new XslTransformETY(); 
     	xslTransformE.setNameXslTransform(XSLT_TEST_NAME_E); 
-     	xslTransformE.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, XSLT_TEST_STRING.getBytes()));
+     	xslTransformE.setContentXslTransform(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
     	xslTransformE.setTemplateIdRoot(XSLT_TEST_ROOT_E); 
-        xslTransformE.setTemplateIdExtension(XSLT_TEST_VERSION_E);
+        xslTransformE.setVersion(XSLT_TEST_VERSION_E);
         xslTransformE.setInsertionDate(oldInsertionDate);
         xslTransformE.setLastUpdateDate(lastUpdate);
         xslTransformE.setDeleted(true);
     	
-        mongo.insert(xslTransformA, XSLT_TEST_COLLECTION);
-        mongo.insert(xslTransformB, XSLT_TEST_COLLECTION);
-        mongo.insert(xslTransformC, XSLT_TEST_COLLECTION);
-        mongo.insert(xslTransformD, XSLT_TEST_COLLECTION);
-        mongo.insert(xslTransformE, XSLT_TEST_COLLECTION);
+
+        mongo.save(xslTransformA);
+        mongo.save(xslTransformB);
+        mongo.save(xslTransformC);
+        mongo.save(xslTransformD);
+        mongo.save(xslTransformE);
     }
     
+    
+    private void DefinitionDataPreparation() throws ParseException, DataProcessingException {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date insertionDate = sdf.parse("2022-06-18T10:00:00");
+        Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
+        Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
+   
+        DefinitionETY DefinitionTransformA = new DefinitionETY(); 
+        DefinitionTransformA.setNameDefinition(DEFINITION_TEST_NAME_A); 
+        DefinitionTransformA.setFilenameDefinition(DEFINITION_TEST_FILENAME_A);
+        DefinitionTransformA.setMultipartContentDefinition(createFakeFile("test file"));
+        DefinitionTransformA.setId(DEFINITION_ID_A); 
+        DefinitionTransformA.setVersionDefinition(DEFINITION_TEST_VERSION_A);
+        DefinitionTransformA.setInsertionDate(oldInsertionDate);
+        
+        
+        DefinitionETY DefinitionTransformB = new DefinitionETY(); 
+        DefinitionTransformB.setNameDefinition(DEFINITION_TEST_NAME_B); 
+        DefinitionTransformB.setFilenameDefinition(DEFINITION_TEST_FILENAME_B);
+        DefinitionTransformB.setMultipartContentDefinition(createFakeFile("test file"));
+        DefinitionTransformB.setId(DEFINITION_ID_B); 
+        DefinitionTransformB.setVersionDefinition(DEFINITION_TEST_VERSION_B);
+        DefinitionTransformB.setInsertionDate(insertionDate); 
+
+        
+        DefinitionETY DefinitionTransformC = new DefinitionETY(); 
+        DefinitionTransformC.setNameDefinition(DEFINITION_TEST_NAME_C); 
+        DefinitionTransformC.setFilenameDefinition(DEFINITION_TEST_FILENAME_C);
+        DefinitionTransformC.setMultipartContentDefinition(createFakeFile("test file"));
+        DefinitionTransformC.setId(DEFINITION_ID_C); 
+        DefinitionTransformC.setVersionDefinition(DEFINITION_TEST_VERSION_C);
+        DefinitionTransformC.setInsertionDate(insertionDate); 
+        DefinitionTransformC.setLastUpdateDate(lastUpdate); 
+
+
+        
+        DefinitionETY DefinitionTransformD = new DefinitionETY(); 
+        DefinitionTransformD.setNameDefinition(DEFINITION_TEST_NAME_D); 
+        DefinitionTransformD.setFilenameDefinition(DEFINITION_TEST_FILENAME_D);
+        DefinitionTransformD.setMultipartContentDefinition(createFakeFile("test file"));
+        DefinitionTransformD.setId(DEFINITION_ID_D); 
+        DefinitionTransformD.setVersionDefinition(DEFINITION_TEST_VERSION_D);
+        DefinitionTransformD.setInsertionDate(oldInsertionDate); 
+        DefinitionTransformD.setLastUpdateDate(lastUpdate); 
+
+
+        
+        DefinitionETY DefinitionTransformE = new DefinitionETY(); 
+        DefinitionTransformE.setNameDefinition(DEFINITION_TEST_NAME_E); 
+        DefinitionTransformE.setFilenameDefinition(DEFINITION_TEST_FILENAME_E);
+        DefinitionTransformE.setMultipartContentDefinition(createFakeFile("test file"));
+        DefinitionTransformE.setId(DEFINITION_ID_E); 
+        DefinitionTransformE.setVersionDefinition(DEFINITION_TEST_VERSION_E);
+        DefinitionTransformE.setInsertionDate(oldInsertionDate); 
+        DefinitionTransformE.setLastUpdateDate(lastUpdate); 
+        DefinitionTransformE.setDeleted(true);
+
+    
+        mongo.save(DefinitionTransformA);
+        mongo.save(DefinitionTransformB);
+        mongo.save(DefinitionTransformC);
+        mongo.save(DefinitionTransformD);
+        mongo.save(DefinitionTransformE);
+        
+    }
+  
+    
+    private void MapChangesetDataPreparation() throws ParseException, DataProcessingException {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date insertionDate = sdf.parse("2022-06-18T10:00:00");
+        Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
+        Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
+        
+        MapETY MapA= new MapETY();
+        MapETY MapB= new MapETY();
+        MapETY MapC= new MapETY();
+        MapETY MapD= new MapETY();
+        MapETY MapE= new MapETY();
+
+        
+        
+        MapA.setNameMap(MAP_TEST_NAME_A);
+        MapA.setContentMap(createFakeFile("test file"));
+        MapA.setId(MAP_ID_A);
+        MapA.setTemplateIdExtension(MAP_TEMPLATE_EXTENSIONS_ID_A);
+        MapA.setInsertionDate(oldInsertionDate);
+ 
+        MapB.setNameMap(MAP_TEST_NAME_B);
+        MapB.setContentMap(createFakeFile("test file"));
+        MapB.setId(MAP_ID_B);
+        MapB.setTemplateIdExtension(MAP_TEMPLATE_EXTENSIONS_ID_B);
+        MapB.setInsertionDate(insertionDate);
+
+        MapC.setNameMap(MAP_TEST_NAME_C);
+        MapC.setContentMap(createFakeFile("test file"));
+        MapC.setId(MAP_ID_C);
+        MapC.setTemplateIdExtension(MAP_TEMPLATE_EXTENSIONS_ID_C);
+        MapC.setInsertionDate(insertionDate);
+        MapC.setLastUpdateDate(lastUpdate);
+
+        MapD.setNameMap(MAP_TEST_NAME_D);
+        MapD.setContentMap(createFakeFile("test file"));
+        MapD.setId(MAP_ID_D);
+        MapD.setTemplateIdExtension(MAP_TEMPLATE_EXTENSIONS_ID_D);
+        MapD.setInsertionDate(oldInsertionDate);
+        MapD.setLastUpdateDate(lastUpdate);
+
+
+        MapE.setNameMap(MAP_TEST_NAME_E);
+        MapE.setContentMap(createFakeFile("test file"));
+        MapE.setId(MAP_ID_E);
+        MapE.setTemplateIdExtension(MAP_TEMPLATE_EXTENSIONS_ID_E);
+        MapE.setInsertionDate(oldInsertionDate);
+        MapE.setLastUpdateDate(lastUpdate);
+        MapE.setDeleted(true);
+        
+        
+        mongo.save(MapA);
+        mongo.save(MapB);
+        mongo.save(MapC);
+        mongo.save(MapD);
+        mongo.save(MapE);
+        
+    }
+    
+
 }

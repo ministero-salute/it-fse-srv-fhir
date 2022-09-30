@@ -12,6 +12,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlread
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
+
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,20 +25,20 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
      * Document service layer
      */
     @Autowired
-    private IDefinitionSRV service;
+    private IDefinitionSRV definitionSRV;
 
     @Override
     public GetDefinitionResDTO getDefinitionByName(String name) throws DocumentNotFoundException, OperationException {
         // Retrieve document by name
-        DefinitionDTO out = service.findDocByName(name);
+        DefinitionDTO out = definitionSRV.findDocByName(name);
         // Return response
         return new GetDefinitionResDTO(getLogTraceInfo(), out);
     }
 
     @Override
-    public UploadDefinitionResDTO uploadDefinition(String name, String version, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+    public UploadDefinitionResDTO uploadDefinition(String version, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
         // Insert document
-        String filename = service.insertDocByName(name, version, file);
+        String filename = definitionSRV.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , version, file);
         // Return response
         return new UploadDefinitionResDTO(getLogTraceInfo(), new UploadDefinitionResDTO.Payload(filename));
     }
@@ -44,7 +46,7 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
     @Override
     public UpdateDefinitionResDTO updateDefinition(String name, MultipartFile file) throws DocumentNotFoundException, OperationException, DataProcessingException {
         // Update document
-        String filename = service.updateDocByName(name, file);
+        String filename = definitionSRV.updateDocByName(name, file);
         // Return response
         return new UpdateDefinitionResDTO(getLogTraceInfo(), new UpdateDefinitionResDTO.Payload(filename));
     }
@@ -52,7 +54,7 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
     @Override
     public DeleteDefinitionResDTO deleteDefinition(String name) throws DocumentNotFoundException, OperationException {
         // Update document
-        String filename = service.deleteDocByName(name);
+        String filename = definitionSRV.deleteDocByName(name);
         // Return response
         return new DeleteDefinitionResDTO(getLogTraceInfo(), new DeleteDefinitionResDTO.Payload(filename));
     }
@@ -60,7 +62,7 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
     @Override
     public GetDefinitionResDTO getDefinitionById(String id) throws DocumentNotFoundException, OperationException {
         // Get document
-        DefinitionDTO out = service.findDocById(id);
+        DefinitionDTO out = definitionSRV.findDocById(id);
         // Return response
         return new GetDefinitionResDTO(getLogTraceInfo(), out);
     }
