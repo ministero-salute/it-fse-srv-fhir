@@ -6,8 +6,6 @@ import static org.apache.http.HttpStatus.SC_CONFLICT;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
-import java.util.Arrays;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -22,9 +20,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorI
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.ExtensionNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.RootNotValidException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 
 
@@ -62,20 +58,6 @@ public final class ErrorBuilderDTO {
         );
     }
 
-    public static ErrorResponseDTO createRootNotValidError(LogTraceInfoDTO trace, RootNotValidException ex) {
-        return new ErrorResponseDTO(
-            trace,
-            ErrorType.VALIDATION.getType(),
-            ErrorType.VALIDATION.getTitle(),
-            String.format(
-                "Root filename %s doesn't match any of the possible values: %s",
-                ex.getValue(),
-                Arrays.toString(ex.getValues().toArray())
-            ),
-            SC_BAD_REQUEST,
-            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getField())
-        );
-    }
 
     public static ErrorResponseDTO createMissingPartError(LogTraceInfoDTO trace, MissingServletRequestPartException ex) {
         return new ErrorResponseDTO(
@@ -121,16 +103,6 @@ public final class ErrorBuilderDTO {
         );
     }
 
-    public static ErrorResponseDTO createExtensionNotFoundError(LogTraceInfoDTO trace, ExtensionNotFoundException ex) {
-        return new ErrorResponseDTO(
-            trace,
-            ErrorType.RESOURCE.getType(),
-            ErrorType.RESOURCE.getTitle(),
-            ex.getMessage(),
-            SC_NOT_FOUND,
-            ErrorType.RESOURCE.toInstance(Resource.NOT_FOUND)
-        );
-    }
 
     public static ErrorResponseDTO createDocumentNotFoundError(LogTraceInfoDTO trace, DocumentNotFoundException ex) {
         return new ErrorResponseDTO(

@@ -207,16 +207,6 @@ class ChangeSetServiceTest extends AbstractTest{
         mongo.save(valuesetC);
         mongo.save(valuesetD);
         mongo.save(valuesetE);
-
-
-
-
-        //  mongo.insert(valuesetA, VALUESET_TEST_COLLECTION);
-        //  mongo.insert(valuesetB, VALUESET_TEST_COLLECTION);
-        //  mongo.insert(valuesetC, VALUESET_TEST_COLLECTION);
-        //  mongo.insert(valuesetD, VALUESET_TEST_COLLECTION);
-        //  mongo.insert(valuesetE, VALUESET_TEST_COLLECTION);
-         
     }
     
 

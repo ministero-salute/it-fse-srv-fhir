@@ -153,13 +153,7 @@ class MapControllerTest extends AbstractTest {
                 status().is2xxSuccessful(),content().contentType(APPLICATION_JSON_VALUE)
                 );
     }
-    // @Test
-    // @DisplayName("Delete Map Fail Test")
-    // void deleteMapFailTest() throws Exception {
-    //  when(service.deleteDocByName(anyString())).thenReturn(anyString());
-    //  mvc.perform(deleteMapMockRequest("proviamo", getBaseUrl())).andExpectAll(
-    //          status().is4xxClientError());
-    // }
+   
     void dataPreparation() throws ParseException, DataProcessingException {
         MultipartFile file = createFakeMultipart("file");
         MapETY MapA = new MapETY();

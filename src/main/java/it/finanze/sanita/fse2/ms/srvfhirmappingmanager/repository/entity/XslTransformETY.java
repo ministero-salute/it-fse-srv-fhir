@@ -51,7 +51,6 @@ public class XslTransformETY {
         Date now = new Date();
         entity.setNameXslTransform(name);
         entity.setId(id);
-//        entity.setContentXslTransform(file.);
         entity.setInsertionDate(now);
         entity.setLastUpdateDate(now);
         entity.setDeleted(false);

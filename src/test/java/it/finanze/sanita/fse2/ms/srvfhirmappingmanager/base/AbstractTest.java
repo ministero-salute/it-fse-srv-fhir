@@ -30,12 +30,10 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.Definit
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl.XslTransformRepo;
 
 public abstract class AbstractTest {
 
-    @Autowired
-    protected XslTransformRepo repository;
+ 
 
     // --- XSLT
     public static final String XSLT_TEST_NAME_A = "test_xslt_A";
@@ -488,11 +486,6 @@ public abstract class AbstractTest {
         this.valuesetEntities.clear();
         this.xslTransformEntities.clear();
 
-        // this.mapReplacements.clear();
-        // this.definitionReplacements.clear();
-        // this.valuesetReplacements.clear();
-        // this.xslTransformReplacements.clear();
-
     }
 
     protected Map<String, MapETY> getMapEntities() {
@@ -511,21 +504,6 @@ public abstract class AbstractTest {
         return new HashMap<>(xslTransformEntities);
     }
 
-    // protected Map<String, MapETY> getReadOnlyMapEntities() {
-    //     return new HashMap<>(mapEntities);
-    // }
-
-    // protected Map<String, DefinitionETY> getReadOnlyDefinitionEntities() {
-    //     return new HashMap<>(definitionEntities);
-    // }
-
-    // protected Map<String, ValuesetETY> getReadOnlyValuesetEntities() {
-    //     return new HashMap<>(valuesetEntities);
-    // }
-
-    // protected Map<String, XslTransformETY> getReadOnlyXslTransformEntities() {
-    //     return new HashMap<>(xslTransformEntities);
-    // }
 
     protected List<MapETY> getMapEntitiesToUpload() {
         return new ArrayList<>(mapEntities.values());
@@ -542,97 +520,6 @@ public abstract class AbstractTest {
     protected List<XslTransformETY> getXslTransformEntitiesToUpload() {
         return new ArrayList<>(xslTransformEntities.values());
     }
-
-    // protected Map<String, MapETY> getMapEntitiesToUseAsReplacement() {
-    //     return new HashMap<>(mapReplacements);
-    // }
-
-    // protected Map<String, DefinitionETY> getDefinitionEntitiesToUseAsReplacement() {
-    //     return new HashMap<>(definitionReplacements);
-    // }
-
-    // protected Map<String, ValuesetETY> getValuesetEntitiesToUseAsReplacement() {
-    //     return new HashMap<>(valuesetReplacements);
-    // }
-
-    // protected Map<String, XslTransformETY> getXslTransformEntitiesToUseAsReplacement() {
-    //     return new HashMap<>(xslTransformReplacements);
-    // }
-
-    // Before all section
-
-    // private void setMapTestEntityToReplace() throws IOException {
-    //     // List of all files inside the sample modified directory
-    //     try (Stream<Path> files = Files.list(MAP_MOD_SAMPLE_FILES)) {
-    //         // Convert to list
-    //         List<Path> samples = files.collect(Collectors.toList());
-    //         MultipartFile fakeFile = createFakeMultipart(MAP_ID_B);
-    //         // Add to each map and convert
-    //         for (Path path : samples) {
-    //             this.mapReplacements.put(
-    //                     path.getFileName().toString(),
-    //                     MapETY.fromPath(
-    //                             path,
-    //                             MAP_TEST_EXTS_B,
-    //                             SCHEMA_TEST_ROOT,
-    //                             fakeFile));
-    //         }
-    //     }
-    // }
-
-    // private void setDefinitionTestEntityToReplace() throws IOException {
-    //     // List of all files inside the sample modified directory
-    //     try (Stream<Path> files = Files.list(DEFINITION_MOD_SAMPLE_FILES)) {
-    //         // Convert to list
-    //         List<Path> samples = files.collect(Collectors.toList());
-    //         MultipartFile fakeFile = createFakeMultipart(MAP_ID_B);
-    //         // Add to each map and convert
-    //         for (Path path : samples) {
-    //             this.definitionReplacements.put(
-    //                     path.getFileName().toString(),
-    //                     DefinitionETY.fromPath(
-    //                             DEFINITION_TEST_EXTS_B,
-    //                             DEFINITION_TEST_VERSION_B,
-    //                             fakeFile));
-    //         }
-    //     }
-    // }
-
-    // private void setValuesetTestEntityToReplace() throws IOException {
-    //     // List of all files inside the sample modified directory
-    //     try (Stream<Path> files = Files.list(VALUESET_MOD_SAMPLE_FILES)) {
-    //         // Convert to list
-    //         List<Path> samples = files.collect(Collectors.toList());
-    //         MultipartFile fakeFile = createFakeMultipart(MAP_ID_B);
-    //         // Add to each map and convert
-    //         for (Path path : samples) {
-    //             this.valuesetReplacements.put(
-    //                     path.getFileName().toString(),
-    //                     ValuesetETY.fromPath(
-    //                             VALUESET_TEST_EXTS_B,
-    //                             fakeFile));
-    //         }
-    //     }
-    // }
-
-    // private void setXslTransformTestEntityToReplace() throws IOException {
-    //     // List of all files inside the sample modified directory
-    //     try (Stream<Path> files = Files.list(XSLT_MOD_SAMPLE_FILES)) {
-    //         // Convert to list
-    //         List<Path> samples = files.collect(Collectors.toList());
-    //         MultipartFile fakeFile = createFakeMultipart(XSLT_TEST_ID_B);
-    //         // Add to each map and convert
-    //         for (Path path : samples) {
-    //             this.xslTransformReplacements.put(
-    //                     path.getFileName().toString(),
-    //                     XslTransformETY.fromPath(
-    //                             XSLTRANSFORM_TEST_EXTS_B,
-    //                             XSLT_TEST_ID_B,
-    //                             XSLT_TEST_VERSION_B,
-    //                             fakeFile));
-    //         }
-    //     }
-    // }
 
     protected void setupTestEntities() throws IOException {
         // Add entities to map instance

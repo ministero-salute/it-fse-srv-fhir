@@ -35,10 +35,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl.Xsltransform
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 
-// @SpringBootTest
-// @ComponentScan
-// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-// @ActiveProfiles(Constants.Profile.TEST)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

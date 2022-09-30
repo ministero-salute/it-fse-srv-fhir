@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 public class ValuesetETY {
 
     public static final String FIELD_ID = "_id";
-//    public static final String FIELD_NAME = "name_valueset";
     public static final String FIELD_FILENAME = "filename_valueset";
     public static final String FIELD_CONTENT = "content_valueset";
 

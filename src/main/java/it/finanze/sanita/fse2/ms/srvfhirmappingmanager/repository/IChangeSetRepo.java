@@ -10,8 +10,6 @@ public interface IChangeSetRepo<T> {
 
     String FIELD_INSERTION_DATE = "insertion_date";
     String FIELD_LAST_UPDATE = "last_update_date";
-//    String FIELD_DELETED = "deleted";
-
     /**
      * Retrieves the latest insertions according to the given timeframe
      *

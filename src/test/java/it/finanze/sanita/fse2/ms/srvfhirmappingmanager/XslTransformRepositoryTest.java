@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,6 +25,8 @@ import org.springframework.test.context.ActiveProfiles;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl.XslTransformRepo;
+
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -64,7 +67,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     
     
     
-    
+	@Autowired
+    protected XslTransformRepo repository;
+	
     @BeforeAll
     public void setup() throws Exception {
 		this.dropTestSchema();
