@@ -50,7 +50,7 @@ public class MapSRV implements IMapSRV {
         return MapDTO.fromEntity(doc);
     }
 
-    @Override
+	@Override
     public String insertDocByName(String name, String root, String extension, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, DataProcessingException {
         // Check if given document already exists
         if(repository.isDocumentInserted(name)) {

@@ -30,18 +30,14 @@ public class MapCTL extends AbstractCTL implements IMapCTL {
 
     @Override
     public GetMapResDTO getMapByName(String name) throws DocumentNotFoundException, OperationException {
-        // Retrieve document by name
         MapDTO out = service.findDocByName(name);
-        // Return response
         return new GetMapResDTO(getLogTraceInfo(), out);
     }
 
     @Override
     public UploadMapResDTO uploadMap(String root, String extension, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
-        // Insert document
-        String filename = service.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , root, extension, file);
-        // Return response
-        return new UploadMapResDTO(getLogTraceInfo(), new UploadMapResDTO.Payload(filename));
+        service.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , root, extension, file);
+        return new UploadMapResDTO(getLogTraceInfo());
     }
 
     @Override

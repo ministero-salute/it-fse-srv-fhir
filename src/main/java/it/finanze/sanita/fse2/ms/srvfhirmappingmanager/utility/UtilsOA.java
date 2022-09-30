@@ -15,7 +15,7 @@ public final class UtilsOA {
     /**
      * Max size extension string
      */
-    public static final int OA_EXTS_STRING_MAX = 25;
+    public static final int OA_EXTS_STRING_MAX = 50;
 
     /**
      * Max size given string ids
