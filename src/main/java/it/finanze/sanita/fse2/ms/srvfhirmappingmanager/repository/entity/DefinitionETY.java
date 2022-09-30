@@ -19,25 +19,19 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChange
 @NoArgsConstructor
 public class DefinitionETY {
 
-    public static final String FIELD_ID = "_id";
-    public static final String FIELD_NAME = "name_definition";
-    public static final String FIELD_FILENAME = "filename_definition";
-    public static final String FIELD_CONTENT = "content_definition";
-    public static final String FIELD_VERSION = "version_definition";
-
     @Id
     private String id;
 
-    @Field(name = FIELD_NAME)
+    @Field(name = "name_definition")
     private String nameDefinition;
 
-    @Field(name = FIELD_FILENAME)
+    @Field(name = "filename_definition")
     private String filenameDefinition;
 
-    @Field(name = FIELD_CONTENT)
+    @Field(name = "content_definition")
     private Binary contentDefinition;
 
-    @Field(name = FIELD_VERSION)
+    @Field(name = "version_definition")
     private String versionDefinition;
 
     @Field(name = FIELD_INSERTION_DATE)

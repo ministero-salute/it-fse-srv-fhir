@@ -88,7 +88,6 @@ public interface IDefinitionCTL {
 	DeleteDefinitionResDTO deleteDefinition(@PathVariable(name = "name") @Parameter(description = "Name identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Name cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Name does not match the expected size") String name)throws DocumentNotFoundException, OperationException;
 
 
-
 	@GetMapping("/id/{id}")
 	@Operation(summary = "Get Definition by ID", description = "Get Definition by ID")
 	@ApiResponses(value = {

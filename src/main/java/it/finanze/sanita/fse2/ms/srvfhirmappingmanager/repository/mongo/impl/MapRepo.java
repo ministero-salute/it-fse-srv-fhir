@@ -1,9 +1,14 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IMapRepo;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERROR_UNABLE_FIND_DELETIONS;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS;
+import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNORDERED;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.util.Date;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -13,16 +18,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
+import com.mongodb.MongoException;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERROR_UNABLE_FIND_DELETIONS;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY.FIELD_ID;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY.FIELD_NAME;
-import static org.springframework.data.mongodb.core.BulkOperations.BulkMode.UNORDERED;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IMapRepo;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
 
 
 @Repository
@@ -37,9 +37,7 @@ public class MapRepo implements IMapRepo {
         boolean res;
         // Create query
         Query query = new Query();
-        query.addCriteria(
-            where(FIELD_NAME).is(name).and("deleted").is(false)
-        );
+        query.addCriteria(where("name_map").is(name).and("deleted").is(false));
         try {
             // Execute
             res = mongo.exists(query, MapETY.class);
@@ -57,9 +55,7 @@ public class MapRepo implements IMapRepo {
         MapETY out;
         // Create query
         Query query = new Query();
-        query.addCriteria(
-            Criteria.where(FIELD_NAME).is(name).and("deleted").is(false)
-        );
+        query.addCriteria(Criteria.where("name_map").is(name).and("deleted").is(false));
         try {
             // Execute
             out = mongo.findOne(query, MapETY.class);
@@ -91,7 +87,7 @@ public class MapRepo implements IMapRepo {
         // Create query to match the required file
         Query query = new Query();
         query.addCriteria(
-            where(FIELD_ID).is(new ObjectId(current.getId()))
+            where("_id").is(new ObjectId(current.getId()))
         );
         query.addCriteria(
             where("deleted").is(false)
@@ -121,7 +117,7 @@ public class MapRepo implements IMapRepo {
         MapETY out;
         // Create query
         Query query = new Query();
-        query.addCriteria(where(FIELD_NAME).is(name));
+        query.addCriteria(where("name_map").is(name));
         query.addCriteria(where("deleted").is(false));
         // Create update definition
         Update update = new Update();
@@ -147,7 +143,7 @@ public class MapRepo implements IMapRepo {
         // Create query
         Query query = new Query();
         query.addCriteria(
-            Criteria.where(FIELD_ID).is(id).and("deleted").is(false)
+            Criteria.where("_id").is(id).and("deleted").is(false)
         );
         try {
             // Execute

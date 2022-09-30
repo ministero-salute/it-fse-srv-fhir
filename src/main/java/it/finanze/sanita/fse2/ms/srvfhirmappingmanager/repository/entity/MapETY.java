@@ -24,29 +24,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MapETY {
 
-    public static final String FIELD_ID = "_id";
-    public static final String FIELD_NAME = "name_map";
-    public static final String FIELD_FILENAME = "filename_map";
-    public static final String FIELD_CONTENT = "content_map";
-    public static final String FIELD_ID_ROOT = "template_id_root";
-    public static final String FIEDL_ID_EXTS = "template_id_extension";
-
     @Id
     private String id;
 
-    @Field(name = FIELD_NAME)
+    @Field(name = "name_map")
     private String nameMap;
 
-    @Field(name = FIELD_FILENAME)
+    @Field(name = "filename_map")
     private String filenameMap;
 
-    @Field(name = FIELD_CONTENT)
+    @Field(name = "content_map")
     private Binary contentMap;
 
-    @Field(name = FIELD_ID_ROOT)
+    @Field(name = "template_id_root")
     private String templateIdRoot;
 
-    @Field(name = FIEDL_ID_EXTS)
+    @Field(name = "template_id_extension")
     private String templateIdExtension;
 
     @Field(name = FIELD_INSERTION_DATE)

@@ -29,41 +29,31 @@ public class DefinitionCTL extends AbstractCTL implements IDefinitionCTL {
 
     @Override
     public GetDefinitionResDTO getDefinitionByName(String name) throws DocumentNotFoundException, OperationException {
-        // Retrieve document by name
         DefinitionDTO out = definitionSRV.findDocByName(name);
-        // Return response
         return new GetDefinitionResDTO(getLogTraceInfo(), out);
     }
 
     @Override
     public UploadDefinitionResDTO uploadDefinition(String version, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
-        // Insert document
         String filename = definitionSRV.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , version, file);
-        // Return response
         return new UploadDefinitionResDTO(getLogTraceInfo(), new UploadDefinitionResDTO.Payload(filename));
     }
 
     @Override
     public UpdateDefinitionResDTO updateDefinition(String name, MultipartFile file) throws DocumentNotFoundException, OperationException, DataProcessingException {
-        // Update document
         String filename = definitionSRV.updateDocByName(name, file);
-        // Return response
         return new UpdateDefinitionResDTO(getLogTraceInfo(), new UpdateDefinitionResDTO.Payload(filename));
     }
 
     @Override
     public DeleteDefinitionResDTO deleteDefinition(String name) throws DocumentNotFoundException, OperationException {
-        // Update document
         String filename = definitionSRV.deleteDocByName(name);
-        // Return response
         return new DeleteDefinitionResDTO(getLogTraceInfo(), new DeleteDefinitionResDTO.Payload(filename));
     }
 
     @Override
     public GetDefinitionResDTO getDefinitionById(String id) throws DocumentNotFoundException, OperationException {
-        // Get document
         DefinitionDTO out = definitionSRV.findDocById(id);
-        // Return response
         return new GetDefinitionResDTO(getLogTraceInfo(), out);
     }
 }
