@@ -14,3 +14,4 @@ bin/
 .metadata
 tmp/
 .vscode/
+*.prefs
