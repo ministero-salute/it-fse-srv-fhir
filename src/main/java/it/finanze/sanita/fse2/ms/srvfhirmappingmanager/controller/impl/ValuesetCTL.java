@@ -1,6 +1,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,9 +36,9 @@ public class ValuesetCTL extends AbstractCTL implements IValuesetCTL {
     }
 
     @Override
-    public UploadValuesetResDTO uploadValueset(MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+    public ResponseEntity<UploadValuesetResDTO> uploadValueset(MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
         service.insertDocsByName(files);
-        return new UploadValuesetResDTO(getLogTraceInfo());
+        return new ResponseEntity<>(new UploadValuesetResDTO(getLogTraceInfo()), HttpStatus.CREATED);
     }
 
     @Override

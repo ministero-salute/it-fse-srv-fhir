@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +65,7 @@ public interface IValuesetCTL {
 			@ApiResponse(responseCode = "409", description = "Duplicated extension identifier", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))})
-	UploadValuesetResDTO uploadValueset(@RequestPart("file") MultipartFile[] file)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
+	ResponseEntity<UploadValuesetResDTO> uploadValueset(@RequestPart("file") MultipartFile[] file)throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
 
 
 	@PutMapping(value = "/{name}", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
