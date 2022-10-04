@@ -1,6 +1,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +35,9 @@ public class StructureDefinitionCTL extends AbstractCTL implements IStructureDef
     }
 
     @Override
-    public UploadDefinitionResDTO uploadDefinition(MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+    public ResponseEntity<UploadDefinitionResDTO> uploadDefinition(MultipartFile[] files) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
         definitionSRV.insertDocsByName(null, files);
-        return new UploadDefinitionResDTO(getLogTraceInfo());
+        return new ResponseEntity<UploadDefinitionResDTO>(new UploadDefinitionResDTO(getLogTraceInfo()), HttpStatus.CREATED);
     }
 
     @Override

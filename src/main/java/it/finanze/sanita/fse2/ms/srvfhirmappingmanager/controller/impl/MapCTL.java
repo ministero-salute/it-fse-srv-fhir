@@ -15,6 +15,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,9 +37,9 @@ public class MapCTL extends AbstractCTL implements IMapCTL {
     }
 
     @Override
-    public UploadMapResDTO uploadMap(String root, String extension, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+    public ResponseEntity<UploadMapResDTO> uploadMap(String root, String extension, MultipartFile file) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
         service.insertDocByName(FilenameUtils.removeExtension(file.getOriginalFilename()) , root, extension, file);
-        return new UploadMapResDTO(getLogTraceInfo());
+        return new ResponseEntity<>(new UploadMapResDTO(getLogTraceInfo()), HttpStatus.CREATED);
     }
 
     @Override
