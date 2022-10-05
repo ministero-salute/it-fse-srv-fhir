@@ -30,7 +30,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessing
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.DefinitionETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Definition;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
 
 
@@ -49,7 +49,7 @@ class DefinitionServiceTest extends AbstractTest {
 
     @BeforeAll
     void setup() throws ParseException{
-        mongo.dropCollection(DefinitionETY.class);
+        mongo.dropCollection(Definition.class);
         dataPreparation();
     }
 
@@ -59,7 +59,7 @@ class DefinitionServiceTest extends AbstractTest {
 
 		assertThrows(DocumentNotFoundException.class, () -> definitionSRV.findDocById("aaa"));
 
-        List<DefinitionETY> definitions = mongo.findAll(DefinitionETY.class);
+        List<Definition> definitions = mongo.findAll(Definition.class);
 
         DefinitionDTO def = definitionSRV.findDocById(definitions.get(0).getId());
         assertNotNull(def);
@@ -108,7 +108,7 @@ class DefinitionServiceTest extends AbstractTest {
 
     void dataPreparation() throws ParseException{
 
-		DefinitionETY definitionA = new DefinitionETY();
+		Definition definitionA = new Definition();
 		definitionA.setNameDefinition(DEFINITION_TEST_NAME_A);
 		definitionA.setFilenameDefinition(DEFINITION_TEST_FILENAME_A);
 		definitionA.setVersionDefinition(DEFINITION_TEST_VERSION_A);

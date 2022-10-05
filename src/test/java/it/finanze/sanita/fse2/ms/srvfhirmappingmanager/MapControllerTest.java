@@ -43,7 +43,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.map.base.MapDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 /**
@@ -63,7 +63,7 @@ class MapControllerTest extends AbstractTest {
     private Tracer tracer;
     @BeforeAll
     public void setup() throws DataProcessingException, ParseException {
-        mongo.dropCollection(MapETY.class);
+        mongo.dropCollection(Map.class);
         dataPreparation();
     }
 
@@ -75,7 +75,7 @@ class MapControllerTest extends AbstractTest {
             "step01.map" })
     @DisplayName("Get Map by Name Test")
     void getMapByNameTest(String mapName) throws Exception {
-        final MapETY testMap = generateMapEntity(mapName);
+        final Map testMap = generateMapEntity(mapName);
         mongo.save(testMap);
         when(service.findDocByName(anyString())).thenReturn(MapDTO.fromEntity(testMap));
         mvc.perform(get(getBaseUrl() + "/map/" + mapName)
@@ -83,9 +83,9 @@ class MapControllerTest extends AbstractTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_VALUE));
     }
-     private MapETY generateMapEntity(String mapName) {
+     private Map generateMapEntity(String mapName) {
         final byte[] mapContent = UtilsMisc.getFileFromInternalResources("structureMap/" + mapName);
-        return new MapETY(mapName, mapName, mapName,
+        return new Map(mapName, mapName, mapName,
                 new Binary(BsonBinarySubType.BINARY, mapContent), "templateIdRoot",
                 "templateIdExtension", new Date(), new Date(), false);
     }
@@ -152,14 +152,14 @@ class MapControllerTest extends AbstractTest {
    
     void dataPreparation() throws ParseException, DataProcessingException {
         MultipartFile file = createFakeMultipart("file");
-        MapETY MapA = new MapETY();
+        Map MapA = new Map();
         //MapA.setId(MAP_ID_A);
         MapA.setNameMap(MAP_TEST_NAME_A);
         MapA.setFilenameMap(MAP_TEST_FILENAME_A);
         MapA.setTemplateIdRoot(MAP_TEMPLATE_ID_ROOT);
         MapA.setContentMap(file);
         MapA.setInsertionDate(new Date());
-        MapETY MapB = new MapETY();
+        Map MapB = new Map();
         ///ìMapB.setId(MAP_ID_B);
         MapB.setNameMap(MAP_TEST_NAME_B);
         MapB.setFilenameMap(MAP_TEST_FILENAME_B);

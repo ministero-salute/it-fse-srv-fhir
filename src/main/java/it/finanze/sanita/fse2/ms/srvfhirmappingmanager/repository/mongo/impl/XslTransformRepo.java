@@ -81,7 +81,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 
             if (xslTransform != null) {
                 Update update = new Update();
-                update.set("deleted", true);
+                update.set(Constants.App.DELETED, true);
                 update.set(FIELD_LAST_UPDATE, new Date());
 
                 mongoTemplate.updateFirst(
@@ -210,7 +210,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
         List<XslTransformETY> objects;
         // Create query
         Query q = Query.query(
-            Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and("deleted").ne(true)
+            Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and(Constants.App.DELETED).ne(true)
         );
         try {
             // Execute
@@ -237,7 +237,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
         Query q = Query.query(
             Criteria.where(FIELD_LAST_UPDATE).gt(lastUpdate)
                 .and(FIELD_INSERTION_DATE).lte(lastUpdate)
-                .and("deleted").is(true)
+                .and(Constants.App.DELETED).is(true)
         );
         try {
             // Execute
@@ -260,7 +260,7 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
         // Working var
         List<XslTransformETY> objects;
         // Create query
-        Query q = Query.query(Criteria.where("deleted").ne(true));
+        Query q = Query.query(Criteria.where(Constants.App.DELETED).ne(true));
         try {
             // Execute
             objects = mongoTemplate.find(q, XslTransformETY.class);

@@ -23,8 +23,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl.MapRepo;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -38,12 +37,12 @@ class MapRepoTest extends AbstractTest {
 
     @BeforeAll
     public void setup() {
-        mongo.dropCollection(MapETY.class);
+        mongo.dropCollection(Map.class);
     }
 
     @BeforeEach
     public void populateMapRepo() throws DataProcessingException {
-        MapETY ety = new MapETY();
+        Map ety = new Map();
         ety.setNameMap(MAP_TEST_NAME_A);
         ety.setContentMap(createFakeMultipart(MAP_TEST_NAME_A));
         ety.setTemplateIdRoot(MAP_TEMPLATE_ID_ROOT);
@@ -57,7 +56,7 @@ class MapRepoTest extends AbstractTest {
     @Test
     void insertDocByNameTest() throws Exception {
 
-        MapETY ety = new MapETY();
+        Map ety = new Map();
         ety.setNameMap(MAP_TEST_NAME_B);
         ety.setContentMap(createFakeMultipart(MAP_TEST_NAME_B));
         ety.setTemplateIdRoot(MAP_TEMPLATE_ID_ROOT);
@@ -66,9 +65,9 @@ class MapRepoTest extends AbstractTest {
         ety.setDeleted(false);
 
         repository.insertDocByName(ety);
-        MapETY retrieved = repository.findDocByName(MAP_TEST_NAME_B);
+        Map retrieved = repository.findDocByName(MAP_TEST_NAME_B);
 
-        assertEquals(MapETY.class, retrieved.getClass());
+        assertEquals(Map.class, retrieved.getClass());
         assertEquals(Binary.class, retrieved.getContentMap().getClass());
         assertEquals(String.class, retrieved.getNameMap().getClass());
         assertEquals(String.class, retrieved.getTemplateIdRoot().getClass());
@@ -91,7 +90,7 @@ class MapRepoTest extends AbstractTest {
 
     @Test
     void updateDocByNameTest() throws DataProcessingException, OperationException {
-        MapETY etyB = new MapETY();
+        Map etyB = new Map();
         etyB.setNameMap(MAP_TEST_NAME_B);
         etyB.setContentMap(createFakeMultipart(MAP_TEST_NAME_B));
         etyB.setTemplateIdRoot(MAP_TEMPLATE_ID_ROOT);
@@ -99,7 +98,7 @@ class MapRepoTest extends AbstractTest {
         etyB.setLastUpdateDate(new Date());
         etyB.setDeleted(false);
 
-        MapETY etyC = new MapETY();
+        Map etyC = new Map();
         etyC.setNameMap(MAP_TEST_NAME_C);
         etyC.setContentMap(createFakeMultipart(MAP_TEST_NAME_C));
         etyC.setTemplateIdRoot(MAP_TEMPLATE_ID_ROOT);
@@ -116,8 +115,8 @@ class MapRepoTest extends AbstractTest {
     @Test
     void deleteDocByNameTest() throws OperationException {
 
-        MapETY deleted = repository.deleteDocByName(MAP_TEST_NAME_A);
-        assertEquals(MapETY.class, deleted.getClass());
+        Map deleted = repository.deleteDocByName(MAP_TEST_NAME_A);
+        assertEquals(Map.class, deleted.getClass());
         assertEquals(Binary.class, deleted.getContentMap().getClass());
         assertEquals(String.class, deleted.getNameMap().getClass());
         assertEquals(String.class, deleted.getTemplateIdRoot().getClass());
@@ -128,8 +127,8 @@ class MapRepoTest extends AbstractTest {
     @Test
     void findDocByIdTest() throws OperationException {
 
-        MapETY retrieved = repository.findDocById(repository.findDocByName(MAP_TEST_NAME_A).getId());
-        assertEquals(MapETY.class, retrieved.getClass());
+        Map retrieved = repository.findDocById(repository.findDocByName(MAP_TEST_NAME_A).getId());
+        assertEquals(Map.class, retrieved.getClass());
         assertEquals(Binary.class, retrieved.getContentMap().getClass());
         assertEquals(String.class, retrieved.getNameMap().getClass());
         assertEquals(String.class, retrieved.getTemplateIdRoot().getClass());
@@ -140,8 +139,8 @@ class MapRepoTest extends AbstractTest {
     @Test
     void findDocByNameTest() throws OperationException {
 
-        MapETY retrieved = repository.findDocByName(MAP_TEST_NAME_A);
-        assertEquals(MapETY.class, retrieved.getClass());
+        Map retrieved = repository.findDocByName(MAP_TEST_NAME_A);
+        assertEquals(Map.class, retrieved.getClass());
         assertEquals(Binary.class, retrieved.getContentMap().getClass());
         assertEquals(String.class, retrieved.getNameMap().getClass());
         assertEquals(String.class, retrieved.getTemplateIdRoot().getClass());

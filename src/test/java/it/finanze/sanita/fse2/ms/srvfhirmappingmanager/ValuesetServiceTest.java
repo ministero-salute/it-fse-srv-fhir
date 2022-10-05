@@ -32,8 +32,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessing
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IValuesetRepo;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 
 @SpringBootTest
@@ -51,7 +50,7 @@ public class ValuesetServiceTest extends AbstractTest {
 
     @BeforeEach
     void setup() throws ParseException{
-        mongo.dropCollection(ValuesetETY.class);
+        mongo.dropCollection(Valueset.class);
         dataPreparation();
     }
 
@@ -61,7 +60,7 @@ public class ValuesetServiceTest extends AbstractTest {
 
 		assertThrows(DocumentNotFoundException.class, () -> valuesetSRV.findDocById("aaa"));
 
-        List<ValuesetETY> valuesets = mongo.findAll(ValuesetETY.class);
+        List<Valueset> valuesets = mongo.findAll(Valueset.class);
 
         ValuesetDTO valueset = valuesetSRV.findDocById(valuesets.get(0).getId());
         assertNotNull(valueset);
@@ -112,7 +111,7 @@ public class ValuesetServiceTest extends AbstractTest {
    @DisplayName("Get Insertions")
    void getInsertionsTest() throws DataProcessingException, OperationException, DocumentNotFoundException {
 
-    List<ValuesetETY> insertions;
+    List<Valueset> insertions;
 
     insertions = valuesetRepo.getEveryActiveDocument();
         assertNotNull(insertions);
@@ -122,7 +121,7 @@ public class ValuesetServiceTest extends AbstractTest {
    @Test
    @DisplayName("Get Deletions")
    void getDeletionsTest() throws DataProcessingException, OperationException, DocumentNotFoundException {
-    List<ValuesetETY> deletions;
+    List<Valueset> deletions;
     Date lastUpdate = new Date();
 
     deletions = valuesetRepo.getDeletions(lastUpdate);
@@ -138,7 +137,7 @@ public class ValuesetServiceTest extends AbstractTest {
 
     void dataPreparation() throws ParseException{
 
-		ValuesetETY valuesetA = new ValuesetETY();
+		Valueset valuesetA = new Valueset();
 		valuesetA.setId(VALUESET_TEST_ID_A);
 		valuesetA.setNameValueset(VALUESET_TEST_NAME_A);
 		valuesetA.setFilenameValueset(VALUESET_TEST_FILENAME_A);

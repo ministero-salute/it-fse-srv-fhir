@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 
 @SpringBootTest
@@ -53,7 +53,7 @@ public class ValuesetControllerTest extends AbstractTest {
 
     @BeforeAll
     void setup(){
-        mongo.dropCollection(ValuesetETY.class);
+        mongo.dropCollection(Valueset.class);
         dataPreparation();
     }
 	
@@ -126,7 +126,7 @@ public class ValuesetControllerTest extends AbstractTest {
 	}
 
     void dataPreparation() {
-		ValuesetETY valuesetA = new ValuesetETY();
+		Valueset valuesetA = new Valueset();
 		valuesetA.setId(VALUESET_TEST_ID_A);
 		valuesetA.setNameValueset(VALUESET_TEST_NAME_A);
 		valuesetA.setFilenameValueset(VALUESET_TEST_FILENAME_A);
@@ -134,7 +134,7 @@ public class ValuesetControllerTest extends AbstractTest {
 		valuesetA.setInsertionDate(new Date());
 		valuesetA.setLastUpdateDate(new Date());
 
-		ValuesetETY valuesetB = new ValuesetETY();
+		Valueset valuesetB = new Valueset();
 		valuesetB.setId(VALUESET_TEST_ID_B);
 		valuesetB.setNameValueset(VALUESET_TEST_NAME_B);
 		valuesetB.setFilenameValueset(VALUESET_TEST_FILENAME_B);

@@ -25,8 +25,7 @@
 	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IMapRepo;
-	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
+    import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
 	import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 	import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
@@ -102,7 +101,7 @@
 		@DisplayName("Insert Doc By Name Test")
 		void insertMapByNameTest() throws OperationException {
 			when(repository.isDocumentInserted(MAP_TEST_EXTS_A)).thenReturn(false);
-			when(repository.insertDocByName(any())).thenReturn(new MapETY());
+			when(repository.insertDocByName(any())).thenReturn(new Map());
 
 			assertDoesNotThrow(()->{
 				service.insertDocByName(
@@ -121,7 +120,7 @@
 		@DisplayName("Update Doc By Name Test")
 		void updateMapByNameTest() throws OperationException {
 
-			MapETY mappa = new MapETY();
+			Map mappa = new Map();
 			mappa.setFilenameMap("filenamemap");
 			when(repository.findDocByName(anyString())).thenReturn(mappa);
 			when(repository.updateDocByName(any(),any())).thenReturn(mappa);
@@ -140,7 +139,7 @@
 			when(repository.isDocumentInserted(MAP_TEST_FILENAME_A))
 			.thenReturn(true);
 			when(repository.deleteDocByName(MAP_TEST_FILENAME_A))
-			.thenReturn(new MapETY());
+			.thenReturn(new Map());
 			
 			assertDoesNotThrow(()->{
 				service.deleteDocByName(MAP_TEST_FILENAME_A);

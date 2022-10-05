@@ -12,30 +12,6 @@ public class CollectionNaming {
     @Autowired
     private ProfileUtility profileUtility;
 
-    @Bean("structureDefinitionBean")
-    public String getStructureDefinitionCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.STRUCTURE_DEFINITION;
-        }
-        return Constants.App.Collections.STRUCTURE_DEFINITION;
-    }
-
-    @Bean("structureMapBean")
-    public String getMapCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.MAP;
-        }
-        return Constants.App.Collections.MAP;
-    }
-
-    @Bean("valueSetBean")
-    public String getValueSetCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.VALUESET;
-        }
-        return Constants.App.Collections.VALUESET;
-    }
-
     @Bean("xslTransformBean")
     public String getDefinitionCollection() {
         if (profileUtility.isTestProfile()) {
@@ -43,7 +19,12 @@ public class CollectionNaming {
         }
         return Constants.App.Collections.XSL_TRANSFORM;
     }
-    
-    
-    
+
+    @Bean("transformBean")
+    public String getTransformCollection() {
+        if (profileUtility.isTestProfile()) {
+            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.TRANSFORM;
+        }
+        return Constants.App.Collections.TRANSFORM;
+    }
 }

@@ -22,15 +22,12 @@ import org.springframework.test.context.ActiveProfiles;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.DefinitionCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.MapCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.ValuesetCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.XSLTransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.DefinitionETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Definition;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
@@ -63,9 +60,9 @@ class ChangeSetServiceTest extends AbstractTest{
     @BeforeAll
     void setup() throws ParseException{
         mongo.dropCollection(XslTransformETY.class);
-        mongo.dropCollection(ValuesetETY.class);
-        mongo.dropCollection(DefinitionETY.class);
-        mongo.dropCollection(MapETY.class);
+        mongo.dropCollection(Valueset.class);
+        mongo.dropCollection(Definition.class);
+        mongo.dropCollection(Map.class);
 
     }
     
@@ -156,33 +153,33 @@ class ChangeSetServiceTest extends AbstractTest{
          Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
          Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
          
-         ValuesetETY valuesetA = new ValuesetETY();
+         Valueset valuesetA = new Valueset();
          valuesetA.setFilenameValueset(VALUESET_TEST_FILENAME_A);
          valuesetA.setNameValueset(VALUESET_TEST_NAME_A);
          valuesetA.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
          valuesetA.setInsertionDate(oldInsertionDate);
 
-         ValuesetETY valuesetB = new ValuesetETY();
+         Valueset valuesetB = new Valueset();
          valuesetB.setFilenameValueset(VALUESET_TEST_FILENAME_B);
          valuesetB.setNameValueset(VALUESET_TEST_NAME_B);
          valuesetB.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
          valuesetB.setInsertionDate(insertionDate);
          
-         ValuesetETY valuesetC = new ValuesetETY();
+         Valueset valuesetC = new Valueset();
          valuesetC.setFilenameValueset(VALUESET_TEST_FILENAME_C);
          valuesetC.setNameValueset(VALUESET_TEST_NAME_C);
          valuesetC.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
          valuesetC.setInsertionDate(insertionDate);
          valuesetC.setLastUpdateDate(lastUpdate);
 
-         ValuesetETY valuesetD = new ValuesetETY();
+         Valueset valuesetD = new Valueset();
          valuesetD.setFilenameValueset(VALUESET_TEST_FILENAME_D);
          valuesetD.setNameValueset(VALUESET_TEST_NAME_D);
          valuesetD.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
          valuesetD.setInsertionDate(oldInsertionDate);
          valuesetD.setLastUpdateDate(lastUpdate);
 
-         ValuesetETY valuesetE = new ValuesetETY();
+         Valueset valuesetE = new Valueset();
          valuesetE.setFilenameValueset(VALUESET_TEST_FILENAME_E);
          valuesetE.setNameValueset(VALUESET_TEST_NAME_E);
          valuesetE.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
@@ -262,7 +259,7 @@ class ChangeSetServiceTest extends AbstractTest{
         Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
         Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
    
-        DefinitionETY DefinitionTransformA = new DefinitionETY(); 
+        Definition DefinitionTransformA = new Definition();
         DefinitionTransformA.setNameDefinition(DEFINITION_TEST_NAME_A); 
         DefinitionTransformA.setFilenameDefinition(DEFINITION_TEST_FILENAME_A);
         DefinitionTransformA.setMultipartContentDefinition(createFakeFile("test file"));
@@ -271,7 +268,7 @@ class ChangeSetServiceTest extends AbstractTest{
         DefinitionTransformA.setInsertionDate(oldInsertionDate);
         
         
-        DefinitionETY DefinitionTransformB = new DefinitionETY(); 
+        Definition DefinitionTransformB = new Definition();
         DefinitionTransformB.setNameDefinition(DEFINITION_TEST_NAME_B); 
         DefinitionTransformB.setFilenameDefinition(DEFINITION_TEST_FILENAME_B);
         DefinitionTransformB.setMultipartContentDefinition(createFakeFile("test file"));
@@ -280,7 +277,7 @@ class ChangeSetServiceTest extends AbstractTest{
         DefinitionTransformB.setInsertionDate(insertionDate); 
 
         
-        DefinitionETY DefinitionTransformC = new DefinitionETY(); 
+        Definition DefinitionTransformC = new Definition();
         DefinitionTransformC.setNameDefinition(DEFINITION_TEST_NAME_C); 
         DefinitionTransformC.setFilenameDefinition(DEFINITION_TEST_FILENAME_C);
         DefinitionTransformC.setMultipartContentDefinition(createFakeFile("test file"));
@@ -291,7 +288,7 @@ class ChangeSetServiceTest extends AbstractTest{
 
 
         
-        DefinitionETY DefinitionTransformD = new DefinitionETY(); 
+        Definition DefinitionTransformD = new Definition();
         DefinitionTransformD.setNameDefinition(DEFINITION_TEST_NAME_D); 
         DefinitionTransformD.setFilenameDefinition(DEFINITION_TEST_FILENAME_D);
         DefinitionTransformD.setMultipartContentDefinition(createFakeFile("test file"));
@@ -302,7 +299,7 @@ class ChangeSetServiceTest extends AbstractTest{
 
 
         
-        DefinitionETY DefinitionTransformE = new DefinitionETY(); 
+        Definition DefinitionTransformE = new Definition();
         DefinitionTransformE.setNameDefinition(DEFINITION_TEST_NAME_E); 
         DefinitionTransformE.setFilenameDefinition(DEFINITION_TEST_FILENAME_E);
         DefinitionTransformE.setMultipartContentDefinition(createFakeFile("test file"));
@@ -329,11 +326,11 @@ class ChangeSetServiceTest extends AbstractTest{
         Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
         Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
         
-        MapETY MapA= new MapETY();
-        MapETY MapB= new MapETY();
-        MapETY MapC= new MapETY();
-        MapETY MapD= new MapETY();
-        MapETY MapE= new MapETY();
+        Map MapA= new Map();
+        Map MapB= new Map();
+        Map MapC= new Map();
+        Map MapD= new Map();
+        Map MapE= new Map();
 
         
         

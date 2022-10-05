@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.DefinitionETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Definition;
 
 
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -55,7 +55,7 @@ class DefinitionControllerTest extends AbstractTest {
 
 	@BeforeAll
 	void setup() {
-		mongo.dropCollection(DefinitionETY.class);
+		mongo.dropCollection(Definition.class);
 		dataPreparation();
 	}
 
@@ -137,7 +137,7 @@ class DefinitionControllerTest extends AbstractTest {
 
 
 	void dataPreparation() {
-		DefinitionETY definitionA = new DefinitionETY();
+		Definition definitionA = new Definition();
 		definitionA.setId(DEFINITION_TEST_ID_A);
 		definitionA.setNameDefinition(DEFINITION_TEST_NAME_A);
 		definitionA.setFilenameDefinition(DEFINITION_TEST_FILENAME_A);
@@ -145,7 +145,7 @@ class DefinitionControllerTest extends AbstractTest {
 		definitionA.setContentDefinition(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
 		definitionA.setInsertionDate(new Date());
 
-		DefinitionETY definitionB = new DefinitionETY();
+		Definition definitionB = new Definition();
 		definitionB.setId(DEFINITION_TEST_ID_B);
 		definitionB.setNameDefinition(DEFINITION_TEST_NAME_B);
 		definitionB.setFilenameDefinition(DEFINITION_TEST_FILENAME_B);
