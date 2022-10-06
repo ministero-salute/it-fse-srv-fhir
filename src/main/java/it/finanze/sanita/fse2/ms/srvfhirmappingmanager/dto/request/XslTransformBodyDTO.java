@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;

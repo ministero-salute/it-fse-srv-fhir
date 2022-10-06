@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
@@ -45,9 +44,32 @@ public interface ITransformCTL extends Serializable {
     @Operation(summary = "Add transform to MongoDB", description = "Servizio che consente di aggiungere una trasformata alla base dati.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Creazione trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class))),
+            @ApiResponse(responseCode = "201", description = "Creazione trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-    ResponseEntity<TransformResponseDTO> uploadTransform(HttpServletRequest request, @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "root does not match the expected size") String rootMapIdentifier, @Parameter(description = "Root map extension identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @NotBlank(message = "Extension cannot be blank") @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Extension does not match the expected size") String rootMapExtension, @RequestBody TransformBodyDTO body, @RequestPart("structureDefinitions") MultipartFile[] structureDefinitions, @RequestPart("maps") MultipartFile[] maps, @RequestPart("valueSets") MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException;
+    ResponseEntity<TransformResponseDTO> uploadTransform(HttpServletRequest request,
+                 @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") @NotBlank(message = "Root map identifier cannot be blank") String rootMapIdentifier,
+                 @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
+                 @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "bersion does not match the expected size") @NotBlank(message = "Version cannot be blank") String version,
+                 @RequestPart("structureDefinitions") MultipartFile[] structureDefinitions,
+                 @RequestPart("maps") MultipartFile[] maps,
+                 @RequestPart("valueSets") MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException;
+
+    @PutMapping(produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @Operation(summary = "Update transform to MongoDB", description = "Servizio che consente di aggiornare una trasformata nella base dati.")
+    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aggiornamento trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
+    ResponseEntity<TransformResponseDTO> updateTransform(HttpServletRequest request,
+                 @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") String rootMapIdentifier,
+                 @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
+                 @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "bersion does not match the expected size") @NotBlank(message = "Version cannot be blank") String version,
+                 @RequestPart("structureDefinitions") MultipartFile[] structureDefinitions,
+                 @RequestPart("maps") MultipartFile[] maps,
+                 @RequestPart("valueSets") MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException;
+
 
     @DeleteMapping(value = "/root/{templateIdRoot}/version/{version}",  produces = {MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Delete transform from MongoDB given its Template ID Root and Version", description = "Servizio che consente di cancellare una trasformata dalla base dati tramite il Template ID Root e la Version.")

@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.result.UpdateResult;
+import com.mongodb.internal.operation.FindOperation;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
@@ -11,7 +12,9 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.Transfo
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -90,6 +93,25 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 							.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)),
 					TransformETY.class);
+		} catch (MongoException e) {
+			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+		} catch (Exception ex) {
+			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
+			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
+		}
+	}
+
+	@Override
+	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+		try {
+			SortOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, Constants.App.INSERTION_DATE);
+			MatchOperation matchOperation = Aggregation.match(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
+			LimitOperation limitOperation = Aggregation.limit(1);
+
+			TypedAggregation<TransformETY> typedAggregation = new TypedAggregation<>(TransformETY.class, matchOperation, sortOperation, limitOperation);
+
+			return mongoTemplate.aggregate(typedAggregation, TransformETY.class).getUniqueMappedResult();
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);

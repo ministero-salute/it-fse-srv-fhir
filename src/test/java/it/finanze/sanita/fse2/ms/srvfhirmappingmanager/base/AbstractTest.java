@@ -1,20 +1,6 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
@@ -24,12 +10,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.map.base.MapDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.DefinitionETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.MapETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.ValuesetETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 public abstract class AbstractTest {
 
@@ -185,11 +174,7 @@ public abstract class AbstractTest {
 	protected MongoTemplate mongo;
 
 	protected AbstractTest() {
-
-		this.definitionEntities = new HashMap<>();
-		this.mapEntities = new HashMap<>();
 		this.xslTransformEntities = new HashMap<>();
-		this.valuesetEntities = new HashMap<>();
 
 	}
 
@@ -224,96 +209,6 @@ public abstract class AbstractTest {
 		mongo.save(xslTransformC);
 
 	}
-
-	protected void populateMapTransform() throws DataProcessingException {
-
-		MapETY MapA = new MapETY();
-		MapA.setNameMap(MAP_TEST_NAME_A);
-		MapA.setContentMap(createFakeMultipart("fake"));
-		MapA.setTemplateIdRoot(MAP_TEST_ROOT_A);
-		MapA.setInsertionDate(new Date());
-		MapA.setLastUpdateDate(new Date());
-
-		MapETY MapB = new MapETY();
-		MapB.setNameMap(MAP_TEST_NAME_B);
-		MapB.setContentMap(createFakeMultipart("fake"));
-		MapB.setTemplateIdRoot(MAP_TEST_ROOT_B);
-		MapB.setInsertionDate(new Date());
-		MapB.setLastUpdateDate(new Date());
-		MapETY MapC = new MapETY();
-		MapC.setNameMap(MAP_TEST_NAME_C);
-		MapC.setContentMap(createFakeMultipart("fake"));
-		MapC.setTemplateIdRoot(MAP_TEST_ROOT_C);
-		MapC.setInsertionDate(new Date());
-		MapC.setLastUpdateDate(new Date());
-
-		mongo.save(MapA);
-		mongo.save(MapB);
-		mongo.save(MapC);
-
-	}
-
-	protected void populateValuesetTransform() throws DataProcessingException {
-
-		ValuesetETY ValuesetA = new ValuesetETY();
-		ValuesetA.setNameValueset(VALUESET_TEST_NAME_A);
-		ValuesetA.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		ValuesetA.setDeleted(false);
-		ValuesetA.setInsertionDate(new Date());
-		ValuesetA.setLastUpdateDate(new Date());
-
-		ValuesetETY ValuesetB = new ValuesetETY();
-		ValuesetB.setNameValueset(VALUESET_TEST_NAME_B);
-		ValuesetB.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		ValuesetB.setDeleted(false);
-		ValuesetB.setInsertionDate(new Date());
-		ValuesetB.setLastUpdateDate(new Date());
-
-		ValuesetETY ValuesetC = new ValuesetETY();
-		ValuesetC.setNameValueset(VALUESET_TEST_NAME_C);
-		ValuesetC.setContentValueset(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		ValuesetC.setDeleted(false);
-		ValuesetC.setInsertionDate(new Date());
-		ValuesetC.setLastUpdateDate(new Date());
-
-		mongo.save(ValuesetA);
-		mongo.save(ValuesetB);
-		mongo.save(ValuesetC);
-
-	}
-
-	protected void populateDefinitionTransform() throws DataProcessingException {
-
-		DefinitionETY DefinitionA = new DefinitionETY();
-		DefinitionA.setNameDefinition(DEFINITION_TEST_NAME_A);
-		DefinitionA.setContentDefinition(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		DefinitionA.setId(DEFINITION_ID_A);
-		DefinitionA.setDeleted(false);
-		DefinitionA.setInsertionDate(new Date());
-		DefinitionA.setLastUpdateDate(new Date());
-
-		DefinitionETY DefinitionB = new DefinitionETY();
-		DefinitionB.setNameDefinition(DEFINITION_TEST_NAME_B);
-		DefinitionB.setContentDefinition(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		DefinitionB.setId(DEFINITION_ID_B);
-		DefinitionB.setDeleted(false);
-		DefinitionB.setInsertionDate(new Date());
-		DefinitionB.setLastUpdateDate(new Date());
-
-		DefinitionETY DefinitionC = new DefinitionETY();
-		DefinitionC.setNameDefinition(DEFINITION_TEST_NAME_C);
-		DefinitionC.setContentDefinition(new Binary(BsonBinarySubType.BINARY, FILE_TEST_STRING.getBytes()));
-		DefinitionC.setId(DEFINITION_ID_C);
-		DefinitionC.setDeleted(false);
-		DefinitionC.setInsertionDate(new Date());
-		DefinitionC.setLastUpdateDate(new Date());
-
-		mongo.save(DefinitionA);
-		mongo.save(DefinitionB);
-		mongo.save(DefinitionC);
-
-	}
-
 	private void createXsltTestSchema() {
 		mongo.createCollection(XslTransformETY.class);
 	}
@@ -404,55 +299,16 @@ public abstract class AbstractTest {
 	public static final Path XSLT_MOD_SAMPLE_FILES = Paths.get("src", "test", "resources", "xslTransform", "files",
 			"modified");
 
-	public final MapDTO FAKE_DTO = new MapDTO(FAKE_VALID_DTO_ID, "fake_dto.xsd", "Q2lhbw==", "POCD_TEST", "Root Map",
-			"Extension Map", OffsetDateTime.now());
-
-	private final Map<String, DefinitionETY> definitionEntities;
-	// private final Map<String, DefinitionETY> definitionReplacements;
-
-	private final Map<String, MapETY> mapEntities;
-	// private final Map<String, MapETY> mapReplacements;
-
-	private final Map<String, ValuesetETY> valuesetEntities;
-	// private final Map<String, ValuesetETY> valuesetReplacements;
-
 	private final Map<String, XslTransformETY> xslTransformEntities;
 	// private final Map<String, XslTransformETY> xslTransformReplacements;
 
 	protected void clearTestEntities() {
-		this.mapEntities.clear();
-		this.definitionEntities.clear();
-		this.valuesetEntities.clear();
 		this.xslTransformEntities.clear();
 
 	}
 
-	protected Map<String, MapETY> getMapEntities() {
-		return new HashMap<>(mapEntities);
-	}
-
-	protected Map<String, DefinitionETY> getDefinitionEntities() {
-		return new HashMap<>(definitionEntities);
-	}
-
-	protected Map<String, ValuesetETY> getValuesetEntities() {
-		return new HashMap<>(valuesetEntities);
-	}
-
 	protected Map<String, XslTransformETY> getXslTransformEntities() {
 		return new HashMap<>(xslTransformEntities);
-	}
-
-	protected List<MapETY> getMapEntitiesToUpload() {
-		return new ArrayList<>(mapEntities.values());
-	}
-
-	protected List<DefinitionETY> getDefinitionEntitiesToUpload() {
-		return new ArrayList<>(definitionEntities.values());
-	}
-
-	protected List<ValuesetETY> getValuesetEntitiesToUpload() {
-		return new ArrayList<>(valuesetEntities.values());
 	}
 
 	protected List<XslTransformETY> getXslTransformEntitiesToUpload() {
@@ -460,84 +316,11 @@ public abstract class AbstractTest {
 	}
 
 	protected void setupTestEntities() throws IOException {
-		// Add entities to map instance
-		addMapTestEntityToMap(MAP_TEST_EXTS_A);
-		addMapTestEntityToMap(MAP_TEST_EXTS_B);
-		addMapTestEntityToMap(MAP_TEST_EXTS_C);
-		addMapTestEntityToMap(MAP_TEST_EXTS_D);
-		// Add entities to be replaced by tests
-		// setMapTestEntityToReplace();
-
-		addDefinitionTestEntityToMap(DEFINITION_TEST_EXTS_A);
-		addDefinitionTestEntityToMap(DEFINITION_TEST_EXTS_B);
-		addDefinitionTestEntityToMap(DEFINITION_TEST_EXTS_C);
-		addDefinitionTestEntityToMap(DEFINITION_TEST_EXTS_D);
-
-		// setDefinitionTestEntityToReplace();
-
-		addValuesetTestEntityToMap(VALUESET_TEST_EXTS_A);
-		addValuesetTestEntityToMap(VALUESET_TEST_EXTS_B);
-		addValuesetTestEntityToMap(VALUESET_TEST_EXTS_C);
-		addValuesetTestEntityToMap(VALUESET_TEST_EXTS_D);
-
-		// setValuesetTestEntityToReplace();
-
 		addXslTransformTestEntityToMap(XSLTRANSFORM_TEST_EXTS_A);
 		addXslTransformTestEntityToMap(XSLTRANSFORM_TEST_EXTS_B);
 		addXslTransformTestEntityToMap(XSLTRANSFORM_TEST_EXTS_C);
 		addXslTransformTestEntityToMap(XSLTRANSFORM_TEST_EXTS_D);
-
 		// setXslTransformTestEntityToReplace();
-
-	}
-
-	private void addDefinitionTestEntityToMap(String extension) throws IOException {
-		// List of all files inside the sample modified directory
-		try (Stream<Path> files = Files.list(DEFINITION_SAMPLE_FILES)) {
-			// Convert to list
-			List<Path> samples = files.collect(Collectors.toList());
-
-			MultipartFile fakeFile = createFakeMultipart(DEFINITION_ID_A);
-
-			// Add to each map and convert
-			for (Path path : samples) {
-				this.definitionEntities.put(path.getFileName().toString(),
-						DefinitionETY.fromPath(DEFINITION_TEST_NAME_C, DEFINITION_TEST_VERSION_C, fakeFile));
-			}
-		}
-	}
-
-	private void addMapTestEntityToMap(String extension) throws IOException {
-		// List of all files inside the sample modified directory
-		try (Stream<Path> files = Files.list(MAP_SAMPLE_FILES)) {
-			// Convert to list
-			List<Path> samples = files.collect(Collectors.toList());
-
-			MultipartFile fakeFile = createFakeMultipart(MAP_ID_A);
-
-			// Add to each map and convert
-			for (Path path : samples) {
-				this.mapEntities.put(path.getFileName().toString(),
-						MapETY.fromPath(path, extension, SCHEMA_TEST_ROOT, fakeFile));
-			}
-		}
-	}
-
-	private void addValuesetTestEntityToMap(String extension) throws IOException {
-		// List of all files inside the sample modified directory
-		try (Stream<Path> files = Files.list(VALUESET_SAMPLE_FILES)) {
-			// Convert to list
-			List<Path> samples = files.collect(Collectors.toList());
-
-			MultipartFile fakeFile = createFakeMultipart(DEFINITION_ID_A);
-
-			// Add to each map and convert
-			for (Path path : samples) {
-				this.valuesetEntities
-
-						.put(path.getFileName().toString(), ValuesetETY.fromPath(VALUESET_TEST_NAME_C, fakeFile));
-			}
-		}
 	}
 
 	private void addXslTransformTestEntityToMap(String extension) throws IOException {
@@ -551,7 +334,6 @@ public abstract class AbstractTest {
 			// Add to each map and convert
 			for (Path path : samples) {
 				this.xslTransformEntities
-
 						.put(path.getFileName().toString(), XslTransformETY.fromPath(XSLT_TEST_NAME_A, XSLT_TEST_ID_A,
 								XSLT_TEST_VERSION_A, fakeFile));
 			}

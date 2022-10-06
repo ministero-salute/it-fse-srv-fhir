@@ -1,8 +1,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Definition;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -35,28 +35,33 @@ public class TransformETY {
 	
 	@Field(name = "last_update_date")
 	private Date lastUpdateDate; 
-	
-	@Field(name = "map")
-	private List<Map> maps;
 
-	@Field(name = "valueset")
-	private List<Valueset> valuesets;
+	@Field(name = "root_map")
+	private StructureMap rootStructureMap;
 
-	@Field(name = "definition")
-	private List<Definition> definitions;
+	@Field(name = "maps")
+	private List<StructureMap> structureMaps;
+
+	@Field(name = "valuesets")
+	private List<StructureValueset> structureValuesets;
+
+	@Field(name = "definitions")
+	private List<StructureDefinition> structureDefinitions;
 
 	@Field(name = "deleted")
 	private boolean deleted;
 
-	public static TransformETY fromComponents(String templateIdRoot, String version, Date insertionDate, Date lastUpdateDate, List<Map> maps, List<Valueset> valuesets, List<Definition> definitions) {
+	public static TransformETY fromComponents(String templateIdRoot, String version, StructureMap rootMap, List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
+		Date date = new Date();
 		TransformETY entity = new TransformETY();
 		entity.setTemplateIdRoot(templateIdRoot);
 		entity.setVersion(version);
-		entity.setInsertionDate(insertionDate);
-		entity.setLastUpdateDate(lastUpdateDate);
-		entity.setMaps(maps);
-		entity.setValuesets(valuesets);
-		entity.setDefinitions(definitions);
+		entity.setInsertionDate(date);
+		entity.setLastUpdateDate(date);
+		entity.setRootStructureMap(rootMap);
+		entity.setStructureMaps(structureMaps);
+		entity.setStructureValuesets(structureValuesets);
+		entity.setStructureDefinitions(structureDefinitions);
 		entity.setDeleted(false);
 		return entity;
 	}

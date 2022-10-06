@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 
 @Data
 @AllArgsConstructor
-public class TransformCS {
+public class XSLTransformCS {
     @Size(max = DEFAULT_STRING_MAX_SIZE)
     String templateIdRoot;
     @Size(max = DEFAULT_STRING_MAX_SIZE)

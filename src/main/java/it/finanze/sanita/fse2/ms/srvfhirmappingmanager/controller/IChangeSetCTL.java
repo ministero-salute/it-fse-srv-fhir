@@ -3,7 +3,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 import java.util.Date;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;

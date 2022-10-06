@@ -1,8 +1,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.TransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
@@ -19,14 +19,21 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 
 	/**
 	 * Insert a FHIR transform using all components passed in the request
-	 * @param rootMapIdentifier
-	 * @param rootMapExtension
 	 * @param body
 	 * @param structureDefinitions
 	 * @param maps
 	 * @param valueSets
 	 */
-	void insertTransformByComponents(String rootMapIdentifier, String rootMapExtension, TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
+	void insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
+
+	/**
+	 * Update a FHIR transform by request's components
+	 * @param body
+	 * @param structureDefinitions
+	 * @param maps
+	 * @param valueSets
+	 */
+	void updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
 
 	/**
 	 * Delete transform by templateIdRoot and version

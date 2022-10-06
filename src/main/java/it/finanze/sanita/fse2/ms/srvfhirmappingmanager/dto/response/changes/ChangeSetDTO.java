@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

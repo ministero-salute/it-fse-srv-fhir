@@ -4,7 +4,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
@@ -36,11 +36,25 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
 
 	@Override
-	public ResponseEntity<TransformResponseDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String rootMapExtension, TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException {
+	public ResponseEntity<TransformResponseDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 		log.debug(Constants.Logs.CALLED_API_UPLOAD_TRANSFORM);
-		TransformBodyDTO transformBodyDTO = JsonUtility.toJsonObject(request.getParameter("body"), TransformBodyDTO.class);
-		transformSRV.insertTransformByComponents(rootMapIdentifier, rootMapExtension, transformBodyDTO, structureDefinitions, maps, valueSets);
+		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+						.templateIdRoot(templateIdRoot)
+						.version(version)
+						.rootMapIdentifier(rootMapIdentifier).build();
+		transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
 		return new ResponseEntity<>(new TransformResponseDTO(getLogTraceInfo()), HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<TransformResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+		log.debug(Constants.Logs.CALLED_API_UPDATE_TRANSFORM);
+		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+				.templateIdRoot(templateIdRoot)
+				.version(version)
+				.rootMapIdentifier(rootMapIdentifier).build();
+		transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+		return new ResponseEntity<>(new TransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 	}
 
 	@Override

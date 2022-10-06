@@ -7,19 +7,15 @@ import org.bson.types.Binary;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Definition {
+public class StructureDefinition {
 
     private String nameDefinition;
     private String filenameDefinition;
     private Binary contentDefinition;
     private String versionDefinition;
-    private Date insertionDate;
-    private Date lastUpdateDate;
-    private boolean deleted;
 
     public void setMultipartContentDefinition(MultipartFile file) throws DataProcessingException {
         try {
@@ -29,29 +25,22 @@ public class Definition {
         }
     }
 
-    public static Definition fromMultipart(String name, String version, MultipartFile file) throws DataProcessingException {
-        Definition entity = new Definition();
-        Date now = new Date();
+    public static StructureDefinition fromMultipart(String name, String version, MultipartFile file) throws DataProcessingException {
+        StructureDefinition entity = new StructureDefinition();
         entity.setFilenameDefinition(file.getOriginalFilename());
         entity.setNameDefinition(name);
         entity.setMultipartContentDefinition(file);
         entity.setVersionDefinition(version);
-        entity.setInsertionDate(now);
-        entity.setLastUpdateDate(now);
         return entity;
     }
     
     
     
-    public static Definition fromPath(String name, String version, MultipartFile file) throws DataProcessingException {
-    	Definition entity = new Definition();
-        Date now = new Date();
+    public static StructureDefinition fromPath(String name, String version, MultipartFile file) throws DataProcessingException {
+    	StructureDefinition entity = new StructureDefinition();
         entity.setNameDefinition(name);
         entity.setFilenameDefinition(file.getOriginalFilename());
         entity.setMultipartContentDefinition(file);
-        entity.setInsertionDate(now);
-        entity.setLastUpdateDate(now);
-        entity.setDeleted(false);
         entity.setVersionDefinition(version);
         return entity;
     }

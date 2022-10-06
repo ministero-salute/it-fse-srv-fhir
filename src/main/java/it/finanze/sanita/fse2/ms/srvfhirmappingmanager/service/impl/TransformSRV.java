@@ -3,25 +3,27 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.TransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformBodyDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.definition.base.DefinitionDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.map.base.MapDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.valueset.base.ValuesetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.DefinitionDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.*;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Definition;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Map;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,23 +52,64 @@ public class TransformSRV implements ITransformSRV {
 	private ITransformRepo transformRepo;
 
 	@Override
-	public void insertTransformByComponents(String rootMapIdentifier, String rootMapExtension, TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
-		log.debug("Start insertion of transform");
-		TransformETY existingDocument = transformRepo.findByTemplateIdRootAndVersion(body.getTemplateIdRoot(), body.getVersion());
+	public void insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+		log.debug("[EDS] Insertion of transform - START");
 		try {
+			TransformETY existingDocument = transformRepo.findByTemplateIdRootAndVersion(body.getTemplateIdRoot(), body.getVersion());
 			if (existingDocument != null) {
-				throw new DocumentAlreadyPresentException("Cannot insert the given document, it already exists");
+				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
 			}
-			List<Map> insertedMapsETY = mapSRV.insertDocsByName(rootMapIdentifier, rootMapExtension, maps);
-			List<Definition> insertedDefinitionsETY = definitionSRV.insertDocsByName(null, structureDefinitions);
-			List<Valueset> insertedValuesetsETY = valuesetSRV.insertDocsByName(valueSets);
 
-			Date insertionDate = new Date();
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), insertionDate, insertionDate, insertedMapsETY, insertedValuesetsETY, insertedDefinitionsETY);
+			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
+			Map<String, StructureMap> mapsToInsert = mapSRV.createMaps(rootMapFileName, maps);
+			Map<String, StructureDefinition> definitionsToInsert = definitionSRV.createDefinitions(null, structureDefinitions);
+			Map<String, StructureValueset> valuesetsToInsert = valuesetSRV.createValuesets(valueSets);
+
+			// Insert rootMap at root level of ety
+			StructureMap rootMap = mapsToInsert.getOrDefault(rootMapFileName, null);
+			mapsToInsert.remove(rootMapFileName);
+
+			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), rootMap,
+					new ArrayList<>(mapsToInsert.values()), new ArrayList<>(definitionsToInsert.values()), new ArrayList<>(valuesetsToInsert.values()));
 			transformRepo.insert(transformETY);
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
 			throw new OperationException(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
+		}
+	}
+
+	@Override
+	public void updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+		log.debug("[EDS] Update of transform - START");
+		try {
+			TransformETY documentToUpdate = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
+
+			if (ObjectUtils.anyNull(documentToUpdate) || ObjectUtils.isEmpty(documentToUpdate)) {
+				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+			}
+
+			if (documentToUpdate.getVersion().equals(body.getVersion())) {
+				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
+			}
+
+			StructureMap currentRoot = documentToUpdate.getRootStructureMap();
+			Map<String, StructureMap> mapsToUpdate = mapSRV.updateMaps(documentToUpdate.getStructureMaps(), maps);
+			Map<String, StructureDefinition> definitionsToUpdate = definitionSRV.updateValuesets(null, documentToUpdate.getStructureDefinitions(), structureDefinitions);
+			Map<String, StructureValueset> valuesetsToUpdate = valuesetSRV.updateValuesets(documentToUpdate.getStructureValuesets(), valueSets);
+
+			// Check if root map is to be replaced
+			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
+			if (!StringUtils.isEmpty(rootMapFileName)) {
+				currentRoot = mapsToUpdate.getOrDefault(rootMapFileName, null);
+				mapsToUpdate.remove(rootMapFileName);
+			}
+
+			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
+					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+			transformRepo.insert(transformETY);
+		} catch (MongoException ex) {
+			log.error(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
+			throw new OperationException(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
 		}
 	}
 
@@ -133,16 +176,14 @@ public class TransformSRV implements ITransformSRV {
 		java.util.Map<String, MapDTO> maps = new HashMap<>();
 		java.util.Map<String, ValuesetDTO> valuesets = new HashMap<>();
 
-		for (Definition definition : output.getDefinitions()) {
-			definitions.put(definition.getFilenameDefinition(), DefinitionDTO.fromEntity(definition));
+		for (StructureDefinition structureDefinition : output.getStructureDefinitions()) {
+			definitions.put(structureDefinition.getFilenameDefinition(), DefinitionDTO.fromEntity(structureDefinition));
 		}
-
-		for (Map map : output.getMaps()) {
-			maps.put(map.getFilenameMap(), MapDTO.fromEntity(map));
+		for (StructureMap structureMap : output.getStructureMaps()) {
+			maps.put(structureMap.getFilenameMap(), MapDTO.fromEntity(structureMap));
 		}
-
-		for (Valueset valueset : output.getValuesets()) {
-			valuesets.put(valueset.getFilenameValueset(), ValuesetDTO.fromEntity(valueset));
+		for (StructureValueset structureValueset : output.getStructureValuesets()) {
+			valuesets.put(structureValueset.getFilenameValueset(), ValuesetDTO.fromEntity(structureValueset));
 		}
 
 		transformDTO.setId(output.getId());
@@ -151,12 +192,13 @@ public class TransformSRV implements ITransformSRV {
 		transformDTO.setVersion(output.getVersion());
 		transformDTO.setTemplateIdRoot(output.getTemplateIdRoot());
 		transformDTO.setDeleted(output.isDeleted());
-
 		transformDTO.setDefinitions(new ArrayList<>(definitions.values()));
 		transformDTO.setMaps(new ArrayList<>(maps.values()));
 		transformDTO.setValuesets(new ArrayList<>(valuesets.values()));
+
 		Date endDate = new Date();
 		log.debug("diff: {}", endDate.getTime() - startDate.getTime());
+
 		return transformDTO;
 	}
 

@@ -1,8 +1,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.definition.base.DefinitionDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.map.base.MapDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.valueset.base.ValuesetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.DefinitionDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

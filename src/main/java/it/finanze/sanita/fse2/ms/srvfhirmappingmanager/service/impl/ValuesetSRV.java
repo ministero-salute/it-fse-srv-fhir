@@ -3,15 +3,15 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Valueset;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
-
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ValuesetSRV implements IValuesetSRV {
@@ -24,13 +24,31 @@ public class ValuesetSRV implements IValuesetSRV {
      * @throws DataProcessingException
      */
     @Override
-    public List<Valueset> insertDocsByName(MultipartFile[] files) throws OperationException, DocumentAlreadyPresentException, DataProcessingException {
-        List<Valueset> filesToAdd = new ArrayList<>();
+    public Map<String, StructureValueset> createValuesets(MultipartFile[] files) throws DataProcessingException {
+        Map<String, StructureValueset> filesToAdd = new HashMap<>();
         for(MultipartFile file : files) {
-            String name = FilenameUtils.removeExtension(file.getOriginalFilename());
-            filesToAdd.add(Valueset.fromMultipart(name, file));
+            String fileName = FilenameUtils.removeExtension(file.getOriginalFilename());
+            filesToAdd.put(fileName, StructureValueset.fromMultipart(fileName, file));
         }
         // Insert it
+        return filesToAdd;
+    }
+
+    @Override
+    public Map<String, StructureValueset> updateValuesets(List<StructureValueset> structureValuesets, MultipartFile[] files) throws DataProcessingException {
+        Map<String, StructureValueset> filesToAdd = new HashMap<>();
+        for (MultipartFile file : files) {
+            String fileName = FilenameUtils.removeExtension(file.getOriginalFilename());
+            filesToAdd.put(fileName, StructureValueset.fromMultipart(fileName, file));
+        }
+
+        // Append to filesToAdd object that are not passed as files
+        for (StructureValueset valueset : structureValuesets) {
+            if (!filesToAdd.containsKey(valueset.getNameValueset())) {
+                filesToAdd.put(valueset.getNameValueset(), valueset);
+            }
+        }
+
         return filesToAdd;
     }
 }
