@@ -76,7 +76,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 
 			xslTransformService.insert(xslTransform);
 
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
+			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
 
 		}
 		return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
