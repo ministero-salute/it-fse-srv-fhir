@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeAll;
@@ -130,5 +131,49 @@ class ChangeSetServiceTest extends AbstractTest{
         mongo.save(xslTransformC);
         mongo.save(xslTransformD);
         mongo.save(xslTransformE);
+    }
+
+    private void transformDataPreparation() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date insertionDate = sdf.parse("2022-06-18T10:00:00");
+        Date oldInsertionDate = sdf.parse("2021-05-4T10:00:00");
+        Date lastUpdate = sdf.parse("2022-06-20T10:00:00");
+
+
+        TransformETY transformA = new TransformETY();
+        transformA.setTemplateIdRoot(TRANSFORM_TEST_ROOT_A);
+        transformA.setVersion(TRANSFORM_TEST_VERSION_A);
+        transformA.setInsertionDate(oldInsertionDate);
+
+        TransformETY transformB = new TransformETY();
+        transformB.setTemplateIdRoot(TRANSFORM_TEST_ROOT_B);
+        transformB.setVersion(TRANSFORM_TEST_VERSION_B);
+        transformB.setInsertionDate(insertionDate);
+
+        TransformETY transformC = new TransformETY();
+        transformC.setTemplateIdRoot(TRANSFORM_TEST_ROOT_C);
+        transformC.setVersion(TRANSFORM_TEST_VERSION_C);
+        transformC.setInsertionDate(insertionDate);
+        transformC.setLastUpdateDate(lastUpdate);
+
+        TransformETY transformD = new TransformETY();
+        transformD.setTemplateIdRoot(TRANSFORM_TEST_ROOT_D);
+        transformD.setVersion(TRANSFORM_TEST_VERSION_D);
+        transformD.setInsertionDate(oldInsertionDate);
+        transformD.setLastUpdateDate(lastUpdate);
+
+        TransformETY transformE = new TransformETY();
+        transformE.setTemplateIdRoot(TRANSFORM_TEST_ROOT_E);
+        transformE.setVersion(TRANSFORM_TEST_VERSION_E);
+        transformE.setInsertionDate(oldInsertionDate);
+        transformE.setLastUpdateDate(lastUpdate);
+        transformE.setDeleted(true);
+
+
+        mongo.save(transformA);
+        mongo.save(transformB);
+        mongo.save(transformC);
+        mongo.save(transformD);
+        mongo.save(transformE);
     }
 }

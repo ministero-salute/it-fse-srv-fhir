@@ -65,11 +65,8 @@ public class TransformSRV implements ITransformSRV {
 			Map<String, StructureDefinition> definitionsToInsert = definitionSRV.createDefinitions(null, structureDefinitions);
 			Map<String, StructureValueset> valuesetsToInsert = valuesetSRV.createValuesets(valueSets);
 
-			// Insert rootMap at root level of ety
-			StructureMap rootMap = mapsToInsert.getOrDefault(rootMapFileName, null);
-			mapsToInsert.remove(rootMapFileName);
-
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), rootMap,
+			// Insert rootMapName at root level of ety
+			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), rootMapFileName,
 					new ArrayList<>(mapsToInsert.values()), new ArrayList<>(definitionsToInsert.values()), new ArrayList<>(valuesetsToInsert.values()));
 			transformRepo.insert(transformETY);
 		} catch (MongoException ex) {
@@ -92,16 +89,15 @@ public class TransformSRV implements ITransformSRV {
 				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
 			}
 
-			StructureMap currentRoot = documentToUpdate.getRootStructureMap();
+			String currentRoot = documentToUpdate.getRootStructureMap();
 			Map<String, StructureMap> mapsToUpdate = mapSRV.updateMaps(documentToUpdate.getStructureMaps(), maps);
 			Map<String, StructureDefinition> definitionsToUpdate = definitionSRV.updateValuesets(null, documentToUpdate.getStructureDefinitions(), structureDefinitions);
 			Map<String, StructureValueset> valuesetsToUpdate = valuesetSRV.updateValuesets(documentToUpdate.getStructureValuesets(), valueSets);
 
 			// Check if root map is to be replaced
 			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
-			if (!StringUtils.isEmpty(rootMapFileName)) {
-				currentRoot = mapsToUpdate.getOrDefault(rootMapFileName, null);
-				mapsToUpdate.remove(rootMapFileName);
+			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
+				currentRoot = rootMapFileName;
 			}
 
 			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),

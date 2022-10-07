@@ -3,7 +3,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,125 +41,21 @@ public abstract class AbstractTest {
 	public static final String XSLT_TEST_VERSION_E = "Version_E";
 
 	public static final String XSLT_TEST_ID_A = "ID_A";
-	public static final String XSLT_TEST_ID_B = "ID_B";
-	public static final String XSLT_TEST_ID_C = "ID_C";
-	public static final String XSLT_TEST_ID_D = "ID_D";
-	public static final String XSLT_TEST_ID_E = "ID_E";
-
-	// --- VALUESET
-	public static final String VALUESET_TEST_ID_A = new ObjectId().toString();
-	public static final String VALUESET_TEST_ID_B = new ObjectId().toString();
-
-	public static final String VALUESET_TEST_NAME_A = "valueset_name_A";
-	public static final String VALUESET_TEST_NAME_B = "valueset_name_B";
-	public static final String VALUESET_TEST_NAME_C = "valueset_name_C";
-	public static final String VALUESET_TEST_NAME_D = "valueset_name_D";
-	public static final String VALUESET_TEST_NAME_E = "valueset_name_E";
-
-	public static final String VALUESET_ID_A = "valueset_ID_A";
-	public static final String VALUESET_ID_B = "valueset_ID_B";
-	public static final String VALUESET_ID_C = "valueset_ID_C";
-	public static final String VALUESET_ID_D = "valueset_ID_D";
-	public static final String VALUESET_ID_E = "valueset_ID_E";
-
-	public static final String VALUESET_TEST_FILENAME_A = "test_valueset_A";
-	public static final String VALUESET_TEST_FILENAME_B = "test_valueset_B";
-	public static final String VALUESET_TEST_FILENAME_C = "test_valueset_C";
-	public static final String VALUESET_TEST_FILENAME_D = "test_valueset_D";
-	public static final String VALUESET_TEST_FILENAME_E = "test_valueset_E";
-
-	// --- DEFINITION
-	public static final String DEFINITION_TEST_ID_A = new ObjectId().toString();
-	public static final String DEFINITION_TEST_ID_B = new ObjectId().toString();
-
-	public static final String DEFINITION_TEST_NAME_A = "definition_name_A";
-	public static final String DEFINITION_TEST_NAME_B = "definition_name_B";
-	public static final String DEFINITION_TEST_NAME_C = "definition_name_C";
-	public static final String DEFINITION_TEST_NAME_D = "definition_name_D";
-	public static final String DEFINITION_TEST_NAME_E = "definition_name_E";
-
-	public static final String DEFINITION_TEST_VERSION_A = "definition_Version_A";
-	public static final String DEFINITION_TEST_VERSION_B = "definition_Version_B";
-	public static final String DEFINITION_TEST_VERSION_C = "definition_Version_C";
-	public static final String DEFINITION_TEST_VERSION_D = "definition_Version_D";
-	public static final String DEFINITION_TEST_VERSION_E = "definition_Version_E";
-
-	public static final String DEFINITION_ID_A = "definition_ID_A";
-	public static final String DEFINITION_ID_B = "definition_ID_B";
-	public static final String DEFINITION_ID_C = "definition_ID_C";
-	public static final String DEFINITION_ID_D = "definition_ID_D";
-	public static final String DEFINITION_ID_E = "definition_ID_E";
-
-	public static final String DEFINITION_TEST_FILENAME_A = "definition_filename_A";
-	public static final String DEFINITION_TEST_FILENAME_B = "definition_filename_B";
-	public static final String DEFINITION_TEST_FILENAME_C = "definition_filename_C";
-	public static final String DEFINITION_TEST_FILENAME_D = "definition_filename_D";
-	public static final String DEFINITION_TEST_FILENAME_E = "definition_filename_E";
-
-	// --- MAP
-	public static final String MAP_TEST_NAME_A = "map_name_A";
-	public static final String MAP_TEST_NAME_B = "map_name_B";
-	public static final String MAP_TEST_NAME_C = "map_name_C";
-	public static final String MAP_TEST_NAME_D = "map_name_D";
-	public static final String MAP_TEST_NAME_E = "map_name_E";
-
-	public static final String MAP_ID_A = "map_ID_A";
-	public static final String MAP_ID_B = "map_ID_B";
-	public static final String MAP_ID_C = "map_ID_C";
-	public static final String MAP_ID_D = "map_ID_D";
-	public static final String MAP_ID_E = "map_ID_E";
-
-	public static final String MAP_TEMPLATE_EXTENSIONS_ID_A = "map_template_extensions_A";
-	public static final String MAP_TEMPLATE_EXTENSIONS_ID_B = "map_template_extensions_B";
-	public static final String MAP_TEMPLATE_EXTENSIONS_ID_C = "map_template_extensions_C";
-	public static final String MAP_TEMPLATE_EXTENSIONS_ID_D = "map_template_extensions_D";
-	public static final String MAP_TEMPLATE_EXTENSIONS_ID_E = "map_template_extensions_E";
-
-	public static final String MAP_TEST_VERSION_A = "map_Version_A";
-	public static final String MAP_TEST_VERSION_B = "map_Version_B";
-	public static final String MAP_TEST_VERSION_C = "map_Version_C";
-	public static final String MAP_TEST_VERSION_D = "map_Version_D";
-	public static final String MAP_TEST_VERSION_E = "map_Version_E";
-	public static final String MAP_TEST_FILENAME_A = "map_File_A";
-	public static final String MAP_TEST_FILENAME_B = "map_File_B";
-	public static final String MAP_TEST_CONTENT_A = "map_content_A";
-	public static final String MAP_TEST_ROOT_A = "map_Root_A";
-	public static final String MAP_TEST_ROOT_B = "map_Root_B";
-	public static final String MAP_TEST_ROOT_C = "map_Root_c";
-
-	public static final String MAP_TEMPLATE_ID_ROOT = "map_id_root";
-
 	public static final String FILE_TEST_STRING = "Hello World!";
-	public static final String FILE_TEST_STRING_UPDATED = "Hello World! - updated";
 	public static final String XSLT_TEST_STRING_UPDATED = "Hello World, folks!";
-
-	public static final String FAKE_MULTIPART = "Fake MultipartFile";
-	/**
-	 * This collection does not exist
-	 */
-	public static final String XSLT_TEST_FAKE_NAME = "test_xslt_F";
-
-	/*
-	 * Map does not exist
-	 */
-	public static final String TEST_ID_NAME_NOT_FOUND = "Map_id_not_found";
-
-	/**
-	 * Sample parameter for multiple tests
-	 */
-	public static final String XSLT_TEST_NAME = "name_xslTransform";
-	/**
-	 * Sample parameter for multiple tests
-	 */
-	public static final String XSLT_TEST_ROOT = "test_root";
-	/**
-	 * Sample parameter for multiple tests
-	 */
-	public static final String XSLT_TEST_EXTENSION = "test_extension";
-	/**
-	 * Sample parameter for multiple tests
-	 */
 	public static final String XSLT_TEST_VERSION = "version";
+
+	public static final String TRANSFORM_TEST_ROOT_A = "T_Root_A";
+	public static final String TRANSFORM_TEST_ROOT_B = "T_Root_B";
+	public static final String TRANSFORM_TEST_ROOT_C = "T_Root_C";
+	public static final String TRANSFORM_TEST_ROOT_D = "T_Root_D";
+	public static final String TRANSFORM_TEST_ROOT_E = "T_Root_E";
+
+	public static final String TRANSFORM_TEST_VERSION_A = "T_Version_A";
+	public static final String TRANSFORM_TEST_VERSION_B = "T_Version_B";
+	public static final String TRANSFORM_TEST_VERSION_C = "T_Version_C";
+	public static final String TRANSFORM_TEST_VERSION_D = "T_Version_D";
+	public static final String TRANSFORM_TEST_VERSION_E = "T_Version_E";
 
 	@Value("${server.port}")
 	private int serverPort;
@@ -224,38 +119,6 @@ public abstract class AbstractTest {
 	}
 
 	public final String FAKE_INVALID_DTO_ID = "||----test";
-	/**
-	 * Valid objectID for test purpose
-	 */
-	public final String FAKE_VALID_DTO_ID = "62cd4f7f5c7e221a80e7effa";
-
-	/**
-	 * This collection is going to be retrieved
-	 */
-	public static final String MAP_TEST_EXTS_A = "POCD_MT000040UV02";
-
-	public static final String MAP_TEST_EXTS_B = "POCD_MT000040UV03";
-
-	public static final String MAP_TEST_EXTS_C = "POCD_MT000040UV04";
-
-	public static final String MAP_TEST_EXTS_D = "7POCD_MT000040UV05";
-
-	public static final String VALUESET_TEST_EXTS_A = "POCD_MT000040UV02";
-
-	public static final String VALUESET_TEST_EXTS_B = "POCD_MT000040UV03";
-
-	public static final String VALUESET_TEST_EXTS_C = "POCD_MT000040UV04";
-
-	public static final String VALUESET_TEST_EXTS_D = "7POCD_MT000040UV05";
-
-	public static final String DEFINITION_TEST_EXTS_A = "POCD_MT000040UV02";
-
-	public static final String DEFINITION_TEST_EXTS_B = "POCD_MT000040UV03";
-
-	public static final String DEFINITION_TEST_EXTS_C = "POCD_MT000040UV04";
-
-	public static final String DEFINITION_TEST_EXTS_D = "7POCD_MT000040UV05";
-
 	public static final String XSLTRANSFORM_TEST_EXTS_A = "POCD_MT000040UV02";
 
 	public static final String XSLTRANSFORM_TEST_EXTS_B = "POCD_MT000040UV03";
@@ -264,11 +127,6 @@ public abstract class AbstractTest {
 
 	public static final String XSLTRANSFORM_TEST_EXTS_D = "7POCD_MT000040UV05";
 
-	public static final String SCHEMA_TEST_FAKE_EXTS = "POCD_MT000040UV06";
-
-	public static final int SCHEMA_TEST_SIZE = 10;
-
-	public static final String SCHEMA_TEST_ROOT = "CDA.xsd";
 	/**
 	 * Sample parameter for multiple tests
 	 */
@@ -276,26 +134,11 @@ public abstract class AbstractTest {
 	/**
 	 * Directory containing sample files to upload as test
 	 */
-
-	public static final Path MAP_SAMPLE_FILES = Paths.get("src", "test", "resources", "structureMap");
-
-	public static final Path DEFINITION_SAMPLE_FILES = Paths.get("src", "test", "resources", "structureDefinition");
-
-	public static final Path VALUESET_SAMPLE_FILES = Paths.get("src", "test", "resources", "valueset");
 	public static final Path XSLT_SAMPLE_FILES = Paths.get("src", "test", "resources", "xslTransform");
 
 	/**
 	 * Directory containing modified files used to replace sample ones
 	 */
-	public static final Path MAP_MOD_SAMPLE_FILES = Paths.get("src", "test", "resources", "structureMap", "files",
-			"modified");
-
-	public static final Path DEFINITION_MOD_SAMPLE_FILES = Paths.get("src", "test", "resources", "definition", "files",
-			"modified");
-
-	public static final Path VALUESET_MOD_SAMPLE_FILES = Paths.get("src", "test", "resources", "valueset", "files",
-			"modified");
-
 	public static final Path XSLT_MOD_SAMPLE_FILES = Paths.get("src", "test", "resources", "xslTransform", "files",
 			"modified");
 

@@ -37,7 +37,7 @@ public class TransformETY {
 	private Date lastUpdateDate; 
 
 	@Field(name = "root_map")
-	private StructureMap rootStructureMap;
+	private String rootStructureMap;
 
 	@Field(name = "maps")
 	private List<StructureMap> structureMaps;
@@ -51,7 +51,7 @@ public class TransformETY {
 	@Field(name = "deleted")
 	private boolean deleted;
 
-	public static TransformETY fromComponents(String templateIdRoot, String version, StructureMap rootMap, List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
+	public static TransformETY fromComponents(String templateIdRoot, String version, String rootMap, List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
 		Date date = new Date();
 		TransformETY entity = new TransformETY();
 		entity.setTemplateIdRoot(templateIdRoot);
