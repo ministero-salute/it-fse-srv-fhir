@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.http.MediaType;
@@ -22,18 +23,18 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformUploadResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
@@ -51,11 +52,14 @@ public interface IXslTransformCTL extends Serializable {
 
     @PostMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Operation(summary = "Add xsl transform to MongoDB", description = "Servizio che consente di aggiungere un xsl alla base dati.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class)))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> addXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("file") MultipartFile contentXSLT) throws IOException, OperationException, DocumentAlreadyPresentException;
+    ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
+    		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String version,
+    		@RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException, DocumentAlreadyPresentException;
     
     @PutMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Operation(summary = "Update XSLT on MongoDB", description = "Servizio che consente di aggiornare uno XSLT sulla base dati.")
@@ -64,7 +68,10 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Aggiornamento XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> updateXslTransform(HttpServletRequest request, @RequestBody XslTransformBodyDTO body, @RequestPart("file") MultipartFile contentXSLT) throws IOException, OperationException;
+    ResponseEntity<XslTransformResponseDTO> updateXslTransform(
+    		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") String version,
+    @RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException;
     
     @DeleteMapping(value = "/xslt/root/{templateIdRoot}/version/{version}",  produces = {MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Delete XSLT from MongoDB given its Template ID Root and Version", description = "Servizio che consente di cancellare uno XSLT dalla base dati dato il Template ID Root e la Version.")
