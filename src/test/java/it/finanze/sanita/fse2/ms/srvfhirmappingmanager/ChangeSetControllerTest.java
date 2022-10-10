@@ -1,8 +1,5 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getDefinitionChangesetMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getMapChangesetMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getXslTransformChangeSetMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getValuesetChangesetMockRequest;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,41 +28,25 @@ class ChangeSetControllerTest extends AbstractTest {
 	private MockMvc mvc; 
 	
 	@MockBean
-	private Tracer tracer; 
+	private Tracer tracer;
 
 	@Test
 	void getXslTransformChangeSetTest() throws Exception{
 
 		String queryDate = "2022-06-04T12:08:56.000-00:00";
-		
+
 		mvc.perform(getXslTransformChangeSetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-            status().is2xxSuccessful()
-        );
-	}
-	@Test
-	void getValuesetChangesetTest() throws Exception {
-		String queryDate = "2022-06-04T12:08:56.000-00:00";
-		mvc.perform(getValuesetChangesetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-	            status().is2xxSuccessful()
-	        );
-	}
-	
-	@Test
-	void getDefinitionChangesetTest() throws Exception {
-		String queryDate = "2022-06-04T12:08:56.000-00:00";
-		
-		mvc.perform(getDefinitionChangesetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-            status().is2xxSuccessful()
-        );
-	}
-	
-	@Test
-	void getMapChangesetTest() throws Exception {
-		String queryDate = "2022-06-04T12:08:56.000-00:00";
-		
-		mvc.perform(getMapChangesetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-            status().is2xxSuccessful()
-        );
+				status().is2xxSuccessful()
+		);
 	}
 
+	@Test
+	void getTransformChangeSetTest() throws Exception{
+
+		String queryDate = "2022-06-04T12:08:56.000-00:00";
+
+		mvc.perform(getTransformChangeSetMockRequest(queryDate, getBaseUrl())).andExpectAll(
+				status().is2xxSuccessful()
+		);
+	}
 }

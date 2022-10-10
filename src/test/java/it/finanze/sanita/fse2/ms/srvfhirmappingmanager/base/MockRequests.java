@@ -1,24 +1,16 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-
-import java.io.IOException;
-import java.time.OffsetDateTime;
-
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockPart;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetXsltResponseDTO;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.time.OffsetDateTime;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public final class MockRequests {
 
@@ -62,141 +54,11 @@ public final class MockRequests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getValuesetChangesetMockRequest(String queryDate, String baseUrl) {
-        return get(baseUrl + "/changeset/valueset/status?lastUpdate=" + queryDate)
+    public static MockHttpServletRequestBuilder getTransformChangeSetMockRequest(String queryDate, String baseUrl) {
+        return get(baseUrl + "/changeset/transform/status?lastUpdate=" + queryDate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getDefinitionChangesetMockRequest(String queryDate, String baseUrl) {
-        return get(baseUrl + "/changeset/definition/status?lastUpdate=" + queryDate)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    // ------- Definition
-
-    public static MockHttpServletRequestBuilder getDefinitionByNameMockRequest(final String name,
-            final String baseUrl) {
-        return get(baseUrl + "/definition/" + name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder getDefinitionByIdMockRequest(final String id, final String baseUrl) {
-        return get(baseUrl + "/definition/id/" + id).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder deleteDefinitionByNameMockRequest(final String name,
-            final String baseUrl) {
-        return delete(baseUrl + "/definition/" + name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder uploadDefinitionMockRequest(String name, String version,
-            MockMultipartFile file, String baseUrl) throws IOException {
-
-        MockMultipartHttpServletRequestBuilder req = multipart(baseUrl + "/definition");
-
-        req.file("File", file.getBytes());
-        req.param("name", name);
-        req.param("version", version);
-        req.contentType(MediaType.MULTIPART_FORM_DATA_VALUE);
-
-        return req;
-    }
-
-    // ------- Valueset
-
-    public static MockHttpServletRequestBuilder getValuesetByNameMockRequest(final String name, final String baseUrl) {
-        return get(baseUrl + "/valueset/" + name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder getValuesetByIdMockRequest(final String id, final String baseUrl) {
-        return get(baseUrl + "/valueset/id/" + id).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder deleteValuesetByNameMockRequest(final String name,
-            final String baseUrl) {
-        return delete(baseUrl + "/valueset/" + name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder uploadValuesetMockRequest(String name, MockMultipartFile file,
-            String baseUrl) throws IOException {
-
-        MockMultipartHttpServletRequestBuilder req = multipart(baseUrl + "/valueset");
-
-        req.file("File", file.getBytes());
-        req.param("name", name);
-
-        req.contentType(MediaType.MULTIPART_FORM_DATA_VALUE);
-
-        return req;
-    }
-
-    // ------- Map
-
-    public static MockHttpServletRequestBuilder getMapByNameMockRequest(String name, String baseUrl) {
-        return get(baseUrl, name).contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder getMapChangesetMockRequest(String queryDate, String baseUrl) {
-        return get(baseUrl + "/changeset/map/status?lastUpdate=" + queryDate)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder deleteMapMockRequest(String name, String baseUrl) {
-        return delete(baseUrl + "/map/" + name)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder uploadMapMockRequest(String name, String root, String version,
-            MockMultipartFile[] files, String baseUrl) {
-        // Create request
-        MockMultipartHttpServletRequestBuilder req = multipart(baseUrl + "/map");
-        // Iterate file
-        for (MockMultipartFile f : files) {
-            req.file(f);
-        }
-
-        // Add parts
-
-        req.part(
-                new MockPart("name", name.getBytes()),
-                new MockPart("root", root.getBytes()),
-                new MockPart("version", version.getBytes()));
-        return req;
-
-    }
-
-    public static MockHttpServletRequestBuilder updateMapMockRequest(String name, MockMultipartFile[] files,
-            String baseUrl) {
-        // create request
-        MockMultipartHttpServletRequestBuilder req = multipart(baseUrl + "/map", name);
-
-        for (MockMultipartFile f : files) {
-            req.file(f);
-        }
-        // Modify output method
-        req.with(request -> {
-            request.setMethod(HttpMethod.PUT.name());
-            return request;
-        });
-
-        return req;
-
-    }
-
-    public static MockMultipartFile createFakeMultipartEmpty(String filename) {
-        return new MockMultipartFile(
-                "files",
-                filename,
-                APPLICATION_XML_VALUE,
-                new byte[0]);
-    }
-
-    public static MockMultipartFile createFakeMultipart(String filename) {
-        return new MockMultipartFile(
-                "files",
-                filename,
-                APPLICATION_XML_VALUE,
-                "Hello world!".getBytes());
-    }
 
     public final String FAKE_INVALID_DTO_ID = "||----test";
     public final String FAKE_INVALID_DTO_NAME_XSLTRANSFORM = "||----test";

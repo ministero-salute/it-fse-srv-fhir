@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.specs.XSLTransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.mongodb.MongoException;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;

@@ -40,10 +40,10 @@ public class XslTransformETY {
 	private Date insertionDate; 
 	
 	@Field(name = "last_update_date")
-	private Date lastUpdateDate; 
-	
+	private Date lastUpdateDate;
+
 	@Field(name = "deleted")
-	private boolean deleted; 
+	private boolean deleted;
 	
 	
 	public static XslTransformETY fromPath(String name,String id, String version, MultipartFile file) throws DataProcessingException {

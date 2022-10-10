@@ -4,7 +4,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -32,10 +31,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 @Configuration
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
-
-    @Autowired
-    private ApplicationContext appContext;
-
 	@Value("${data.mongodb.uri}")
 	private String mongoUri; 
  
@@ -48,7 +43,7 @@ public class MongoDatabaseCFG {
 
     @Bean
     @Primary
-    public MongoTemplate mongoTemplate() {
+    public MongoTemplate mongoTemplate(ApplicationContext appContext) {
         // Create new connection instance
         MongoDatabaseFactory factory = mongoDatabaseFactory();
         // Assign application context to mongo

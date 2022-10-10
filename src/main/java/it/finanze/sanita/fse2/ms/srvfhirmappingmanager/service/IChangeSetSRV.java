@@ -2,7 +2,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
 import org.springframework.lang.Nullable;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 
 import java.util.Date;

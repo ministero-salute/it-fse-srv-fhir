@@ -111,8 +111,13 @@ public final class Constants {
 		public static final String CONTENT_MULTIPART_FILE = "file";
 
 		public static final String LAST_UPDATE_DATE = "last_update_date";
+
+		public static final String INSERTION_DATE = "insertion_date";
 		
-		public static final String SHA_256 = "SHA-256"; 
+		public static final String SHA_256 = "SHA-256";
+        public static final String NAME_DEFINITION = "name_definition";
+		public static final String NAME_MAP = "name_map";
+		public static final String NAME_VALUESET = "name_valueset";
 
 
 		private App() {
@@ -124,6 +129,8 @@ public final class Constants {
 			public static final String MAP = "structure-map";
 			public static final String VALUESET = "structure-valueset";
 			public static final String XSL_TRANSFORM = "xsl_transform";
+			public static final String TRANSFORM = "transform";
+
 			private Collections() {
 			}
 		}
@@ -183,10 +190,27 @@ public final class Constants {
 
 		 public static final String ERROR_INVALID_OBJECT_ID = "The following string is not a valid object id: "; 
 
-		 public static final String ERROR_DOCUMENT_NOT_FOUND = "Error: document not found in collection"; 
+		 public static final String ERROR_DOCUMENT_NOT_FOUND = "Error: document not found in collection";
 
-			
-		 private Logs() {
+		public static final String CALLED_API_QUERY_TRANSFORM_ROOT_EXTENSION = "Called GET /transform by ID Root and Version";
+		public static final String CALLED_API_UPLOAD_TRANSFORM = "Called POST /transform";
+		public static final String CALLED_API_UPDATE_TRANSFORM = "Called PUT /transform";
+		public static final String CALLED_API_DELETE_TRANSFORM = "Called DELETE /transform";
+		public static final String ERROR_INSERT_TRANSFORM = "Error while inserting transform";
+		public static final String ERROR_UPDATE_TRANSFORM = "Error while updating transform";
+
+		public static final String ERROR_FIND_TRANSFORM = "Error find by id ety transform :";
+		public static final String ERROR_UPDATING_TRANSFORM = "Error while updating transform ";
+        public static final String CALLED_API_GET_TRANSFORM = "Called GET /transform/id";
+		public static final String CALLED_API_GET_ALL_TRANSFORM = "Called GET /transform";
+
+		public static final String ERROR_FIND_ALL_TRANSFORM = "Error find all active ety transform :";
+		public static final String CALLED_API_GET_ACTIVE_TRANSFORM = "Called GET /transform/active";
+		public static final String ERROR_INSERT_VALUESET = "Unable to insert valueset by name";
+        public static final String ERROR_DOCUMENT_ALREADY_EXIST = "Cannot insert the given document, it already exists";
+
+
+        private Logs() {
 				//This method is intentionally left blank. 
 		 }
 	}

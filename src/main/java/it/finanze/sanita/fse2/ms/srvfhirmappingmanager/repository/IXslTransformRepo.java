@@ -47,7 +47,7 @@ public interface IXslTransformRepo extends IChangeSetRepo<XslTransformETY> {
 	/**
 	 * Deletes a xslTransform identified by its {@code template_id_root} and its {@code version}.
 	 * 
-	 * @param template_id_root, version Primary key of the xslTransform to return.
+	 * @param templateIdRoot, version Primary key of the xslTransform to return.
 	 */
 	boolean remove(String templateIdRoot, String version) throws OperationException;
 	
