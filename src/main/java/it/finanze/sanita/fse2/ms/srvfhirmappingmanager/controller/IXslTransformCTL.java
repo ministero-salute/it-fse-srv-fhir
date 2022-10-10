@@ -8,8 +8,10 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.checkerframework.common.value.qual.MatchesRegex;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -58,7 +60,8 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
     ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
     		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String version,
+    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") 
+    		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
     		@RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException, DocumentAlreadyPresentException;
     
     @PutMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -70,7 +73,8 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
     ResponseEntity<XslTransformResponseDTO> updateXslTransform(
     		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") String version,
+    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") 
+    		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
     @RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException;
     
     @DeleteMapping(value = "/xslt/root/{templateIdRoot}/version/{version}",  produces = {MediaType.APPLICATION_JSON_VALUE })
