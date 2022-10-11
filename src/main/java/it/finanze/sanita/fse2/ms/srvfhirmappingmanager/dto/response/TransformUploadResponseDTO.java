@@ -1,5 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
 
+import java.util.Map;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,13 +15,17 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TransformResponseDTO extends ResponseDTO {
-	 
-	public TransformResponseDTO() {
+public class TransformUploadResponseDTO extends ResponseDTO {
+	
+	private Map<String,Integer> items;
+	
+	
+	public TransformUploadResponseDTO() {
 		super();
 	}
 	
-	public TransformResponseDTO(final LogTraceInfoDTO traceInfo) {
+	public TransformUploadResponseDTO(final LogTraceInfoDTO traceInfo, final Map<String,Integer> inItems) {
 		super(traceInfo);
+		items = inItems;
 	}
 }

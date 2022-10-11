@@ -10,6 +10,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Transform interface service.
@@ -24,7 +25,7 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param maps
 	 * @param valueSets
 	 */
-	void insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
+	Map<String,Integer> insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
 
 	/**
 	 * Update a FHIR transform by request's components

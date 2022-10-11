@@ -38,6 +38,8 @@ public class TransformDTO {
     private List<ValuesetDTO> valuesets;
 
     private List<DefinitionDTO> definitions;
+    
+    private String rootMap;
 
     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
     private boolean deleted;
