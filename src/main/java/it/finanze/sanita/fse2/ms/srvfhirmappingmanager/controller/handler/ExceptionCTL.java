@@ -52,23 +52,17 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(DocumentNotFoundException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDocumentNotFoundException(DocumentNotFoundException ex) {
-        // Create error DTO
         ErrorResponseDTO out = createDocumentNotFoundError(getLogTraceInfo(), ex);
-        // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
     @ExceptionHandler(InvalidVersionException.class)
     protected ResponseEntity<ErrorResponseDTO> handleInvalidVersionException(InvalidVersionException ex) {
-        // Create error DTO
         ErrorResponseDTO out = createInvalidVersionError(getLogTraceInfo(), ex);
-        // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
