@@ -21,14 +21,6 @@ public interface IXslTransformRepo extends IChangeSetRepo<XslTransformETY> {
 	XslTransformETY insert(XslTransformETY ety) throws OperationException;
 	
 	/**
-	 * Update a XSLT on database.
-	 * 
-	 * @param ety xslTransform to update.
-	 * @return xslTransform updated.
-	 */
-	boolean update(XslTransformETY ety) throws OperationException;
-	
-	/**
 	 * Returns a xslTransform identified by its {@code templateIdRoot} and {@code version}.
 	 * 
 	 * @param templateIdRoot, version Primary key of the xslTransform to return.

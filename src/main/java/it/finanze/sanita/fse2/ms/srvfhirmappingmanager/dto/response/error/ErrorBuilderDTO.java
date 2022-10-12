@@ -20,6 +20,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorI
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidXsltContentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 
@@ -103,7 +104,6 @@ public final class ErrorBuilderDTO {
         );
     }
 
-
     public static ErrorResponseDTO createDocumentNotFoundError(LogTraceInfoDTO trace, DocumentNotFoundException ex) {
         return new ErrorResponseDTO(
             trace,
@@ -113,6 +113,18 @@ public final class ErrorBuilderDTO {
             SC_NOT_FOUND,
             ErrorType.RESOURCE.toInstance(Resource.NOT_FOUND)
         );
+    }
+
+    public static ErrorResponseDTO createInvalidContentError(LogTraceInfoDTO trace, InvalidXsltContentException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            ex.getMessage(),
+            SC_BAD_REQUEST,
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
+        );
+
     }
 
     public static ErrorResponseDTO createDocumentAlreadyPresentError(LogTraceInfoDTO trace, DocumentAlreadyPresentException ex) {

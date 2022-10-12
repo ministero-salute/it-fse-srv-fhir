@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.VariableOperators.Let;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -115,10 +116,17 @@ public class TransformSRV implements ITransformSRV {
 			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
 				currentRoot = rootMapFileName;
 			}
+			boolean isDeleted = delete(documentToUpdate.getTemplateIdRoot(), documentToUpdate.getVersion());
+			if (isDeleted) {
+				TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
+						currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+				transformRepo.insert(transformETY);
+			} else {
+				throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", body.getTemplateIdRoot()));
+			}
 
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
-					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
-			transformRepo.insert(transformETY);
+		} catch (DocumentNotFoundException de) {
+			throw de;
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
 			throw new OperationException(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);

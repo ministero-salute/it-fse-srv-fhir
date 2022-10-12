@@ -26,9 +26,9 @@ public interface IXslTransformSRV extends IChangeSetSRV<XSLTransformCS> {
 	/**
 	 * Update the XSL Transform document.
 	 * @param ety
-	 * @return
+	 * @throws DocumentNotFoundException
 	 */
-	boolean update(XslTransformDTO ety) throws OperationException; 
+	void update(XslTransformDTO ety) throws OperationException, DocumentNotFoundException; 
 
 	/**
 	 * Insert all the XSLTs in the list.

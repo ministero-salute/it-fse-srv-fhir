@@ -5,17 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.MongoException;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
@@ -47,7 +46,7 @@ public class XsltransformSRV implements IXslTransformSRV {
 			XslTransformETY xslTransformIfPresent = xslTransformRepo.findByTemplateIdRootAndVersion(
 						ety.getTemplateIdRoot(), ety.getVersion()); 
 			
-			if(!ObjectUtils.isEmpty(xslTransformIfPresent.getId())) {
+			if(xslTransformIfPresent != null) {
 				log.error(Constants.Logs.ERROR_XSL_TRANSFORM_ALREADY_PRESENT);
 				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_XSL_TRANSFORM_ALREADY_PRESENT); 
 			}
@@ -61,15 +60,22 @@ public class XsltransformSRV implements IXslTransformSRV {
 	}
 	
 	@Override
-	public boolean update(XslTransformDTO dto) throws OperationException {
-			XslTransformETY ety = parseDtoToEty(dto); 
-			return xslTransformRepo.update(ety); 
+	public void update(XslTransformDTO dto) throws OperationException, DocumentNotFoundException {
+		XslTransformETY ety = parseDtoToEty(dto);
+
+		XslTransformETY lastVersion = xslTransformRepo.findByTemplateIdRoot(ety.getTemplateIdRoot());
+		if (lastVersion != null) {
+			xslTransformRepo.remove(ety.getTemplateIdRoot(), lastVersion.getVersion());
+			xslTransformRepo.insert(ety);
+		} else {
+			throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", dto.getTemplateIdRoot()));
+		}
 	}
 
 	@Override
 	public void insertAll(List<XslTransformDTO> dtos) throws OperationException {
-			List<XslTransformETY> etyList; 
-			etyList = buildEtyFromDto(dtos); 			
+			List<XslTransformETY> etyList;
+			etyList = buildEtyFromDto(dtos);			
 			xslTransformRepo.insertAll(etyList);
 	}
 	
@@ -79,7 +85,7 @@ public class XsltransformSRV implements IXslTransformSRV {
 		
 		XslTransformETY output = xslTransformRepo.findByTemplateIdRootAndVersion(templateIdRoot, version);
 
-		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
+		if (output == null) {
             throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
         } 
 		
@@ -97,15 +103,15 @@ public class XsltransformSRV implements IXslTransformSRV {
 		
 		return XslTransformDocumentDTO.fromEntity(output);
 	}
-	
+
 	@Override
 	public boolean delete(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
 		try {
 			return xslTransformRepo.remove(templateIdRoot, version); 
 		} catch(MongoException e) {
-			throw new OperationException(e.getMessage(), e); 
+			throw new OperationException(e.getMessage(), e);  
 		}
-			
+
 	}
 	
 	@Override

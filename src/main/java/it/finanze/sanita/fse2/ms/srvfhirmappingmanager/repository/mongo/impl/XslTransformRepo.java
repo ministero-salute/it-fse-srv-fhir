@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.MongoException;
+import com.mongodb.client.result.UpdateResult;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
@@ -56,44 +59,18 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 		}
 	}
 	
-	@Override
-	public boolean update(XslTransformETY ety) throws OperationException {
-
-        boolean removed = remove(ety.getTemplateIdRoot(), ety.getVersion());
-
-        if(removed){
-            XslTransformETY inserted = insert(ety);
-            return inserted != null;
-        } else {
-            return false;
-        }
-	}
-	
     @Override
     public boolean remove(final String templateIdRoot, final String version) throws OperationException {
         try {
             Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-                    .and(Constants.App.VERSION).is(version));
+                    .and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true));
 
-            // Template ID Root and Version uniquely determine a XSLT, we can use findOne
-            // and take the first element
-            XslTransformETY xslTransform = mongoTemplate.findOne(query, XslTransformETY.class);
-
-            if (xslTransform != null) {
-                Update update = new Update();
-                update.set(Constants.App.DELETED, true);
-                update.set(FIELD_LAST_UPDATE, new Date());
-
-                mongoTemplate.updateFirst(
-                        Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(xslTransform.getTemplateIdRoot())
-                                .and(Constants.App.VERSION).is(xslTransform.getVersion())
-                                .and(Constants.App.DELETED).ne(true)),
-                        update, XslTransformETY.class);
-
-                return true;
-            }
-            return false;
-
+            Update update = new Update();
+            update.set(Constants.App.DELETED, true);
+            update.set(FIELD_LAST_UPDATE, new Date());
+            
+            UpdateResult updateResult = mongoTemplate.updateFirst(query, update, XslTransformETY.class);
+            return updateResult.getModifiedCount() > 0;
         } catch (MongoException e) {
             log.error(Constants.Logs.ERROR_DELETING_ETY, e);
             throw new OperationException(Constants.Logs.ERROR_DELETING_ETY, e);
@@ -106,13 +83,11 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
 	
     @Override
     public XslTransformETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException {
-        List<XslTransformETY> etyList = new ArrayList<>();
 
         try {
-            etyList = mongoTemplate.find(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-                    .and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)),
-                    XslTransformETY.class);
-
+            return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+                    .and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), XslTransformETY.class);
+       
         } catch (MongoException e) {
             log.error(Constants.Logs.ERROR_FIND_XSL_TRANSFORM, e);
             throw new OperationException(Constants.Logs.ERROR_FIND_XSL_TRANSFORM, e);
@@ -120,8 +95,6 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
             log.error(Constants.Logs.ERROR_UPDATING_XSL_TRANSFORM + getClass(), ex);
             throw new BusinessException(Constants.Logs.ERROR_UPDATING_XSL_TRANSFORM + getClass(), ex);
         }
-
-        return etyList.isEmpty() ? new XslTransformETY() : etyList.get(0);
     }
 
     @Override
@@ -270,6 +243,22 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
         }
         return objects;
     }
+
+	public XslTransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+		try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
+            query.with(Sort.by(Direction.DESC, Constants.App.INSERTION_DATE));
+
+            return mongoTemplate.findOne(query, XslTransformETY.class);
+		} catch (MongoException e) {
+			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+		} catch (Exception ex) {
+			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
+			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
+		}
+	}
 	
 	
 }

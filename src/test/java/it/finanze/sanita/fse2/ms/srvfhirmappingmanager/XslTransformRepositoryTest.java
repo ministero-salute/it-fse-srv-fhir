@@ -87,19 +87,10 @@ class XslTransformRepositoryTest extends AbstractTest {
     	repository.insert(ety);
     	
     	XslTransformETY retrievedEty = repository.findByTemplateIdRootAndVersion(TEST_INS_ROOT, TEST_INS_VERSION); 
-    	
-    	assertEquals(XslTransformETY.class, retrievedEty.getClass()); 
-    	assertEquals(Binary.class, retrievedEty.getContentXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEty.getNameXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEty.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEty.getVersion().getClass()); 
-    	assertEquals(Date.class, retrievedEty.getInsertionDate().getClass()); 
-    	assertEquals(Date.class, retrievedEty.getLastUpdateDate().getClass()); 
-    	
+    
     	assertEquals(TEST_INS_XSLT, retrievedEty.getNameXslTransform()); 
     	assertEquals(TEST_INS_ROOT, retrievedEty.getTemplateIdRoot()); 
     	assertEquals(TEST_INS_VERSION, retrievedEty.getVersion()); 
-
     } 
     
     @Test
@@ -129,22 +120,6 @@ class XslTransformRepositoryTest extends AbstractTest {
     	
     	XslTransformETY retrievedEtyA = repository.findByTemplateIdRootAndVersion(TEST_INS_MANY_ROOT_A, TEST_INS_MANY_VERSION_A); 
     	XslTransformETY retrievedEtyB = repository.findByTemplateIdRootAndVersion(TEST_INS_MANY_ROOT_B, TEST_INS_MANY_VERSION_B); 
-
-    	
-    	assertEquals(XslTransformETY.class, retrievedEtyA.getClass()); 
-    	assertEquals(Binary.class, retrievedEtyA.getContentXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEtyA.getNameXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEtyA.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEtyA.getVersion().getClass()); 
-    	assertEquals(Date.class, retrievedEtyA.getLastUpdateDate().getClass()); 
-    	assertEquals(Date.class, retrievedEtyA.getInsertionDate().getClass()); 
-    	assertEquals(XslTransformETY.class, retrievedEtyB.getClass()); 
-    	assertEquals(Binary.class, retrievedEtyB.getContentXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEtyB.getNameXslTransform().getClass()); 
-    	assertEquals(String.class, retrievedEtyB.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, retrievedEtyB.getVersion().getClass()); 
-    	assertEquals(Date.class, retrievedEtyB.getInsertionDate().getClass()); 
-    	assertEquals(Date.class, retrievedEtyB.getLastUpdateDate().getClass());
     	
     	assertEquals(TEST_INS_MANY_XSLT_A, retrievedEtyA.getNameXslTransform()); 
     	assertEquals(TEST_INS_MANY_ROOT_A, retrievedEtyA.getTemplateIdRoot()); 
@@ -152,7 +127,6 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertEquals(TEST_INS_MANY_XSLT_B, retrievedEtyB.getNameXslTransform()); 
     	assertEquals(TEST_INS_MANY_ROOT_B, retrievedEtyB.getTemplateIdRoot()); 
     	assertEquals(TEST_INS_MANY_VERSION_B, retrievedEtyB.getVersion()); 
-    	
     } 
     
     @Test
@@ -233,7 +207,6 @@ class XslTransformRepositoryTest extends AbstractTest {
     	assertNull(retrievedEty.getVersion()); 
     	assertNull(retrievedEty.getInsertionDate()); 
     	assertNull(retrievedEty.getLastUpdateDate()); 
-
     } 
     
     @Test
@@ -254,19 +227,9 @@ class XslTransformRepositoryTest extends AbstractTest {
     	
     	XslTransformETY ety = repository.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_VERSION); 
     	
-    	
-    	assertEquals(XslTransformETY.class, ety.getClass()); 
-    	assertEquals(Binary.class, ety.getContentXslTransform().getClass()); 
-    	assertEquals(String.class, ety.getNameXslTransform().getClass()); 
-    	assertEquals(String.class, ety.getTemplateIdRoot().getClass()); 
-    	assertEquals(String.class, ety.getVersion().getClass()); 
-    	assertEquals(Date.class, ety.getInsertionDate().getClass()); 
-    	assertEquals(Date.class, ety.getLastUpdateDate().getClass()); 
-    	
     	assertEquals("Root_A", ety.getNameXslTransform()); 
     	assertEquals("Root_A", ety.getTemplateIdRoot()); 
     	assertEquals( "Version_A", ety.getVersion()); 
-
     }
     
     
