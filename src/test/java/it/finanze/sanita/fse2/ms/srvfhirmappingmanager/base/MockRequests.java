@@ -20,37 +20,39 @@ public final class MockRequests {
     private MockRequests() {
     }
 
-    public static MockHttpServletRequestBuilder deleteXslTransformMockRequest(String root, String version,
-            String baseUrl) {
-        return delete(baseUrl + "/xslt/root/" + root + "/version/" + version)
+    protected static String getBaseUrl() {
+		return "/v1";
+	}
+
+    public static MockHttpServletRequestBuilder deleteXslTransformMockRequest(String root, String version) {
+        return delete(getBaseUrl() + "/xslt/root/" + root + "/version/" + version)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getXslTransformsMockRequest(String baseUrl) {
-        return get(baseUrl + "/xslt").contentType(MediaType.APPLICATION_JSON_VALUE);
+    public static MockHttpServletRequestBuilder getXslTransformsMockRequest() {
+        return get(getBaseUrl() + "/xslt").contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getXslTransformByIdMockRequest(String id, String baseUrl) {
-        MockHttpServletRequestBuilder obj = get(baseUrl + "/xslt/id/" + id)
+    public static MockHttpServletRequestBuilder getXslTransformByIdMockRequest(String id) {
+        MockHttpServletRequestBuilder obj = get(getBaseUrl() + "/xslt/id/" + id)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
         return obj;
     }
 
-    public static MockHttpServletRequestBuilder queryXslTransformMockRequest(String root, String version,
-            String baseUrl) {
-        return get(baseUrl + "/xslt/root/" + root + "/version/" + version)
+    public static MockHttpServletRequestBuilder queryXslTransformMockRequest(String root, String version) {
+        return get(getBaseUrl() + "/xslt/root/" + root + "/version/" + version)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     // Changeset
 
-    public static MockHttpServletRequestBuilder getXslTransformChangeSet(String lastUpdate, String baseUrl) {
-        return get(baseUrl + "/changeset/xslt/status?lastUpdate=" + lastUpdate)
+    public static MockHttpServletRequestBuilder getXslTransformChangeSet(String lastUpdate) {
+        return get(getBaseUrl() + "/changeset/xslt/status?lastUpdate=" + lastUpdate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getXslTransformChangeSetMockRequest(String queryDate, String baseUrl) {
-        return get(baseUrl + "/changeset/xslt/status?lastUpdate=" + queryDate)
+    public static MockHttpServletRequestBuilder getXslTransformChangeSetMockRequest(String queryDate) {
+        return get(getBaseUrl() + "/changeset/xslt/status?lastUpdate=" + queryDate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
@@ -86,40 +88,40 @@ public final class MockRequests {
 
     public static MockHttpServletRequestBuilder deleteTransformMockRequest(String root, String version,
                                                                               String baseUrl) {
-        return delete(baseUrl + "/transform/root/" + root + "/version/" + version)
+        return delete(getBaseUrl() + "/transform/root/" + root + "/version/" + version)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     public static MockHttpServletRequestBuilder getTransformsMockRequest(String baseUrl) {
-        return get(baseUrl + "/transform").contentType(MediaType.APPLICATION_JSON_VALUE);
+        return get(getBaseUrl() + "/transform").contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getTransformByIdMockRequest(String id, String baseUrl) {
-        MockHttpServletRequestBuilder obj = get(baseUrl + "/transform/id/" + id)
+    public static MockHttpServletRequestBuilder getTransformByIdMockRequest(String id) {
+        MockHttpServletRequestBuilder obj = get(getBaseUrl() + "/transform/id/" + id)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
         return obj;
     }
 
     public static MockHttpServletRequestBuilder queryTransformMockRequest(String root, String version,
                                                                              String baseUrl) {
-        return get(baseUrl + "/transform/root/" + root + "/version/" + version)
+        return get(getBaseUrl() + "/transform/root/" + root + "/version/" + version)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     public static MockHttpServletRequestBuilder queryActiveTransformMockRequest(String baseUrl) {
-        return get(baseUrl + "/transform/active")
+        return get(getBaseUrl() + "/transform/active")
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     // Changeset
 
-    public static MockHttpServletRequestBuilder getTransformChangeSet(String lastUpdate, String baseUrl) {
-        return get(baseUrl + "/changeset/transform/status?lastUpdate=" + lastUpdate)
+    public static MockHttpServletRequestBuilder getTransformChangeSet(String lastUpdate) {
+        return get(getBaseUrl() + "/changeset/transform/status?lastUpdate=" + lastUpdate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder getTransformChangeSetMockRequest(String queryDate, String baseUrl) {
-        return get(baseUrl + "/changeset/transform/status?lastUpdate=" + queryDate)
+    public static MockHttpServletRequestBuilder getTransformChangeSetMockRequest(String queryDate) {
+        return get(getBaseUrl() + "/changeset/transform/status?lastUpdate=" + queryDate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 

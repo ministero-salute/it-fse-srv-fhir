@@ -20,7 +20,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorI
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidXsltContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 
@@ -115,7 +116,19 @@ public final class ErrorBuilderDTO {
         );
     }
 
-    public static ErrorResponseDTO createInvalidContentError(LogTraceInfoDTO trace, InvalidXsltContentException ex) {
+    public static ErrorResponseDTO createInvalidVersionError(LogTraceInfoDTO trace, InvalidVersionException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            ex.getMessage(),
+            SC_CONFLICT,
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "version")
+        );
+
+    }
+
+    public static ErrorResponseDTO createInvalidContentError(LogTraceInfoDTO trace, InvalidContentException ex) {
         return new ErrorResponseDTO(
             trace,
             ErrorType.VALIDATION.getType(),

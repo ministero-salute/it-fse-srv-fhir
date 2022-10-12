@@ -6,6 +6,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBody
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,8 +34,9 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param structureDefinitions
 	 * @param maps
 	 * @param valueSets
+	 * @throws InvalidVersionException
 	 */
-	Map<String,Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
+	Map<String,Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException;
 
 	/**
 	 * Delete transform by templateIdRoot and version

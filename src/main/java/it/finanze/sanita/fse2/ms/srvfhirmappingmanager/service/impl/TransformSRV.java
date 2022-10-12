@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mongodb.MongoException;
@@ -29,6 +30,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessExcept
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
@@ -40,6 +42,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -94,31 +97,31 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
 		Map<String,Integer> output = new LinkedHashMap<>();
 		try {
-			TransformETY documentToUpdate = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
+			TransformETY lastDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 
-			if (ObjectUtils.anyNull(documentToUpdate) || ObjectUtils.isEmpty(documentToUpdate)) {
+			if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
 				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 			}
 
-			if (documentToUpdate.getVersion().equals(body.getVersion())) {
-				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
+			if (!ValidationUtility.isMajorVersion(body.getVersion(), lastDocument.getVersion())) {
+				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", body.getVersion(), lastDocument.getVersion()));
 			}
 
-			String currentRoot = documentToUpdate.getRootStructureMap();
-			Map<String, StructureMap> mapsToUpdate = mapSRV.updateMaps(documentToUpdate.getStructureMaps(), maps);
-			Map<String, StructureDefinition> definitionsToUpdate = definitionSRV.updateValuesets(null, documentToUpdate.getStructureDefinitions(), structureDefinitions);
-			Map<String, StructureValueset> valuesetsToUpdate = valuesetSRV.updateValuesets(documentToUpdate.getStructureValuesets(), valueSets);
+			String currentRoot = lastDocument.getRootStructureMap();
+			Map<String, StructureMap> mapsToUpdate = mapSRV.updateMaps(lastDocument.getStructureMaps(), maps);
+			Map<String, StructureDefinition> definitionsToUpdate = definitionSRV.updateValuesets(null, lastDocument.getStructureDefinitions(), structureDefinitions);
+			Map<String, StructureValueset> valuesetsToUpdate = valuesetSRV.updateValuesets(lastDocument.getStructureValuesets(), valueSets);
 
 			// Check if root map is to be replaced
 			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
 			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
 				currentRoot = rootMapFileName;
 			}
-			boolean isDeleted = delete(documentToUpdate.getTemplateIdRoot(), documentToUpdate.getVersion());
+			boolean isDeleted = delete(lastDocument.getTemplateIdRoot(), lastDocument.getVersion());
 			if (isDeleted) {
 				TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
 						currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
@@ -169,8 +172,10 @@ public class TransformSRV implements ITransformSRV {
 		java.util.Map<String, TransformDTO> transforms = new HashMap<>();
 		List<TransformETY> entities = transformRepo.findAll();
 
-		for (TransformETY transformETY : entities) {
-			transforms.put(transformETY.getId(), this.parseEtyToDto(transformETY));
+		if (!CollectionUtils.isEmpty(entities)) {
+			for (TransformETY transformETY : entities) {
+				transforms.put(transformETY.getId(), this.parseEtyToDto(transformETY));
+			}
 		}
 
 		return new ArrayList<>(transforms.values());
@@ -181,8 +186,10 @@ public class TransformSRV implements ITransformSRV {
 		java.util.Map<String, TransformDTO> transforms = new HashMap<>();
 		List<TransformETY> entities = transformRepo.getEveryActiveDocument();
 
-		for (TransformETY transformETY : entities) {
-			transforms.put(transformETY.getId(), this.parseEtyToDto(transformETY));
+		if (!CollectionUtils.isEmpty(entities)) {
+			for (TransformETY transformETY : entities) {
+				transforms.put(transformETY.getId(), this.parseEtyToDto(transformETY));
+			}
 		}
 
 		return new ArrayList<>(transforms.values());

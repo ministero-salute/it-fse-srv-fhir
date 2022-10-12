@@ -35,8 +35,8 @@ class ChangeSetControllerTest extends AbstractTest {
 
 		String queryDate = "2022-06-04T12:08:56.000-00:00";
 
-		mvc.perform(getXslTransformChangeSetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-				status().is2xxSuccessful()
+		mvc.perform(getXslTransformChangeSetMockRequest(queryDate)).andExpectAll(
+				status().isOk()
 		);
 	}
 
@@ -45,8 +45,8 @@ class ChangeSetControllerTest extends AbstractTest {
 
 		String queryDate = "2022-06-04T12:08:56.000-00:00";
 
-		mvc.perform(getTransformChangeSetMockRequest(queryDate, getBaseUrl())).andExpectAll(
-				status().is2xxSuccessful()
+		mvc.perform(getTransformChangeSetMockRequest(queryDate)).andExpectAll(
+				status().isOk()
 		);
 	}
 }

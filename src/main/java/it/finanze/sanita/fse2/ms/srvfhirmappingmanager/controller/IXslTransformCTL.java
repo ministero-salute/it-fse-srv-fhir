@@ -38,7 +38,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransform
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformUploadResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidXsltContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
 
@@ -52,67 +53,84 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
 @Validated
 public interface IXslTransformCTL extends Serializable {
 
-    @PostMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    @Operation(summary = "Add xsl transform to MongoDB", description = "Servizio che consente di aggiungere un xsl alla base dati.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class)))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
-    		@RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
-    		@RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank")
-    		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
-    		@RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidXsltContentException;
-    
-    @PutMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    @Operation(summary = "Update XSLT on MongoDB", description = "Servizio che consente di aggiornare uno XSLT sulla base dati.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Aggiornamento XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> updateXslTransform(
-    		@RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
-    		@RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank")
-    		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
-    @RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException, InvalidXsltContentException, DocumentNotFoundException;
-    
-    @DeleteMapping(value = "/xslt/root/{templateIdRoot}/version/{version}",  produces = {MediaType.APPLICATION_JSON_VALUE })
-    @Operation(summary = "Delete XSLT from MongoDB given its Template ID Root and Version", description = "Servizio che consente di cancellare uno XSLT dalla base dati dato il Template ID Root e la Version.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cancellazione XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version) throws DocumentNotFoundException, OperationException; 
-    
-    
-    @GetMapping(value = "/xslt/root/{templateIdRoot}/version/{version}",  produces = {MediaType.APPLICATION_JSON_VALUE })
-     @Operation(summary = "Returns a XSLT from MongoDB, given its Template ID Root and its Version", description = "Servizio che consente di ritornare uno XSLT dalla base dati dati il suo Template ID Root e Version.")
-     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
-     @ApiResponses(value = {
-             @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformDTO.class))),
-             @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
-             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<XslTransformDTO> getXslTransformByTemplateIdRootAndVersion(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version) throws DocumentNotFoundException, OperationException; 
+        @PostMapping(value = "/xslt", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+                        MediaType.MULTIPART_FORM_DATA_VALUE })
+        @Operation(summary = "Add xsl transform to MongoDB", description = "Servizio che consente di aggiungere un xsl alla base dati.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
+                        @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
+                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") @Pattern(regexp = "[0-9]\\.[0-9]") String version,
+                        @RequestPart("file") MultipartFile file, HttpServletRequest request) throws IOException,
+                        OperationException, DocumentAlreadyPresentException, InvalidContentException;
 
+        @PutMapping(value = "/xslt", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
+                        MediaType.MULTIPART_FORM_DATA_VALUE })
+        @Operation(summary = "Update XSLT on MongoDB", description = "Servizio che consente di aggiornare uno XSLT sulla base dati.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Aggiornamento XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<XslTransformResponseDTO> updateXslTransform(
+                        @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
+                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(regexp = "[0-9]\\.[0-9]") String version,
+                        @RequestPart("file") MultipartFile file, HttpServletRequest request)
+                        throws IOException, OperationException, InvalidContentException, DocumentNotFoundException,
+                        InvalidVersionException;
 
-    @GetMapping(value = "/xslt/id/{id}", produces = {MediaType.APPLICATION_JSON_VALUE })
-    @Operation(summary = "Returns a XSLT from MongoDB, given its ID", description = "Servizio che consente di ritornare uno XSLT dalla base dati dati il suo ID.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
-    @ApiResponses(value = {
-                    @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
-                    @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
-                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<GetDocumentResDTO> getXslTransformById(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id) throws OperationException, DocumentNotFoundException;
+        @DeleteMapping(value = "/xslt/root/{templateIdRoot}/version/{version}", produces = {
+                        MediaType.APPLICATION_JSON_VALUE })
+        @Operation(summary = "Delete XSLT from MongoDB given its Template ID Root and Version", description = "Servizio che consente di cancellare uno XSLT dalla base dati dato il Template ID Root e la Version.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Cancellazione XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request,
+                        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
+                        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version)
+                        throws DocumentNotFoundException, OperationException;
 
-    @GetMapping(value = "/xslt",  produces = {MediaType.APPLICATION_JSON_VALUE })
-     @Operation(summary = "Returns the list of all XSLTs from MongoDB", description = "Servizio che consente di ritornare la lista degli XSLT dalla base dati.")
-     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
-     @ApiResponses(value = {
-             @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetXsltResponseDTO.class))),
-             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-    ResponseEntity<GetXsltResponseDTO> getXslTransform(HttpServletRequest request) throws OperationException; 
+        @GetMapping(value = "/xslt/root/{templateIdRoot}/version/{version}", produces = {
+                        MediaType.APPLICATION_JSON_VALUE })
+        @Operation(summary = "Returns a XSLT from MongoDB, given its Template ID Root and its Version", description = "Servizio che consente di ritornare uno XSLT dalla base dati dati il suo Template ID Root e Version.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<XslTransformDTO> getXslTransformByTemplateIdRootAndVersion(HttpServletRequest request,
+                        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
+                        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version)
+                        throws DocumentNotFoundException, OperationException;
+
+        @GetMapping(value = "/xslt/id/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+        @Operation(summary = "Returns a XSLT from MongoDB, given its ID", description = "Servizio che consente di ritornare uno XSLT dalla base dati dati il suo ID.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformDTO.class))),
+                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<GetDocumentResDTO> getXslTransformById(HttpServletRequest request,
+                        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
+                        throws OperationException, DocumentNotFoundException;
+
+        @GetMapping(value = "/xslt", produces = { MediaType.APPLICATION_JSON_VALUE })
+        @Operation(summary = "Returns the list of all XSLTs from MongoDB", description = "Servizio che consente di ritornare la lista degli XSLT dalla base dati.")
+        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformResponseDTO.class)))
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Richiesta XSLT avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetXsltResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
+        ResponseEntity<GetXsltResponseDTO> getXslTransform(HttpServletRequest request) throws OperationException;
 
 }

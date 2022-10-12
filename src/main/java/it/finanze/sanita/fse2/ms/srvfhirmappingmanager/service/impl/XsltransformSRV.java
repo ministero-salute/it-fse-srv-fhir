@@ -18,11 +18,13 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.spec
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl.XslTransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -60,13 +62,17 @@ public class XsltransformSRV implements IXslTransformSRV {
 	}
 	
 	@Override
-	public void update(XslTransformDTO dto) throws OperationException, DocumentNotFoundException {
+	public void update(XslTransformDTO dto) throws OperationException, DocumentNotFoundException, InvalidVersionException {
 		XslTransformETY ety = parseDtoToEty(dto);
 
-		XslTransformETY lastVersion = xslTransformRepo.findByTemplateIdRoot(ety.getTemplateIdRoot());
-		if (lastVersion != null) {
-			xslTransformRepo.remove(ety.getTemplateIdRoot(), lastVersion.getVersion());
-			xslTransformRepo.insert(ety);
+		XslTransformETY lastXslt = xslTransformRepo.findByTemplateIdRoot(ety.getTemplateIdRoot());
+		if (lastXslt != null) {
+			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastXslt.getVersion())) {
+				xslTransformRepo.remove(ety.getTemplateIdRoot(), lastXslt.getVersion());
+				xslTransformRepo.insert(ety);
+			} else {
+				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", dto.getVersion(), lastXslt.getVersion()));
+			}
 		} else {
 			throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", dto.getTemplateIdRoot()));
 		}

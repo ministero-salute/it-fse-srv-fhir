@@ -226,19 +226,10 @@ class XslTransformServiceTest extends AbstractTest {
     	dto.setInsertionDate(date); 
     	dto.setLastUpdate(date); 
 
-    	xslTransformService.insert(dto); 
-    	
+    	xslTransformService.insert(dto);
     	xslTransformService.delete(TEST_XSLT_ROOT_DEL, TEST_XSLT_VERSION_DEL); 
     	
-    	XslTransformDTO emptyDtoToReturn = xslTransformService.findByTemplateIdRootAndVersion(
-    			TEST_XSLT_ROOT_DEL, TEST_XSLT_VERSION_DEL); 
-    	
-    	
-    	assertEquals(XslTransformDTO.class, emptyDtoToReturn.getClass()); 
-    	
-    	assertNull(emptyDtoToReturn.getTemplateIdRoot()); 
-
-
+    	assertThrows(DocumentNotFoundException.class, () -> xslTransformService.findByTemplateIdRootAndVersion(TEST_XSLT_ROOT_DEL, TEST_XSLT_VERSION_DEL)); 
     }
     
     
@@ -299,19 +290,9 @@ class XslTransformServiceTest extends AbstractTest {
     	dto.setLastUpdate(date); 
 
     	xslTransformService.insert(dto); 
-    	
     	xslTransformService.delete(TEST_XSLT_ROOT_QUERY_DEL, TEST_XSLT_VERSION_QUERY_DEL); 
 
-    	XslTransformDTO returnedDto = xslTransformService.findByTemplateIdRootAndVersion(TEST_XSLT_ROOT_QUERY_DEL, TEST_XSLT_VERSION_QUERY_DEL); 
-    	
-    	
-    	assertEquals(true, returnedDto instanceof XslTransformDTO); 
-    	
-    	assertNull(returnedDto.getNameXslTransform()); 
-    	assertNull(returnedDto.getContentXslTransform()); 
-    	assertNull(returnedDto.getTemplateIdRoot()); 
-    	assertNull(returnedDto.getVersion()); 
-
+    	assertThrows(DocumentNotFoundException.class, () -> xslTransformService.findByTemplateIdRootAndVersion(TEST_XSLT_ROOT_QUERY_DEL, TEST_XSLT_VERSION_QUERY_DEL)); 
     } 
     
         

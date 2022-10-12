@@ -1,27 +1,28 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
-import org.bson.BsonBinarySubType;
-import org.bson.Document;
-import org.bson.types.Binary;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import org.bson.BsonBinarySubType;
+import org.bson.Document;
+import org.bson.types.Binary;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 
 public abstract class AbstractTest {
 
@@ -62,9 +63,6 @@ public abstract class AbstractTest {
 	public static final String TRANSFORM_TEST_VERSION_E = "T_Version_E";
 
 	public static final String TRANSFORM_DEMO_ETY = "{\"template_id_root\":\"Root_A\",\"version\":\"1.1\",\"insertion_date\":{\"$date\":{\"$numberLong\":\"1665493776553\"}},\"last_update_date\":{\"$date\":{\"$numberLong\":\"1665493776553\"}},\"root_map\":\"map1\",\"maps\":[{\"nameMap\":\"map1\",\"filenameMap\":\"map1.map\",\"contentMap\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"valuesets\":[{\"filenameValueset\":\"valueSet1.json\",\"nameValueset\":\"valueSet1\",\"contentValueset\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"definitions\":[{\"nameDefinition\":\"structureDefinition1\",\"filenameDefinition\":\"structureDefinition1.json\",\"contentDefinition\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"deleted\":false}";
-
-	@Value("${server.port}")
-	private int serverPort;
 
 	protected String getBaseUrl() {
 		return "/v1";

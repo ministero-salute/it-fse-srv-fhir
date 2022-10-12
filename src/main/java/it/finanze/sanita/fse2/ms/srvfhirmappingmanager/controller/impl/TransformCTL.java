@@ -21,6 +21,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformRes
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformUploadResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -39,25 +41,33 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
 
 	@Override
-	public ResponseEntity<TransformUploadResponseDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+	public ResponseEntity<TransformUploadResponseDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
 		log.debug(Constants.Logs.CALLED_API_UPLOAD_TRANSFORM);
-		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-						.templateIdRoot(templateIdRoot)
-						.version(version)
-						.rootMapIdentifier(rootMapIdentifier).build();
-		Map<String,Integer> output = transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-		return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(),output), HttpStatus.CREATED);
+		if (validateFiles(structureDefinitions) && validateFiles(maps) && validateFiles(valueSets)) {
+			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+							.templateIdRoot(templateIdRoot)
+							.version(version)
+							.rootMapIdentifier(rootMapIdentifier).build();
+			Map<String,Integer> output = transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+			return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(), output), HttpStatus.CREATED);
+		} else {
+			throw new InvalidContentException("One or more files appear to be empty");
+		}
 	}
 
 	@Override
-	public ResponseEntity<TransformUploadResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+	public ResponseEntity<TransformUploadResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
 		log.debug(Constants.Logs.CALLED_API_UPDATE_TRANSFORM);
-		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-				.templateIdRoot(templateIdRoot)
-				.version(version)
-				.rootMapIdentifier(rootMapIdentifier).build();
-		Map<String,Integer> output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-		return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(),output), HttpStatus.OK);
+		if (validateFiles(structureDefinitions) && validateFiles(maps) && validateFiles(valueSets)) {
+			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+					.templateIdRoot(templateIdRoot)
+					.version(version)
+					.rootMapIdentifier(rootMapIdentifier).build();
+			Map<String,Integer> output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+			return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(), output), HttpStatus.OK);
+		} else {
+			throw new InvalidContentException("One or more files appear to be empty");
+		}
 	}
 
 	@Override
@@ -99,4 +109,5 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 		List<TransformDTO> response = transformSRV.findAllActive();
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+	
 }

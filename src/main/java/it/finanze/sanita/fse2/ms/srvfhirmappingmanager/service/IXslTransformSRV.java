@@ -5,6 +5,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentD
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface IXslTransformSRV extends IChangeSetSRV<XSLTransformCS> {
 	 * @param ety
 	 * @throws DocumentNotFoundException
 	 */
-	void update(XslTransformDTO ety) throws OperationException, DocumentNotFoundException; 
+	void update(XslTransformDTO ety) throws OperationException, DocumentNotFoundException, InvalidVersionException; 
 
 	/**
 	 * Insert all the XSLTs in the list.

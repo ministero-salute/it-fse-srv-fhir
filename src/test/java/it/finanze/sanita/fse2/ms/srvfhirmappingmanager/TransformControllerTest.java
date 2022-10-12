@@ -1,22 +1,20 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import brave.Tracer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
-import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.operator.OperatorException;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.deleteTransformMockRequest;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByIdMockRequest;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformsMockRequest;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.queryActiveTransformMockRequest;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.queryTransformMockRequest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,19 +35,19 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.springframework.util.LinkedMultiValueMap;
 
-import java.util.Collections;
-import java.util.List;
+import com.mongodb.MongoException;
 
-import static com.mongodb.client.model.Filters.eq;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
 
-@Slf4j
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
@@ -102,7 +100,7 @@ class TransformControllerTest extends AbstractTest {
 						.file(valueSets)
 						.contentType(MediaType.MULTIPART_FORM_DATA)
 				)
-				.andExpect(status().is2xxSuccessful());
+				.andExpect(status().isCreated());
 
 		// if reinserting same transform, will throw a 4XX error
 		mvc.perform(MockMvcRequestBuilders
@@ -187,7 +185,7 @@ class TransformControllerTest extends AbstractTest {
 						.file(valueSets)
 						.contentType(MediaType.MULTIPART_FORM_DATA)
 				)
-				.andExpect(status().is2xxSuccessful());
+				.andExpect(status().isBadRequest());
 
 	}
 
@@ -436,16 +434,16 @@ class TransformControllerTest extends AbstractTest {
 
 	@Test
 	void findTransformByIdDocumentNotFoundTest() throws Exception {
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000", getBaseUrl())).andExpect(status().is4xxClientError());
+		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpect(status().isNotFound());
 	}
 
 	@Test
 	void findTransformByIdExceptionsTest() throws Exception {
 		prepareCollection();
 		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000", getBaseUrl())).andExpectAll(status().is5xxServerError());
+		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpectAll(status().is5xxServerError());
 		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000", getBaseUrl())).andExpectAll(status().is5xxServerError());
+		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpectAll(status().is5xxServerError());
 	}
 
 	@Test
@@ -460,7 +458,7 @@ class TransformControllerTest extends AbstractTest {
 	void getZeroActiveTransformsTest() throws Exception {
 		this.deleteTransformTest();
 		String res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn().getResponse().getContentAsString();
-		List list = JsonUtility.toJsonObject(res, List.class);
+		List<?> list = JsonUtility.toJsonObject(res, List.class);
 		assertEquals(0, list.size());
 	}
 
@@ -468,7 +466,7 @@ class TransformControllerTest extends AbstractTest {
 	void getActiveTransformsOneFoundTest() throws Exception {
 		prepareCollection();
 		String res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn().getResponse().getContentAsString();
-		List list = JsonUtility.toJsonObject(res, List.class);
+		List<?> list = JsonUtility.toJsonObject(res, List.class);
 		assertEquals(1, list.size());
 	}
 }

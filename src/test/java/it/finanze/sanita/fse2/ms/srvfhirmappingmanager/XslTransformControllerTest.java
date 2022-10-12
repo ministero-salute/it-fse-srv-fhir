@@ -1,25 +1,18 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.*;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByIdMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import org.bson.types.Binary;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,32 +20,29 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl.XslTransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.XslTransformBodyDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetXsltResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.LinkedMultiValueMap;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 
-@Slf4j
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
@@ -63,9 +53,6 @@ class XslTransformControllerTest extends AbstractTest {
 	private final String TEST_NAME_XSLT = "Name_A";
 	private final String TEST_ID_ROOT = "Root_A";
 	private final String TEST_ID_VERSION = "1.0";
-
-	private final String TEST_ID_ROOT_INV = "Root_A_INV";
-	private final String TEST_ID_VERSION_INV = "Version_A_INV";
 
 	private final String TEST_ID_ROOT_NOT_FOUND = "Root_A_NF";
 	private final String TEST_ID_VERSION_NOT_FOUND = "Version_A_NF";
@@ -81,11 +68,15 @@ class XslTransformControllerTest extends AbstractTest {
 	@SpyBean
 	private IXslTransformSRV xslTransformService;
 
+	@BeforeEach
+	void setup() {
+		mongo.dropCollection(XslTransformETY.class);
+	}
+
 	@Test
 	void insertXslTransform() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xml",
-				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
+				MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xsl:stylesheet/>".getBytes());
 
 		XslTransformBodyDTO dto = new XslTransformBodyDTO();
 		dto.setTemplateIdRoot(TEST_ID_ROOT);
@@ -96,14 +87,13 @@ class XslTransformControllerTest extends AbstractTest {
 		builder.with(new RequestPostProcessor() {
 			@Override
 			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-				request.setParameter("file", "test");
 				request.setMethod("POST");
 				return request;
 			}
 		});
-
+		
 		mvc.perform(builder
-				.file(new MockMultipartFile("file", multipartFile.getBytes()))
+				.file(multipartFile)
 				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
 				.part(new MockPart("version", dto.getVersion().getBytes()))
 				.contentType(MediaType.MULTIPART_FORM_DATA))
@@ -112,7 +102,7 @@ class XslTransformControllerTest extends AbstractTest {
 
 	@Test
 	void insertXslTransformEmptyBody() throws Exception {
-		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xml",
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
 				MediaType.APPLICATION_JSON_VALUE, "".getBytes());
 
 		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
@@ -134,15 +124,13 @@ class XslTransformControllerTest extends AbstractTest {
 				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
 				.part(new MockPart("version", dto.getVersion().getBytes()))
 				.contentType(MediaType.MULTIPART_FORM_DATA))
-				.andExpect(status().is2xxSuccessful());
-
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void updateXslTransform() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xml",
-				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
+	void updateFileNotFoundTest() throws Exception {
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
+				MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xsl:stylesheet/>".getBytes());
 
 		XslTransformBodyDTO dto = new XslTransformBodyDTO();
 		dto.setTemplateIdRoot(TEST_ID_ROOT);
@@ -159,17 +147,113 @@ class XslTransformControllerTest extends AbstractTest {
 			}
 		});
 		mvc.perform(builder
-				.file(new MockMultipartFile("file", multipartFile.getBytes()))
+				.file(multipartFile)
 				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
-				.part(new MockPart("version", dto.getVersion().getBytes()))				.contentType(MediaType.MULTIPART_FORM_DATA))
+				.part(new MockPart("version", dto.getVersion().getBytes())).contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void updateSameVersionConflict() throws Exception {
+
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
+			MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xsl:stylesheet/>".getBytes());
+
+		XslTransformBodyDTO dto = new XslTransformBodyDTO();
+		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
+
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
+
+		builder.with(new RequestPostProcessor() {
+			@Override
+			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+				request.setMethod("POST");
+				return request;
+			}
+		});
+
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
+				.part(new MockPart("version", dto.getVersion().getBytes()))
+				.contentType(MediaType.MULTIPART_FORM_DATA))
 				.andExpect(status().is2xxSuccessful());
 
+		builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
+
+		builder.with(new RequestPostProcessor() {
+			@Override
+			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+				request.setMethod("PUT");
+				return request;
+			}
+		});
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
+				.part(new MockPart("version", dto.getVersion().getBytes())).contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void testComparison () {
+		assertTrue(ValidationUtility.isMajorVersion("2.0", "1.0"));
+		assertFalse(ValidationUtility.isMajorVersion("1.0", "2.0"));
+		assertTrue(ValidationUtility.isMajorVersion("1.1", "1.0"));
+		assertTrue(ValidationUtility.isMajorVersion("0.8", "0.7"));
+		assertFalse(ValidationUtility.isMajorVersion("0.7", "0.8"));
+	}
+
+
+	@Test
+	void updateHappyPath() throws Exception {
+
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
+			MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xsl:stylesheet/>".getBytes());
+
+		XslTransformBodyDTO dto = new XslTransformBodyDTO();
+		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
+
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
+
+		builder.with(new RequestPostProcessor() {
+			@Override
+			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+				request.setMethod("POST");
+				return request;
+			}
+		});
+
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
+				.part(new MockPart("version", dto.getVersion().getBytes()))
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().is2xxSuccessful());
+
+		builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
+
+		builder.with(new RequestPostProcessor() {
+			@Override
+			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+				request.setMethod("PUT");
+				return request;
+			}
+		});
+		dto.setVersion("2.0");
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
+				.part(new MockPart("version", dto.getVersion().getBytes())).contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().isOk());
 	}
 
 	@Test
 	void updateXslTransformEmptyBody() throws Exception {
-		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform.xml",
-				MediaType.APPLICATION_JSON_VALUE, "".getBytes());
+		MockMultipartFile multipartFile = new MockMultipartFile("file", "xslTransform_post.xsl",
+			MediaType.APPLICATION_JSON_VALUE, "".getBytes());
 
 		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(getBaseUrl() + "/xslt");
 
@@ -190,15 +274,14 @@ class XslTransformControllerTest extends AbstractTest {
 				.part(new MockPart("templateIdRoot", dto.getTemplateIdRoot().getBytes()))
 				.part(new MockPart("version", dto.getVersion().getBytes()))
 				.contentType(MediaType.MULTIPART_FORM_DATA))
-				.andExpect(status().is2xxSuccessful());
-
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void deleteXslTransformNotFoundTest() throws Exception {
 
-		mvc.perform(deleteXslTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_VERSION_NOT_FOUND, getBaseUrl())).andExpectAll(
-				status().is4xxClientError());
+		mvc.perform(MockRequests.deleteXslTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_VERSION_NOT_FOUND)).andExpectAll(
+				status().isNotFound());
 	}
 
 	@Test
@@ -208,17 +291,15 @@ class XslTransformControllerTest extends AbstractTest {
 
 		dto.setNameXslTransform(TEST_NAME_XSLT);
 		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
 		dto.setInsertionDate(new Date());
 		dto.setLastUpdate(new Date());
 		dtoList.add(dto);
-
+		
 		xslTransformService.insertAll(dtoList);
 
-		when(xslTransformService.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_VERSION))
-				.thenReturn(dto);
-
-		mvc.perform(queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(
-				status().is2xxSuccessful());
+		mvc.perform(MockRequests.queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION)).andExpectAll(
+				status().isOk());
 	}
 
 	@Test
@@ -228,22 +309,20 @@ class XslTransformControllerTest extends AbstractTest {
 
 		dto.setNameXslTransform(TEST_NAME_XSLT);
 		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
 		dto.setInsertionDate(new Date());
 		dto.setLastUpdate(new Date());
 		dtoList.add(dto);
 
 		xslTransformService.insertAll(dtoList);
 
-		when(xslTransformService.findByTemplateIdRootAndVersion(TEST_ID_ROOT_INV, TEST_ID_VERSION))
-				.thenReturn(new XslTransformDTO());
-
-		mvc.perform(queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(
-				status().is(200));
+		mvc.perform(MockRequests.queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION)).andExpect(
+			status().isOk());
 	}
 
 	@Test
 	void findXslTransformByIdDocumentNotFoundTest() throws Exception {
-		mvc.perform(getXslTransformByIdMockRequest("690000000000000000000001", getBaseUrl())).andExpect(
+		mvc.perform(MockRequests.getXslTransformByIdMockRequest("690000000000000000000001")).andExpect(
 				status().is4xxClientError());
 	}
 
@@ -254,57 +333,35 @@ class XslTransformControllerTest extends AbstractTest {
 
 		dto.setNameXslTransform(TEST_NAME_XSLT);
 		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
 		dto.setInsertionDate(new Date());
 		dto.setLastUpdate(new Date());
 		dtoList.add(dto);
 
 		xslTransformService.insertAll(dtoList);
 
-		when(xslTransformService.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_VERSION_INV))
-				.thenReturn(new XslTransformDTO());
-
-		mvc.perform(queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION_INV, getBaseUrl())).andExpect(
+		mvc.perform(MockRequests.queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION)).andExpect(
 				status().is(200));
 	}
 
 	@Test
 	void getXslTransformsTest() throws Exception {
-		when(xslTransformService.findAll())
-				.thenReturn(new ArrayList<>());
+		List<XslTransformDTO> dtoList = new ArrayList<XslTransformDTO>();
+		XslTransformDTO dto = new XslTransformDTO();
 
-		mvc.perform(getXslTransformsMockRequest(getBaseUrl())).andExpectAll(
-				status().is2xxSuccessful());
-	}
+		dto.setNameXslTransform(TEST_NAME_XSLT);
+		dto.setTemplateIdRoot(TEST_ID_ROOT);
+		dto.setVersion(TEST_ID_VERSION);
+		dto.setInsertionDate(new Date());
+		dto.setLastUpdate(new Date());
+		dto.setContentXslTransform(new Binary("test".getBytes()));
+		dtoList.add(dto);
 
-	@Test
-	void getXslTransformJsonObject() {
-		XslTransformBodyDTO dto = XslTransformCTL.getXsltJSONObject(TEST_JSON_XSLT);
+		xslTransformService.insertAll(dtoList);
 
-		assertEquals(XslTransformBodyDTO.class, dto.getClass());
-		assertEquals(String.class, dto.getTemplateIdRoot().getClass());
-		assertEquals(String.class, dto.getVersion().getClass());
-
-		assertEquals("Root_AB", dto.getTemplateIdRoot());
-		assertEquals("Version_AB", dto.getVersion());
-
-	}
-
-	@Test
-	void findTransformByIdRootAndExtensionExceptionsTest() throws Exception {
-		prepareCollection();
-		Mockito.doThrow(new MongoException("")).when(mongo).find(any(Query.class), ArgumentMatchers.eq(XslTransformETY.class));
-		mvc.perform(queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(status().is5xxServerError());
-		Mockito.doThrow(new BusinessException("")).when(mongo).find(any(Query.class), ArgumentMatchers.eq(XslTransformETY.class));
-		mvc.perform(queryXslTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(status().is5xxServerError());
-	}
-
-	@Test
-	void findTransformByIdExceptionsTest() throws Exception {
-		prepareCollection();
-		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(XslTransformETY.class));
-		mvc.perform(getXslTransformByIdMockRequest("690000000000000000000000", getBaseUrl())).andExpectAll(status().is5xxServerError());
-		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(XslTransformETY.class));
-		mvc.perform(getXslTransformByIdMockRequest("690000000000000000000000", getBaseUrl())).andExpectAll(status().is5xxServerError());
+		MvcResult result = mvc.perform(MockRequests.getXslTransformsMockRequest()).andExpect(status().isOk()).andReturn();
+		GetXsltResponseDTO output = JsonUtility.toJsonObject(result.getResponse().getContentAsString(), GetXsltResponseDTO.class);
+		assertEquals(1, output.getBody().size());
 	}
 
 }

@@ -6,6 +6,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createDocumentNotFoundError;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createGenericError;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createInvalidContentError;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createInvalidVersionError;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.createOperationError;
 
 import javax.validation.ConstraintViolationException;
@@ -23,7 +24,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfo
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidXsltContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,8 +61,19 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
-    @ExceptionHandler(InvalidXsltContentException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleInvalidContentException(InvalidXsltContentException ex) {
+    @ExceptionHandler(InvalidVersionException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidVersionException(InvalidVersionException ex) {
+        // Create error DTO
+        ErrorResponseDTO out = createInvalidVersionError(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        // Bye bye
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
+    @ExceptionHandler(InvalidContentException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidContentException(InvalidContentException ex) {
         ErrorResponseDTO out = createInvalidContentError(getLogTraceInfo(), ex);
         HttpHeaders headers = new HttpHeaders();
 

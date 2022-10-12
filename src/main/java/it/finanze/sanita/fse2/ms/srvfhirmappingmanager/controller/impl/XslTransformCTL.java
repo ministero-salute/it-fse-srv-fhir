@@ -15,25 +15,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IXslTransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.XslTransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetXsltResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformUploadResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidXsltContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -54,7 +51,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 	@Override
 	public ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(String templateIdRoot, String version,
 			MultipartFile file, HttpServletRequest request)
-			throws IOException, OperationException, DocumentAlreadyPresentException, InvalidXsltContentException {
+			throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException {
 		log.debug(Constants.Logs.CALLED_API_POST_XSL_TRANSFORM);
 		Date date = new Date();
 
@@ -69,14 +66,14 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			xslTransformService.insert(xslTransform);
 			return new ResponseEntity<>(new XslTransformUploadResponseDTO(getLogTraceInfo(), 1), HttpStatus.CREATED);
 		} else {
-			throw new InvalidXsltContentException("The file does not appear to be a valid xslt file");
+			throw new InvalidContentException("The file does not appear to be a valid xslt file");
 		}
 	}
 
 	@Override
 	public ResponseEntity<XslTransformResponseDTO> updateXslTransform(String templateIdRoot, String version,
 			MultipartFile file, HttpServletRequest request)
-			throws IOException, OperationException, InvalidXsltContentException, DocumentNotFoundException {
+			throws IOException, OperationException, InvalidContentException, DocumentNotFoundException, InvalidVersionException {
 		log.debug(Constants.Logs.CALLED_API_PUT_XSL_TRANSFORM);
 
 		Date date = new Date();
@@ -92,7 +89,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			xslTransformService.update(xslTransform);
 			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 		} else {
-			throw new InvalidXsltContentException("The file does not appear to be a valid xslt file");
+			throw new InvalidContentException("The file does not appear to be a valid xslt file");
 		}
 	}
 
@@ -104,7 +101,7 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 		if (existsXslTransform) {
 			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.NOT_FOUND);
+			throw new DocumentNotFoundException(String.format("Document with templateIdRoot %s and version %s not found", templateIdRoot, version));
 		}
 	}
 
@@ -128,20 +125,6 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 		response.setBody(body);
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
-
-	public static XslTransformBodyDTO getXsltJSONObject(String jsonREQ) {
-		XslTransformBodyDTO out = null;
-		if (!StringUtility.isNullOrEmpty(jsonREQ)) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				out = mapper.readValue(jsonREQ, XslTransformBodyDTO.class);
-			} catch (Exception ex) {
-				log.error(Constants.Logs.ERROR_JSON_HANDLING, ex);
-			}
-		}
-		return out;
-
 	}
 
 	@Override

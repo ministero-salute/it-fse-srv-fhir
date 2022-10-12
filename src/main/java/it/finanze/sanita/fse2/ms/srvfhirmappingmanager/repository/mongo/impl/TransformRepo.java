@@ -1,26 +1,32 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.LimitOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
+
 import com.mongodb.MongoException;
 import com.mongodb.client.result.UpdateResult;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  *	Transform repository.
@@ -55,27 +61,14 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	public boolean remove(final String templateIdRoot, final String version) throws OperationException {
 		try {
 			Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-					.and(Constants.App.VERSION).is(version));
+					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true));
 
-			// Template ID Root and Version uniquely determine a transform, we can use findOne
-			// and take the first element
-			TransformETY transformETY = mongoTemplate.findOne(query, TransformETY.class);
+			Update update = new Update();
+			update.set(Constants.App.DELETED, true);
+			update.set(FIELD_LAST_UPDATE, new Date());
 
-			if (transformETY != null) {
-				Update update = new Update();
-				update.set(Constants.App.DELETED, true);
-				update.set(FIELD_LAST_UPDATE, new Date());
-
-				UpdateResult result = mongoTemplate.updateFirst(
-						Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(transformETY.getTemplateIdRoot())
-								.and(Constants.App.VERSION).is(transformETY.getVersion())
-								.and(Constants.App.DELETED).ne(true)),
-						update, TransformETY.class);
-
-				return result.getModifiedCount() > 0;
-			}
-			return false;
-
+			UpdateResult result = mongoTemplate.updateFirst(query, update, TransformETY.class);
+			return result.getModifiedCount() > 0;
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_DELETING_ETY, e);
 			throw new OperationException(Constants.Logs.ERROR_DELETING_ETY, e);

@@ -15,4 +15,18 @@ public class ValidationUtility {
 	public static final int DEFAULT_BINARY_MIN_SIZE = 0;
 	public static final int DEFAULT_BINARY_MAX_SIZE = 10000;
 	
+	public static boolean isMajorVersion(final String newVersion, final String lastVersion) {
+		boolean isMajor = false;
+		String[] lastVersionChunks = lastVersion.split("\\.");
+		String [] newVersionChunks = newVersion.split("\\.");
+	
+		if (Integer.valueOf(lastVersionChunks[0]) < Integer.valueOf(newVersionChunks[0])) {
+			isMajor = true;
+		} else if (Integer.valueOf(lastVersionChunks[0]).equals(Integer.valueOf(newVersionChunks[0]))) {
+			isMajor = Integer.valueOf(lastVersionChunks[1]) < Integer.valueOf(newVersionChunks[1]);
+		}
+		
+		return isMajor;
+	}
+
 }
