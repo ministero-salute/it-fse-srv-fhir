@@ -50,14 +50,14 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public ResponseEntity<TransformResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+	public ResponseEntity<TransformUploadResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 		log.debug(Constants.Logs.CALLED_API_UPDATE_TRANSFORM);
 		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
 				.templateIdRoot(templateIdRoot)
 				.version(version)
 				.rootMapIdentifier(rootMapIdentifier).build();
-		transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-		return new ResponseEntity<>(new TransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+		Map<String,Integer> output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+		return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(),output), HttpStatus.OK);
 	}
 
 	@Override

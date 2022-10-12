@@ -58,8 +58,8 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "200", description = "Creazione XSL avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = XslTransformUploadResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
     ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
-    		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") 
+    		@RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
+    		@RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank")
     		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
     		@RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException, DocumentAlreadyPresentException;
     
@@ -71,8 +71,8 @@ public interface IXslTransformCTL extends Serializable {
             @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
     ResponseEntity<XslTransformResponseDTO> updateXslTransform(
-    		@RequestPart@Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    		@RequestPart@Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") 
+    		@RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
+    		@RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank")
     		@Pattern(regexp = "[0-9]\\.[0-9]")String version,
     @RequestPart("file") MultipartFile file,HttpServletRequest request) throws IOException, OperationException;
     
