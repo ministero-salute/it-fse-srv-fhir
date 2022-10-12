@@ -34,7 +34,7 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param maps
 	 * @param valueSets
 	 */
-	void updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
+	Map<String,Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
 
 	/**
 	 * Delete transform by templateIdRoot and version

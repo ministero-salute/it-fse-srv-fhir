@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.VariableOperators.Let;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,7 +65,7 @@ public class TransformSRV implements ITransformSRV {
 	@Override
 	public Map<String,Integer> insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
 		log.debug("[EDS] Insertion of transform - START");
-		Map<String,Integer> output = new HashMap<>();
+		Map<String,Integer> output = new LinkedHashMap<>();
 		try {
 			TransformETY existingDocument = transformRepo.findByTemplateIdRootAndVersion(body.getTemplateIdRoot(), body.getVersion());
 			if (existingDocument != null) {
@@ -85,6 +85,7 @@ public class TransformSRV implements ITransformSRV {
 			output.put("insertedMaps", mapsToInsert.values().size());
 			output.put("insertedDefinitions", definitionsToInsert.values().size());
 			output.put("insertedValuesets", valuesetsToInsert.values().size());
+
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
 			throw new OperationException(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
@@ -93,8 +94,9 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public void updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
 		log.debug("[EDS] Update of transform - START");
+		Map<String,Integer> output = new LinkedHashMap<>();
 		try {
 			TransformETY documentToUpdate = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 
@@ -124,7 +126,16 @@ public class TransformSRV implements ITransformSRV {
 			} else {
 				throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", body.getTemplateIdRoot()));
 			}
-
+			
+			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
+					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+			transformRepo.insert(transformETY);
+	
+			output.put("updatedMaps", structureDefinitions.length);
+			output.put("updatedDefinitions", maps.length);
+			output.put("updatedValuesets", valueSets.length);
+	
+			return output;
 		} catch (DocumentNotFoundException de) {
 			throw de;
 		} catch (MongoException ex) {
