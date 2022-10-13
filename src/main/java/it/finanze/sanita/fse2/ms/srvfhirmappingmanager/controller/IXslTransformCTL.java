@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -63,7 +64,7 @@ public interface IXslTransformCTL extends Serializable {
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
         ResponseEntity<XslTransformUploadResponseDTO> addXslTransform(
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
-                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") @Pattern(regexp = "[0-9]\\.[0-9]") String version,
+                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestPart("file") MultipartFile file, HttpServletRequest request) throws IOException,
                         OperationException, DocumentAlreadyPresentException, InvalidContentException;
 
@@ -77,9 +78,9 @@ public interface IXslTransformCTL extends Serializable {
                         @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-        ResponseEntity<XslTransformResponseDTO> updateXslTransform(
+        ResponseEntity<XslTransformUploadResponseDTO> updateXslTransform(
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the xslt", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
-                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(regexp = "[0-9]\\.[0-9]") String version,
+                        @RequestPart("version") @Parameter(description = "Xslt version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestPart("file") MultipartFile file, HttpServletRequest request)
                         throws IOException, OperationException, InvalidContentException, DocumentNotFoundException,
                         InvalidVersionException;
@@ -93,10 +94,10 @@ public interface IXslTransformCTL extends Serializable {
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
-        ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request,
-                        @NotBlank @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
-                        @NotBlank @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version)
-                        throws DocumentNotFoundException, OperationException;
+        ResponseEntity<XslTransformUploadResponseDTO> deleteXslTransform(HttpServletRequest request,
+                        @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
+                        @PathVariable @NotBlank(message = "version cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version)
+        throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = "/xslt/root/{templateIdRoot}/version/{version}", produces = {
                         MediaType.APPLICATION_JSON_VALUE })
@@ -108,8 +109,8 @@ public interface IXslTransformCTL extends Serializable {
                         @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
         ResponseEntity<XslTransformDTO> getXslTransformByTemplateIdRootAndVersion(HttpServletRequest request,
-                        @NotBlank @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
-                        @NotBlank @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version)
+                        @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
+                        @PathVariable @NotBlank(message = "version cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version)
                         throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = "/xslt/id/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -121,7 +122,7 @@ public interface IXslTransformCTL extends Serializable {
                         @ApiResponse(responseCode = "404", description = "XSLT non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = XslTransformErrorResponseDTO.class))) })
         ResponseEntity<GetDocumentResDTO> getXslTransformById(HttpServletRequest request,
-                        @NotBlank @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
+                        @NotBlank(message = "Id cannot be blank") @PathVariable @Size(min = 1, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
                         throws OperationException, DocumentNotFoundException;
 
         @GetMapping(value = "/xslt", produces = { MediaType.APPLICATION_JSON_VALUE })

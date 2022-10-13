@@ -21,12 +21,13 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 
 	/**
 	 * Mark a transform as deleted on database
+	 *
 	 * @param templateIdRoot
 	 * @param version
 	 * @return
 	 * @throws OperationException
 	 */
-	boolean remove(String templateIdRoot, String version) throws OperationException;
+	TransformETY remove(String templateIdRoot, String version) throws OperationException;
 
 	/**
 	 * Find a transform by templateIdRoot and version

@@ -14,17 +14,18 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class XslTransformUploadResponseDTO extends ResponseDTO {
-
-
 	private Integer insertedXslt;
+	private Integer updatedXslt;
+	private Integer deletedXslt;
 	 
 	public XslTransformUploadResponseDTO() {
 		super();
 	}
 
-	public XslTransformUploadResponseDTO(final LogTraceInfoDTO traceInfo, final Integer inInsertedXslt) {
+	public XslTransformUploadResponseDTO(LogTraceInfoDTO traceInfo, Integer insertedXslt, Integer updatedXslt, Integer deletedXslt) {
 		super(traceInfo);
-		insertedXslt = inInsertedXslt;
+		this.insertedXslt = insertedXslt;
+		this.updatedXslt = updatedXslt;
+		this.deletedXslt = deletedXslt;
 	}
-	
 }

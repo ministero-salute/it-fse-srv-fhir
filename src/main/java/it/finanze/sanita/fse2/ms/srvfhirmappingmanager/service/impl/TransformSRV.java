@@ -97,7 +97,7 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
+	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
 		Map<String,Integer> output = new LinkedHashMap<>();
 		try {
@@ -121,26 +121,16 @@ public class TransformSRV implements ITransformSRV {
 			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
 				currentRoot = rootMapFileName;
 			}
-			boolean isDeleted = delete(lastDocument.getTemplateIdRoot(), lastDocument.getVersion());
-			if (isDeleted) {
-				TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
-						currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
-				transformRepo.insert(transformETY);
-			} else {
-				throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", body.getTemplateIdRoot()));
-			}
-			
+			delete(lastDocument.getTemplateIdRoot(), lastDocument.getVersion());
 			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
 					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
 			transformRepo.insert(transformETY);
 	
-			output.put("updatedMaps", structureDefinitions.length);
-			output.put("updatedDefinitions", maps.length);
+			output.put("updatedMaps", maps.length);
+			output.put("updatedDefinitions", structureDefinitions.length);
 			output.put("updatedValuesets", valueSets.length);
 	
 			return output;
-		} catch (DocumentNotFoundException de) {
-			throw de;
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
 			throw new OperationException(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
@@ -148,9 +138,18 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public boolean delete(String templateIdRoot, String version) throws OperationException {
+	public Map<String, Integer> delete(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
+		Map<String, Integer> output = new LinkedHashMap<>();
 		try {
-			return transformRepo.remove(templateIdRoot, version);
+			TransformETY deletedTransform = transformRepo.remove(templateIdRoot, version);
+			if (deletedTransform != null) {
+				output.put("deletedMaps", deletedTransform.getStructureMaps().size());
+				output.put("deletedDefinitions", deletedTransform.getStructureDefinitions().size());
+				output.put("deletedValuesets", deletedTransform.getStructureValuesets().size());
+			} else {
+				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+			}
+			return output;
 		} catch(MongoException e) {
 			throw new OperationException(e.getMessage(), e);
 		}

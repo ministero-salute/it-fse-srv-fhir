@@ -279,9 +279,14 @@ class XslTransformControllerTest extends AbstractTest {
 
 	@Test
 	void deleteXslTransformNotFoundTest() throws Exception {
-
-		mvc.perform(MockRequests.deleteXslTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_VERSION_NOT_FOUND)).andExpectAll(
+		mvc.perform(MockRequests.deleteXslTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, "1.0")).andExpectAll(
 				status().isNotFound());
+	}
+
+	@Test
+	void deleteXslTransformInvalidVersionTest() throws Exception {
+		mvc.perform(MockRequests.deleteXslTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_VERSION_NOT_FOUND)).andExpectAll(
+				status().isBadRequest());
 	}
 
 	@Test

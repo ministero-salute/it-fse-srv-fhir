@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,15 +72,10 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public ResponseEntity<TransformResponseDTO> deleteTransform(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
+	public ResponseEntity<TransformUploadResponseDTO> deleteTransform(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
 		log.debug(Constants.Logs.CALLED_API_DELETE_TRANSFORM);
-		boolean existsTransform = transformSRV.delete(templateIdRoot, version);
-		if (existsTransform) {
-			return new ResponseEntity<>(new TransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
-		}
-		else {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-		}
+		Map<String, Integer> existsTransform = transformSRV.delete(templateIdRoot, version);
+		return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(), existsTransform), HttpStatus.OK);
 	}
 
 	@Override

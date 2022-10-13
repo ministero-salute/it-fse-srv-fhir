@@ -64,14 +64,14 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			xslTransform.setInsertionDate(date);
 			xslTransform.setLastUpdate(date);
 			xslTransformService.insert(xslTransform);
-			return new ResponseEntity<>(new XslTransformUploadResponseDTO(getLogTraceInfo(), 1), HttpStatus.CREATED);
+			return new ResponseEntity<>(new XslTransformUploadResponseDTO(getLogTraceInfo(), 1, null, null), HttpStatus.CREATED);
 		} else {
 			throw new InvalidContentException("The file does not appear to be a valid xslt file");
 		}
 	}
 
 	@Override
-	public ResponseEntity<XslTransformResponseDTO> updateXslTransform(String templateIdRoot, String version,
+	public ResponseEntity<XslTransformUploadResponseDTO> updateXslTransform(String templateIdRoot, String version,
 			MultipartFile file, HttpServletRequest request)
 			throws IOException, OperationException, InvalidContentException, DocumentNotFoundException, InvalidVersionException {
 		log.debug(Constants.Logs.CALLED_API_PUT_XSL_TRANSFORM);
@@ -87,19 +87,19 @@ public class XslTransformCTL extends AbstractCTL implements IXslTransformCTL {
 			xslTransform.setInsertionDate(date);
 			xslTransform.setLastUpdate(date);
 			xslTransformService.update(xslTransform);
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+			return new ResponseEntity<>(new XslTransformUploadResponseDTO(getLogTraceInfo(),  null, 1, null), HttpStatus.OK);
 		} else {
 			throw new InvalidContentException("The file does not appear to be a valid xslt file");
 		}
 	}
 
 	@Override
-	public ResponseEntity<XslTransformResponseDTO> deleteXslTransform(HttpServletRequest request, String templateIdRoot,
+	public ResponseEntity<XslTransformUploadResponseDTO> deleteXslTransform(HttpServletRequest request, String templateIdRoot,
 			String version) throws DocumentNotFoundException, OperationException {
 		log.info(Constants.Logs.CALLED_API_DELETE_XSL_TRANSFORM);
 		boolean existsXslTransform = xslTransformService.delete(templateIdRoot, version);
 		if (existsXslTransform) {
-			return new ResponseEntity<>(new XslTransformResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+			return new ResponseEntity<>(new XslTransformUploadResponseDTO(getLogTraceInfo(), null, null, 1), HttpStatus.OK);
 		} else {
 			throw new DocumentNotFoundException(String.format("Document with templateIdRoot %s and version %s not found", templateIdRoot, version));
 		}

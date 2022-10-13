@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.result.UpdateResult;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
@@ -58,7 +57,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public boolean remove(final String templateIdRoot, final String version) throws OperationException {
+	public TransformETY remove(final String templateIdRoot, final String version) throws OperationException {
 		try {
 			Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true));
@@ -67,8 +66,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			update.set(Constants.App.DELETED, true);
 			update.set(FIELD_LAST_UPDATE, new Date());
 
-			UpdateResult result = mongoTemplate.updateFirst(query, update, TransformETY.class);
-			return result.getModifiedCount() > 0;
+			return mongoTemplate.findAndModify(query, update, TransformETY.class);
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_DELETING_ETY, e);
 			throw new OperationException(Constants.Logs.ERROR_DELETING_ETY, e);
