@@ -2,6 +2,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto;
 
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,15 +23,15 @@ public class XslTransformDocumentDTO implements Serializable {
 	private static final long serialVersionUID = 4887099482914213186L; 
 	
 	
-	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String id;
-	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String templateIdRoot;
-	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String nameXslTransform;
-	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE, type = "string", format = "binary", description = "XSLT content")
 	private String contentXslTransform;
-	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String version;
 	private OffsetDateTime lastUpdateDate;
 

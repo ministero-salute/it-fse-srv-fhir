@@ -14,7 +14,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 public class ChangeSetDTO<T> {
 
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
-	private String id; 
+	private String id;
 
 	T description;
 

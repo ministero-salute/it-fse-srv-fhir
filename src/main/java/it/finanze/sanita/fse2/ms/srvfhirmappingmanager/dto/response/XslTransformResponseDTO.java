@@ -15,8 +15,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class XslTransformResponseDTO extends ResponseDTO {
 
-
-	 
 	public XslTransformResponseDTO() {
 		super();
 	}

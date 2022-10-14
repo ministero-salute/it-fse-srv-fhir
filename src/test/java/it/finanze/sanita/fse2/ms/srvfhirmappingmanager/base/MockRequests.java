@@ -1,16 +1,17 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.time.OffsetDateTime;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.GetXsltDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.GetXsltResponseDTO;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
-import java.time.OffsetDateTime;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public final class MockRequests {
 
@@ -110,18 +111,6 @@ public final class MockRequests {
 
     public static MockHttpServletRequestBuilder queryActiveTransformMockRequest(String baseUrl) {
         return get(getBaseUrl() + "/transform/active")
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    // Changeset
-
-    public static MockHttpServletRequestBuilder getTransformChangeSet(String lastUpdate) {
-        return get(getBaseUrl() + "/changeset/transform/status?lastUpdate=" + lastUpdate)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder getTransformChangeSetMockRequest(String queryDate) {
-        return get(getBaseUrl() + "/changeset/transform/status?lastUpdate=" + queryDate)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
