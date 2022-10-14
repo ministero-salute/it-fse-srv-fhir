@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.TransformGenUtility;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,10 +38,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.Transfo
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IDefinitionSRV;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IMapSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IValuesetSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -52,16 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TransformSRV implements ITransformSRV {
-
-	@Autowired
-	private IDefinitionSRV definitionSRV;
-
-	@Autowired
-	private IValuesetSRV valuesetSRV;
-
-	@Autowired
-	private IMapSRV mapSRV;
-
 	@Autowired
 	private ITransformRepo transformRepo;
 
@@ -76,9 +64,9 @@ public class TransformSRV implements ITransformSRV {
 			}
 
 			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
-			Map<String, StructureMap> mapsToInsert = mapSRV.createMaps(rootMapFileName, maps);
-			Map<String, StructureDefinition> definitionsToInsert = definitionSRV.createDefinitions(null, structureDefinitions);
-			Map<String, StructureValueset> valuesetsToInsert = valuesetSRV.createValuesets(valueSets);
+			Map<String, StructureMap> mapsToInsert = TransformGenUtility.createMaps(rootMapFileName, maps);
+			Map<String, StructureDefinition> definitionsToInsert = TransformGenUtility.createDefinitions(null, structureDefinitions);
+			Map<String, StructureValueset> valuesetsToInsert = TransformGenUtility.createValuesets(valueSets);
 
 			// Insert rootMapName at root level of ety
 			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), rootMapFileName,
@@ -112,9 +100,9 @@ public class TransformSRV implements ITransformSRV {
 			}
 
 			String currentRoot = lastDocument.getRootStructureMap();
-			Map<String, StructureMap> mapsToUpdate = mapSRV.updateMaps(lastDocument.getStructureMaps(), maps);
-			Map<String, StructureDefinition> definitionsToUpdate = definitionSRV.updateValuesets(null, lastDocument.getStructureDefinitions(), structureDefinitions);
-			Map<String, StructureValueset> valuesetsToUpdate = valuesetSRV.updateValuesets(lastDocument.getStructureValuesets(), valueSets);
+			Map<String, StructureMap> mapsToUpdate = TransformGenUtility.updateMaps(lastDocument.getStructureMaps(), maps);
+			Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.updateDefinitions(null, lastDocument.getStructureDefinitions(), structureDefinitions);
+			Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.updateValuesets(lastDocument.getStructureValuesets(), valueSets);
 
 			// Check if root map is to be replaced
 			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
