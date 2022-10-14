@@ -1,15 +1,15 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
+
+import java.util.Date;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Size;
-import java.util.Date;
-
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.*;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 
 @Data
 @NoArgsConstructor
@@ -17,19 +17,19 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 public class GetXsltDTO
  {
 
-     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
      private String id;
 
-     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
      private String templateIdRoot;
 
-     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
      private String nameXslTransform;
 
-     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_BINARY_MAX_SIZE)
+     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE, type = "string", format = "binary", description = "XSLT content")
      private String contentXslTransform;
 
-     @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
      private String version;
 
      private Date lastUpdate;

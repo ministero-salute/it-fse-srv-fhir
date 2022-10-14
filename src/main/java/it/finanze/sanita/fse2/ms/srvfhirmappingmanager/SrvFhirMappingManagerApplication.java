@@ -11,7 +11,7 @@ public class SrvFhirMappingManagerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SrvFhirMappingManagerApplication.class, args);
-	} 
+	}
 	
     /**
      * Definizione rest template.

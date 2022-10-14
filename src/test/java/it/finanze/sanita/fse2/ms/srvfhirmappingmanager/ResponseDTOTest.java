@@ -9,13 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ChangeSetResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XsltransformCreationErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 
 @SuppressWarnings("rawtypes")
@@ -125,61 +123,13 @@ class ResponseDTOTest extends AbstractTest {
 	}
 	
 	@Test
-	void xslTransformErrorResponseDtoTest() {
-		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-
-		XslTransformErrorResponseDTO dto = new XslTransformErrorResponseDTO(logTraceInfoDto, IN_TYPE_TEST, IN_TITLE_TEST,
-				IN_DETAIL_TEST, IN_STATUS_TEST, IN_INSTANCE_TEST, IN_TX_ID_TEST); 
-		
-		
-		assertEquals(XslTransformErrorResponseDTO.class, dto.getClass()); 
-		assertEquals(String.class, dto.getType().getClass()); 
-		assertEquals(String.class, dto.getTitle().getClass()); 
-		assertEquals(String.class, dto.getDetail().getClass()); 
-		assertEquals(Integer.class, dto.getStatus().getClass()); 
-		assertEquals(String.class, dto.getInstance().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass()); 
-		
-		assertEquals(IN_TYPE_TEST, dto.getType()); 
-		assertEquals(IN_TITLE_TEST, dto.getTitle()); 
-		assertEquals(IN_DETAIL_TEST, dto.getDetail()); 
-		assertEquals(IN_STATUS_TEST, dto.getStatus()); 
-		assertEquals(IN_INSTANCE_TEST, dto.getInstance()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
-	}
-	
-	@Test
-	void xslTransformCreationErrorResponseDtoTest() {
-		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-
-		XsltransformCreationErrorResponseDTO dto = new XsltransformCreationErrorResponseDTO(logTraceInfoDto, IN_TYPE_TEST, IN_TITLE_TEST,
-				IN_DETAIL_TEST, IN_STATUS_TEST, IN_INSTANCE_TEST, IN_TX_ID_TEST); 
-		
-		
-		assertEquals(XsltransformCreationErrorResponseDTO.class, dto.getClass()); 
-		assertEquals(String.class, dto.getType().getClass()); 
-		assertEquals(String.class, dto.getTitle().getClass()); 
-		assertEquals(String.class, dto.getDetail().getClass()); 
-		assertEquals(Integer.class, dto.getStatus().getClass()); 
-		assertEquals(String.class, dto.getInstance().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass()); 
-		
-		assertEquals(IN_TYPE_TEST, dto.getType()); 
-		assertEquals(IN_TITLE_TEST, dto.getTitle()); 
-		assertEquals(IN_DETAIL_TEST, dto.getDetail()); 
-		assertEquals(IN_STATUS_TEST, dto.getStatus()); 
-		assertEquals(IN_INSTANCE_TEST, dto.getInstance()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
-	} 
-	
-	@Test
 	void changesetResponseDtoTest() {
-		ChangeSetResDTO changesetResponse = new ChangeSetResDTO();
+		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>();
 		
 		Date date = new Date(); 
 		
-		changesetResponse.setInsertions(new ArrayList<ChangeSetDTO>()); 
-		changesetResponse.setDeletions(new ArrayList<ChangeSetDTO>()); 
+		changesetResponse.setInsertions(new ArrayList<>()); 
+		changesetResponse.setDeletions(new ArrayList<>()); 
 		changesetResponse.setTimestamp(date); 
 		changesetResponse.setLastUpdate(date); 
 		changesetResponse.setTotalNumberOfElements(1); 
@@ -198,8 +148,8 @@ class ResponseDTOTest extends AbstractTest {
 	@Test
 	void changesetResponseDtoInitTest() {
 		LogTraceInfoDTO logTraceInfo = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-		ChangeSetResDTO changesetResponse = new ChangeSetResDTO(logTraceInfo, new Date(), new Date(),
-				new ArrayList<ChangeSetDTO>(), new ArrayList<ChangeSetDTO>(), 1); 
+		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>(logTraceInfo, new Date(), new Date(),
+				new ArrayList<>(), new ArrayList<>(), 1); 
 		
 		assertEquals(ArrayList.class, changesetResponse.getInsertions().getClass()); 
 		assertEquals(ArrayList.class, changesetResponse.getDeletions().getClass()); 
