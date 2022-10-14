@@ -4,7 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +22,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfo
  *
  *	Abstract controller.
  */
+@Slf4j
 public abstract class AbstractCTL {
 
 	@Autowired
@@ -28,13 +33,12 @@ public abstract class AbstractCTL {
 		boolean isValid = false;
 		if (file != null && !file.isEmpty()) {
 			try {
-				final Path path = Paths.get(file.getOriginalFilename());
-				final String mimeType = Files.probeContentType(path);
 				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-
-				isValid = MimeTypeUtils.TEXT_XML_VALUE.equals(mimeType) && content.startsWith("<?xml") && content.contains("xsl:stylesheet");
+				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
+				boolean isXslt = extension.equals("xsl");
+				isValid = isXslt && content.startsWith("<?xml") && content.contains("xsl:stylesheet");
 			} catch (Exception e) {
-				isValid = false;
+				log.warn("Error, file not valid", e);
 			}
 		}
 
