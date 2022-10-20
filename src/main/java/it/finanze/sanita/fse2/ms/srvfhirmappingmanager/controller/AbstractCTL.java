@@ -33,10 +33,8 @@ public abstract class AbstractCTL {
 		boolean isValid = false;
 		if (file != null && !file.isEmpty()) {
 			try {
-				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
 				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
-				boolean isXslt = extension.equals("xsl");
-				isValid = isXslt && content.startsWith("<?xml") && content.contains("xsl:stylesheet");
+				return extension.equals("xsl");
 			} catch (Exception e) {
 				log.warn("Error, file not valid", e);
 			}
