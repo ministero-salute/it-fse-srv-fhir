@@ -18,16 +18,16 @@ public class CollectionNaming {
     @Bean("xslTransformBean")
     public String getDefinitionCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.XSL_TRANSFORM;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.XSL_TRANSFORM;
         }
-        return Constants.App.Collections.XSL_TRANSFORM;
+        return Constants.Collections.XSL_TRANSFORM;
     }
 
     @Bean("transformBean")
     public String getTransformCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.App.Collections.TRANSFORM;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.TRANSFORM;
         }
-        return Constants.App.Collections.TRANSFORM;
+        return Constants.Collections.TRANSFORM;
     }
 }
