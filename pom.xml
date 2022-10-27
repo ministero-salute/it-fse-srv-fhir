@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.finanze.sanita.fse2</groupId>
-	<artifactId>srv-fhir-mapping-manager-ms</artifactId>
+	<artifactId>srv-fhir-ms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>srv-fhir-mapping-manager-ms</name>
+	<name>srv-fhir-ms</name>
 	<description>EDS FHIR Mapping Manager</description>
 	<properties>
 		<!-- Application -->
