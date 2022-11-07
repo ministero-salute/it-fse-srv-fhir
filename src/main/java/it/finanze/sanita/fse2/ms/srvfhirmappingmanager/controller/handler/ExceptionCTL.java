@@ -31,7 +31,6 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error
 
 /**
  *	Exceptions handler
- *  @author G. Baittiner
  */
 @ControllerAdvice
 @Slf4j
