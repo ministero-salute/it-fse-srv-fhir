@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
