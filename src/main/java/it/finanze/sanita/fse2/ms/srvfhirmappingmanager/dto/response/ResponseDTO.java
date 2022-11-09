@@ -13,7 +13,6 @@ import lombok.Setter;
 
 /**
  * Base response
- * @author CPIERASC
  */
 @Getter
 @Setter

@@ -12,7 +12,6 @@ import lombok.EqualsAndHashCode;
 /**
  * The Class XslTransformResponseDTO.
  *
- * @author Riccardo Bonesi
  * 
  *         Xsl Transform Creation Response.
  */

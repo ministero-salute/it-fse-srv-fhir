@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
-	@author Riccardo Bonesi
  *
  *	XSL Transform service.
  */

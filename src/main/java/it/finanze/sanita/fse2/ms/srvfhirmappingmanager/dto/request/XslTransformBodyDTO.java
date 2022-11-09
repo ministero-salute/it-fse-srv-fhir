@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 /**
  * XSLT Body for insert and update endpoints
  * 
- * @author Riccardo Bonesi
  */
 @Data
 @NoArgsConstructor

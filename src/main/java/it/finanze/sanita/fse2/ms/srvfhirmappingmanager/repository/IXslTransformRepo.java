@@ -9,7 +9,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 
 /**
-	@author Riccardo Bonesi
  *
  *	XSLT interface repository.
  */
