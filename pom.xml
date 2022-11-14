@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>srv-fhir-ms</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version> <!-- IPPOCRATE -->
 	<name>srv-fhir-ms</name>
 	<description>EDS FHIR Mapping Manager</description>
 	<properties>
