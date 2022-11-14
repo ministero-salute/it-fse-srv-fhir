@@ -3,6 +3,18 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
@@ -10,11 +22,9 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-
+@Slf4j
 public class TransformGenUtility {
     private TransformGenUtility() {}
 
@@ -68,12 +78,25 @@ public class TransformGenUtility {
      * @throws DocumentNotFoundException
      */
     public static Map<String, StructureMap> createMaps(String rootMapFileName, MultipartFile[] files) throws DataProcessingException, DocumentNotFoundException {
-        checkRootMap(rootMapFileName, files);
         Map<String, StructureMap> filesToAdd = new HashMap<>();
-        for (MultipartFile file : files) {
-            String fileName = FilenameUtils.removeExtension(file.getOriginalFilename());
-            filesToAdd.put(fileName, StructureMap.fromMultipart(fileName, file));
+        try {
+        	checkRootMap(rootMapFileName, files);
+        	for (MultipartFile file : files) {
+        		String fileString = new String(file.getBytes());
+        		Pattern pattern = Pattern.compile("^ *map.*= *\"(.*)\"");
+        		Matcher matcher = pattern.matcher(fileString);
+        		String name = FilenameUtils.removeExtension(file.getOriginalFilename());
+        		
+        		if(matcher.find()) {
+        			name = matcher.group(1);
+        		}
+        		filesToAdd.put(name, StructureMap.fromMultipart(name, file));
+        	}
+        } catch(Exception ex) {
+        	log.error("Error while perform create maps : " , ex);
+        	throw new BusinessException("Error while perform create maps : " , ex);
         }
+        
         return filesToAdd;
     }
 
