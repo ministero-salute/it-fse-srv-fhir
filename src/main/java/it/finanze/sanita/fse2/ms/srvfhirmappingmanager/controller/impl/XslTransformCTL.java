@@ -36,7 +36,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Riccardo Bonesi
  */
 @RestController
 @Slf4j

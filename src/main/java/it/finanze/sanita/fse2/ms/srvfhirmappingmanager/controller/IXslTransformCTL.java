@@ -49,7 +49,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
 /**
  * XSLT Controller.
  * 
- * @author Riccardo Bonesi
  */
 @RequestMapping(path = "/v1")
 @Tag(name = "XSLT Controller")

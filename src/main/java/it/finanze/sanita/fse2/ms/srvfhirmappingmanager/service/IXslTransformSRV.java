@@ -14,7 +14,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 import java.util.List;
 
 /**
-    @author Riccardo Bonesi
  *
  *	XSL Transform interface service.
  */

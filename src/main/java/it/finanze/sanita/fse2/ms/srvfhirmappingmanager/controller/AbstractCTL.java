@@ -21,7 +21,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfo
 
 /**
  * 
- * @author CPIERASC
  *
  *	Abstract controller.
  */
