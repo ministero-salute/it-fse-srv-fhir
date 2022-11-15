@@ -80,7 +80,8 @@ public class TransformGenUtility {
     public static Map<String, StructureMap> createMaps(String rootMapFileName, MultipartFile[] files) throws DataProcessingException, DocumentNotFoundException {
         Map<String, StructureMap> filesToAdd = new HashMap<>();
         try {
-        	checkRootMap(rootMapFileName, files);
+//        	checkRootMap(rootMapFileName, files);
+        	boolean rootFind = false;
         	for (MultipartFile file : files) {
         		String fileString = new String(file.getBytes());
         		Pattern pattern = Pattern.compile("^ *map.*= *\"(.*)\"");
@@ -90,7 +91,16 @@ public class TransformGenUtility {
         		if(matcher.find()) {
         			name = matcher.group(1);
         		}
+        		
+        		if(Boolean.FALSE.equals(rootFind) && rootMapFileName.equals(name)) {
+        			rootFind = true;
+        		}
+        		
         		filesToAdd.put(name, StructureMap.fromMultipart(name, file));
+        	}
+        	
+        	if(!rootFind) {
+        		throw new BusinessException("Root not found ");
         	}
         } catch(Exception ex) {
         	log.error("Error while perform create maps : " , ex);
@@ -125,8 +135,8 @@ public class TransformGenUtility {
     }
 
     private static void checkRootMap(String rootMapFileName, MultipartFile[] files) throws DocumentNotFoundException {
-        String sanitizedRootMapFileName = FilenameUtils.removeExtension(rootMapFileName);
-        Optional<MultipartFile> rootMapFile = Arrays.stream(files).filter(file -> sanitizedRootMapFileName.equals(FilenameUtils.removeExtension(file.getOriginalFilename()))).findFirst();
+//        String sanitizedRootMapFileName = FilenameUtils.removeExtension(rootMapFileName);
+        Optional<MultipartFile> rootMapFile = Arrays.stream(files).filter(file -> rootMapFileName.equals(FilenameUtils.removeExtension(file.getOriginalFilename()))).findFirst();
         if (!rootMapFile.isPresent()) {
             throw new DocumentNotFoundException("Root map file is not passed in files");
         }
