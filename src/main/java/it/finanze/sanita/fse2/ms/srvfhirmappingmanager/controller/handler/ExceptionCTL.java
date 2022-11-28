@@ -4,8 +4,11 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.handler;
 
 
-import javax.validation.ConstraintViolationException;
-
+import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,18 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.ConstraintViolationException;
+import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.*;
 
@@ -130,6 +127,25 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Handles exceptions thrown by the inability to convert a certain value from a type X to a type Y.
+     * (e.g. {@link String} to {@link Date})
+     *
+     * @param ex exception
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        // Log me
+        log.error("HANDLER MethodArgumentTypeMismatchException()", ex);
+        // Create error DTO
+        ErrorResponseDTO out = createArgumentMismatchError(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        // Bye bye
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
+    /**
      * Handle generic exception.
      *
      * @param ex		exception
@@ -163,6 +179,8 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Return the log trace
         return out;
     }
+
+
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

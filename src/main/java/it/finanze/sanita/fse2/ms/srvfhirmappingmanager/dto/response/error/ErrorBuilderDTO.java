@@ -4,29 +4,21 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error;
 
 
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
-import static org.apache.http.HttpStatus.SC_CONFLICT;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Resource;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Server;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Validation;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_UNABLE_CONVERT;
+import static org.apache.http.HttpStatus.*;
 
 
 public final class ErrorBuilderDTO {
@@ -54,7 +46,7 @@ public final class ErrorBuilderDTO {
             ErrorType.VALIDATION.getType(),
             ErrorType.VALIDATION.getTitle(),
             String.format(
-                "Failed to convert %s to %s",
+                ERR_VAL_UNABLE_CONVERT,
                 ex.getName(),
                 ex.getParameter().getParameter().getType().getSimpleName()
             ),
@@ -72,17 +64,6 @@ public final class ErrorBuilderDTO {
             ex.getMessage(),
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getRequestPartName())
-        );
-    }
-
-    public static ErrorResponseDTO createMissingParameterError(LogTraceInfoDTO trace, MissingServletRequestParameterException ex) {
-        return new ErrorResponseDTO(
-            trace,
-            ErrorType.VALIDATION.getType(),
-            ErrorType.VALIDATION.getTitle(),
-            ex.getMessage(),
-            SC_BAD_REQUEST,
-            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getParameterName())
         );
     }
 
