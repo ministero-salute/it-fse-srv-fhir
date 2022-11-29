@@ -3,31 +3,25 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformUploadResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -45,7 +39,7 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	@Override
 	public ResponseEntity<TransformUploadResponseDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
 		log.debug(Constants.Logs.CALLED_API_UPLOAD_TRANSFORM);
-		if (validateFiles(structureDefinitions) && validateFiles(maps) && validateFiles(valueSets)) {
+		if (validateFiles(maps)) {
 			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
 							.templateIdRoot(templateIdRoot)
 							.version(version)
@@ -60,7 +54,7 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	@Override
 	public ResponseEntity<TransformUploadResponseDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
 		log.debug(Constants.Logs.CALLED_API_UPDATE_TRANSFORM);
-		if (validateFiles(structureDefinitions) && validateFiles(maps) && validateFiles(valueSets)) {
+		if (validateFiles(maps)) {
 			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
 					.templateIdRoot(templateIdRoot)
 					.version(version)

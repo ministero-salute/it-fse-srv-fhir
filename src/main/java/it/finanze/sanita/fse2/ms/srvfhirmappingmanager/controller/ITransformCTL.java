@@ -3,32 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -41,12 +15,26 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformUploadResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MAX;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
 /**
  * Transform Controller
@@ -69,9 +57,9 @@ public interface ITransformCTL extends Serializable {
                         @RequestPart("rootMapIdentifier") @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") @NotBlank(message = "Root map identifier cannot be blank") String rootMapIdentifier,
                         @RequestPart("templateIdRoot") @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("structureDefinitions") MultipartFile[] structureDefinitions,
+                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "structureDefinitions", required = false) MultipartFile[] structureDefinitions,
                         @Parameter(description = "Map files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("maps") MultipartFile[] maps,
-                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("valueSets") MultipartFile[] valueSets) throws IOException, OperationException,
+                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "valueSets", required = false) MultipartFile[] valueSets) throws IOException, OperationException,
                         DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException;
 
         @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -87,9 +75,9 @@ public interface ITransformCTL extends Serializable {
                         @RequestPart("rootMapIdentifier") @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") String rootMapIdentifier,
                         @RequestPart("templateIdRoot") @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("structureDefinitions") MultipartFile[] structureDefinitions,
+                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "structureDefinitions", required = false) MultipartFile[] structureDefinitions,
                         @Parameter(description = "Maps files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("maps") MultipartFile[] maps,
-                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("valueSets") MultipartFile[] valueSets) throws IOException, OperationException,
+                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "valueSets", required = false) MultipartFile[] valueSets) throws IOException, OperationException,
                         DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException,
                         InvalidContentException;
 

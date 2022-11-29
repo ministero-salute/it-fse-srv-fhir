@@ -3,25 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.TransformGenUtility;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.mongodb.MongoException;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
@@ -30,12 +12,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
@@ -43,8 +20,18 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.Structur
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.TransformGenUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -102,24 +89,19 @@ public class TransformSRV implements ITransformSRV {
 				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", body.getVersion(), lastDocument.getVersion()));
 			}
 
-			String currentRoot = lastDocument.getRootStructureMap();
-			Map<String, StructureMap> mapsToUpdate = TransformGenUtility.updateMaps(lastDocument.getStructureMaps(), maps);
-			Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.updateDefinitions(null, lastDocument.getStructureDefinitions(), structureDefinitions);
-			Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.updateValuesets(lastDocument.getStructureValuesets(), valueSets);
+			Map<String, StructureMap> mapsToUpdate = TransformGenUtility.createMaps(body.getRootMapIdentifier(), maps);
+			Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.createDefinitions(null, structureDefinitions);
+			Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.createValuesets(valueSets);
 
-			// Check if root map is to be replaced
-			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
-			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
-				currentRoot = rootMapFileName;
-			}
 			delete(lastDocument.getTemplateIdRoot());
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
-					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+			// Insert rootMapName at root level of ety
+			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), body.getRootMapIdentifier(),
+				new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
 			transformRepo.insert(transformETY);
 	
-			output.put("updatedMaps", maps.length);
-			output.put("updatedDefinitions", structureDefinitions.length);
-			output.put("updatedValuesets", valueSets.length);
+			output.put("updatedMaps", mapsToUpdate.size());
+			output.put("updatedDefinitions", definitionsToUpdate.size());
+			output.put("updatedValuesets", valuesetsToUpdate.size());
 	
 			return output;
 		} catch (MongoException ex) {
