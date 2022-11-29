@@ -30,6 +30,9 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.extern.slf4j.Slf4j;
 
+import static org.springframework.data.mongodb.core.query.Criteria.*;
+import static org.springframework.data.mongodb.core.query.Query.*;
+
 /**
  *	Transform repository.
  */
@@ -60,16 +63,16 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public TransformETY remove(final String templateIdRoot, final String version) throws OperationException {
+	public List<TransformETY> remove(final String templateIdRoot) throws OperationException {
 		try {
-			Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true));
-
+			Query query = query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
 			Update update = new Update();
 			update.set(Constants.App.DELETED, true);
 			update.set(FIELD_LAST_UPDATE, new Date());
 
-			return mongoTemplate.findAndModify(query, update, TransformETY.class);
+			List<TransformETY> list = mongoTemplate.find(query, TransformETY.class);
+			mongoTemplate.updateMulti(query, update, TransformETY.class);
+			return list;
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_DELETING_ETY, e);
 			throw new OperationException(Constants.Logs.ERROR_DELETING_ETY, e);
@@ -82,7 +85,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	@Override
 	public TransformETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException {
 		try {
-			return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+			return mongoTemplate.findOne(query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 							.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)),
 					TransformETY.class);
 		} catch (MongoException e) {
@@ -98,7 +101,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
 		try {
 			SortOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, Constants.App.INSERTION_DATE);
-			MatchOperation matchOperation = Aggregation.match(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
+			MatchOperation matchOperation = Aggregation.match(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
 			LimitOperation limitOperation = Aggregation.limit(1);
 
 			TypedAggregation<TransformETY> typedAggregation = new TypedAggregation<>(TransformETY.class, matchOperation, sortOperation, limitOperation);
@@ -129,7 +132,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	@Override
 	public TransformETY findById(String id) throws OperationException {
 		try {
-			return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.MONGO_ID).is(id)
+			return mongoTemplate.findOne(query(where(Constants.App.MONGO_ID).is(id)
 							.and(Constants.App.DELETED).ne(true)),
 					TransformETY.class);
 		} catch (MongoException e) {
@@ -154,8 +157,8 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Working var
 		List<TransformETY> objects;
 		// Create query
-		Query q = Query.query(
-				Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and(Constants.App.DELETED).ne(true)
+		Query q = query(
+				where(FIELD_INSERTION_DATE).gt(lastUpdate).and(Constants.App.DELETED).ne(true)
 		);
 		try {
 			// Execute
@@ -179,8 +182,8 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Working var
 		List<TransformETY> objects;
 		// Create query
-		Query q = Query.query(
-				Criteria.where(FIELD_LAST_UPDATE).gt(lastUpdate)
+		Query q = query(
+				where(FIELD_LAST_UPDATE).gt(lastUpdate)
 						.and(FIELD_INSERTION_DATE).lte(lastUpdate)
 						.and(Constants.App.DELETED).is(true)
 		);
@@ -205,7 +208,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Working var
 		List<TransformETY> objects;
 		// Create query
-		Query q = Query.query(Criteria.where(Constants.App.DELETED).ne(true));
+		Query q = query(where(Constants.App.DELETED).ne(true));
 		try {
 			// Execute
 			objects = mongoTemplate.find(q, TransformETY.class);

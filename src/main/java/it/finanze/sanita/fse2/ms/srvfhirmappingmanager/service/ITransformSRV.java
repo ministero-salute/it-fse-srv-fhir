@@ -45,10 +45,9 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * Delete transform by templateIdRoot and version
 	 *
 	 * @param templateIdRoot
-	 * @param version
 	 * @return
 	 */
-	Map<String, Integer> delete(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException;
+	Map<String, Integer> delete(String templateIdRoot) throws OperationException, DocumentNotFoundException;
 
 	/**
 	 * Find transform by templateIdRoot and version

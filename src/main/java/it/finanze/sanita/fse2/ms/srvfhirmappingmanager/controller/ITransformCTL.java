@@ -93,19 +93,16 @@ public interface ITransformCTL extends Serializable {
                         DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException,
                         InvalidContentException;
 
-        @DeleteMapping(value = "/root/{templateIdRoot}/version/{version}", produces = {
+        @DeleteMapping(value = "/root/{templateIdRoot}", produces = {
                         MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Delete transform from MongoDB given its Template ID Root and Version", description = "Servizio che consente di cancellare una trasformata dalla base dati tramite il Template ID Root e la Version.")
+        @Operation(summary = "Delete transform from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare una trasformata dalla base dati tramite il Template ID Root.")
         @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Cancellazione avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Trasformata non trovata sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        ResponseEntity<TransformUploadResponseDTO> deleteTransform(HttpServletRequest request,
-                        @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
-                        @PathVariable @NotBlank(message = "version cannot be blank") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "version does not match the expected size") String version)
-                        throws DocumentNotFoundException, OperationException;
+        ResponseEntity<TransformUploadResponseDTO> deleteTransform(HttpServletRequest request, @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = "/root/{templateIdRoot}/version/{version}", produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a transform from MongoDB, given its Template ID Root and its Version", description = "Servizio che consente di ritornare una trasformata dalla base dati tramite il suo Template ID Root e Version.")

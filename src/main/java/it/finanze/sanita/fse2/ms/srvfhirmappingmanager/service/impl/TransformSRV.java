@@ -112,7 +112,7 @@ public class TransformSRV implements ITransformSRV {
 			if (!StringUtils.isEmpty(rootMapFileName) && mapsToUpdate.containsKey(rootMapFileName)) {
 				currentRoot = rootMapFileName;
 			}
-			delete(lastDocument.getTemplateIdRoot(), lastDocument.getVersion());
+			delete(lastDocument.getTemplateIdRoot());
 			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(),
 					currentRoot, new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
 			transformRepo.insert(transformETY);
@@ -129,14 +129,23 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public Map<String, Integer> delete(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
+	public Map<String, Integer> delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
 		Map<String, Integer> output = new LinkedHashMap<>();
 		try {
-			TransformETY deletedTransform = transformRepo.remove(templateIdRoot, version);
+			List<TransformETY> deletedTransform = transformRepo.remove(templateIdRoot);
 			if (deletedTransform != null) {
-				output.put("deletedMaps", deletedTransform.getStructureMaps().size());
-				output.put("deletedDefinitions", deletedTransform.getStructureDefinitions().size());
-				output.put("deletedValuesets", deletedTransform.getStructureValuesets().size());
+				output.put(
+					"deletedMaps",
+					deletedTransform.stream().mapToInt(s -> s.getStructureMaps().size()).sum()
+				);
+				output.put(
+					"deletedDefinitions",
+					deletedTransform.stream().mapToInt(s -> s.getStructureDefinitions().size()).sum()
+				);
+				output.put(
+					"deletedValuesets",
+					deletedTransform.stream().mapToInt(s -> s.getStructureValuesets().size()).sum()
+				);
 			} else {
 				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 			}

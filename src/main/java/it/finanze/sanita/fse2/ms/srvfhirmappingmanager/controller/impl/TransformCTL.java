@@ -73,9 +73,9 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public ResponseEntity<TransformUploadResponseDTO> deleteTransform(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
+	public ResponseEntity<TransformUploadResponseDTO> deleteTransform(HttpServletRequest request, String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		log.debug(Constants.Logs.CALLED_API_DELETE_TRANSFORM);
-		Map<String, Integer> existsTransform = transformSRV.delete(templateIdRoot, version);
+		Map<String, Integer> existsTransform = transformSRV.delete(templateIdRoot);
 		return new ResponseEntity<>(new TransformUploadResponseDTO(getLogTraceInfo(), existsTransform), HttpStatus.OK);
 	}
 
