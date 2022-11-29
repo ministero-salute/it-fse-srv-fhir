@@ -61,7 +61,7 @@ public class TransformSRV implements ITransformSRV {
 		log.debug("[EDS] Insertion of transform - START");
 		Map<String,Integer> output = new LinkedHashMap<>();
 		try {
-			TransformETY existingDocument = transformRepo.findByTemplateIdRootAndVersion(body.getTemplateIdRoot(), body.getVersion());
+			TransformETY existingDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 			if (existingDocument != null) {
 				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
 			}
