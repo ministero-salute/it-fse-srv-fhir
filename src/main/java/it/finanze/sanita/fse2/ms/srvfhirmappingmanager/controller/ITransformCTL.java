@@ -122,13 +122,8 @@ public interface ITransformCTL extends Serializable {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        ResponseEntity<List<TransformDTO>> getTransform(HttpServletRequest request) throws OperationException;
+        ResponseEntity<List<TransformDTO>> getTransform(HttpServletRequest request,
+        		@RequestParam(required = false, defaultValue = "false") @Parameter(description = "Include deleted schema") boolean includeDeleted
+        		) throws OperationException;
 
-        @GetMapping(value = "/active", produces = { MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Returns the list of all active transforms from MongoDB", description = "Servizio che consente di ritornare la lista delle trasformate attive dalla base dati.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformDTO.class))),
-                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        ResponseEntity<List<TransformDTO>> getActiveTransform(HttpServletRequest request) throws OperationException;
 }

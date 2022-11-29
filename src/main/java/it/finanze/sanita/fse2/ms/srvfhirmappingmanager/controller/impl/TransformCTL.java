@@ -87,16 +87,9 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public ResponseEntity<List<TransformDTO>> getTransform(HttpServletRequest request) throws OperationException {
+	public ResponseEntity<List<TransformDTO>> getTransform(HttpServletRequest request, boolean includeDeleted) throws OperationException {
 		log.info(Constants.Logs.CALLED_API_GET_ALL_TRANSFORM);
-		List<TransformDTO> response = transformSRV.findAll();
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
-
-	@Override
-	public ResponseEntity<List<TransformDTO>> getActiveTransform(HttpServletRequest request) throws OperationException {
-		log.info(Constants.Logs.CALLED_API_GET_ACTIVE_TRANSFORM);
-		List<TransformDTO> response = transformSRV.findAllActive();
+		List<TransformDTO> response = includeDeleted ? transformSRV.findAll() : transformSRV.findAllActive();
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
