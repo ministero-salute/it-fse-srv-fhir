@@ -32,15 +32,6 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	List<TransformETY> remove(String templateIdRoot) throws OperationException;
 
 	/**
-	 * Find a transform by templateIdRoot and version
-	 * @param templateIdRoot
-	 * @param version
-	 * @return
-	 * @throws OperationException
-	 */
-	TransformETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException;
-
-	/**
 	 * Find a transform by templateIdRoot
 	 * @param templateIdRoot
 	 * @return

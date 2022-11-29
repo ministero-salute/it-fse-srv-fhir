@@ -4,34 +4,27 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.LimitOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
-
 import com.mongodb.MongoException;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
 
-import static org.springframework.data.mongodb.core.query.Criteria.*;
-import static org.springframework.data.mongodb.core.query.Query.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  *	Transform repository.
@@ -79,21 +72,6 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		} catch (Exception ex) {
 			log.error(Constants.Logs.ERROR_DELETING_ETY + getClass(), ex);
 			throw new BusinessException(Constants.Logs.ERROR_DELETING_ETY + getClass(), ex);
-		}
-	}
-
-	@Override
-	public TransformETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException {
-		try {
-			return mongoTemplate.findOne(query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-							.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)),
-					TransformETY.class);
-		} catch (MongoException e) {
-			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-		} catch (Exception ex) {
-			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
-			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
 		}
 	}
 
