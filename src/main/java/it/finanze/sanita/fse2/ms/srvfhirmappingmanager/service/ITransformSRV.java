@@ -52,10 +52,9 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	/**
 	 * Find transform by templateIdRoot and version
 	 * @param templateIdRoot
-	 * @param version
 	 * @return
 	 */
-	TransformDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException;
+	TransformDTO findByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException;
 
 	/**
 	 * Find all transform saved on database

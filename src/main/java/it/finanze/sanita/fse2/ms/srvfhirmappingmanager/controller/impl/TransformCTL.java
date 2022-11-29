@@ -80,10 +80,9 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public ResponseEntity<TransformDTO> getTransformByTemplateIdRootAndVersion(HttpServletRequest request, String templateIdRoot, String version) throws DocumentNotFoundException, OperationException {
+	public ResponseEntity<TransformDTO> getTransformByTemplateIdRootAndVersion(HttpServletRequest request, String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		log.info(Constants.Logs.CALLED_API_QUERY_TRANSFORM_ROOT_EXTENSION);
-		TransformDTO response =  transformSRV.findByTemplateIdRootAndVersion(templateIdRoot, version);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(transformSRV.findByTemplateIdRoot(templateIdRoot));
 	}
 
 	@Override

@@ -156,8 +156,8 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public TransformDTO findByTemplateIdRootAndVersion(final String templateIdRoot, final String version) throws DocumentNotFoundException, OperationException {
-		TransformETY output = transformRepo.findByTemplateIdRootAndVersion(templateIdRoot, version);
+	public TransformDTO findByTemplateIdRoot(final String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		TransformETY output = transformRepo.findByTemplateIdRoot(templateIdRoot);
 
 		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);

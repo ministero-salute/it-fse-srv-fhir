@@ -13,3 +13,4 @@ bin/
 tmp/
 .vscode/
 *.prefs
+.idea
