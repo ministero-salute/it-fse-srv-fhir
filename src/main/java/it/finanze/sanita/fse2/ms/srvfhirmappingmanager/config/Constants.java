@@ -105,8 +105,8 @@ public final class Constants {
 		public static final String STRUCTURE_DEFINITION = "structure-definition";
 		public static final String MAP = "structure-map";
 		public static final String VALUESET = "structure-valueset";
-		public static final String XSL_TRANSFORM = "xsl_transform";
-		public static final String TRANSFORM = "transform";
+		public static final String XSL_TRANSFORM = "xsl_transform_eds";
+		public static final String TRANSFORM = "transform_eds";
 
 		private Collections() {
 		}
