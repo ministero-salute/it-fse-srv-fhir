@@ -82,7 +82,7 @@ public class TransformGenUtility {
         	boolean rootFind = false;
         	for (MultipartFile file : files) {
         		String fileString = new String(file.getBytes());
-        		Pattern pattern = Pattern.compile("^ *map.*= *\"(.*)\"");
+        		Pattern pattern = Pattern.compile("^ *map.*= *\"(.*)\"++");
         		Matcher matcher = pattern.matcher(fileString);
         		String name = FilenameUtils.removeExtension(file.getOriginalFilename());
         		
