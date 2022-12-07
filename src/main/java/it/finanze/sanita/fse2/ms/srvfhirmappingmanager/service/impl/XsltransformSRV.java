@@ -3,32 +3,26 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.mongodb.MongoException;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.XslTransformDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl.XslTransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -219,7 +213,16 @@ public class XsltransformSRV implements IXslTransformSRV {
 		}
 	}
 
+	/**
+	 * Retrieves the expected collection size after the alignment
+	 *
+	 * @return The collection size
+	 * @throws OperationException If a data-layer error occurs
+	 */
+	@Override
+	public long getCollectionSize() throws OperationException {
+		return xslTransformRepo.getActiveDocumentCount();
+	}
 
 
-	
 }

@@ -4,13 +4,14 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.mongodb.MongoException;
+import com.mongodb.client.result.UpdateResult;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IXslTransformRepo;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -21,15 +22,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import com.mongodb.MongoException;
-import com.mongodb.client.result.UpdateResult;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IXslTransformRepo;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  *
@@ -246,7 +246,29 @@ public class XslTransformRepo implements IXslTransformRepo, Serializable {
         return objects;
     }
 
-	public XslTransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+    /**
+     * Count all the not-deleted extensions items
+     *
+     * @return Number of active documents
+     * @throws OperationException If a data-layer error occurs
+     */
+    @Override
+    public long getActiveDocumentCount() throws OperationException {
+        // Working var
+        long size;
+        // Create query
+        Query q = query(where(Constants.App.DELETED).ne(true));
+        try {
+            // Execute count
+            size = mongoTemplate.count(q, XslTransformETY.class);
+        }catch (MongoException e) {
+            // Catch data-layer runtime exceptions and turn into a checked exception
+            throw new OperationException(Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC, e);
+        }
+        return size;
+    }
+
+    public XslTransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
 		try {
             Query query = new Query();
             query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));

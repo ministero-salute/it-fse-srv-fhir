@@ -249,4 +249,9 @@ public class TransformSRV implements ITransformSRV {
 			throw new BusinessException("Error retrieving modifications", e);
 		}
 	}
+
+	@Override
+	public long getCollectionSize() throws OperationException {
+		return transformRepo.getActiveDocumentCount();
+	}
 }

@@ -3,21 +3,20 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ChangeSetResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("rawtypes")
 class ResponseDTOTest extends AbstractTest {
@@ -150,9 +149,15 @@ class ResponseDTOTest extends AbstractTest {
 	
 	@Test
 	void changesetResponseDtoInitTest() {
-		LogTraceInfoDTO logTraceInfo = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>(logTraceInfo, new Date(), new Date(),
-				new ArrayList<>(), new ArrayList<>(), 1); 
+		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>(
+			TRACE_ID_TEST,
+			SPAN_ID_TEST,
+			new Date(),
+			new Date(),
+			new ArrayList<>(),
+			new ArrayList<>(),
+			1,
+			1);
 		
 		assertEquals(ArrayList.class, changesetResponse.getInsertions().getClass()); 
 		assertEquals(ArrayList.class, changesetResponse.getDeletions().getClass()); 

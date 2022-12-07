@@ -3,22 +3,22 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IChangeSetCTL;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.XSLTransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.IXslTransformSRV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.IChangeSetCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import java.util.Date;
+import java.util.List;
 
 /** 
  * 
@@ -37,7 +37,8 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         // Retrieve changes
         List<ChangeSetDTO<XSLTransformCS>> insertions = serviceXSL.getInsertions(lastUpdate);
         List<ChangeSetDTO<XSLTransformCS>> deletions = serviceXSL.getDeletions(lastUpdate);
-        int totalNumberOfElements = insertions.size() + deletions.size();
+        long collectionSize = serviceXSL.getCollectionSize();
+
         // Retrieve log trace
         LogTraceInfoDTO trace = getLogTraceInfo();
         // Build response
@@ -48,8 +49,9 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         response.setTimestamp(new Date());
         response.setInsertions(insertions);
         response.setDeletions(deletions);
-        response.setTotalNumberOfElements(totalNumberOfElements);
-        // Have a nice day
+        response.setTotalNumberOfElements(insertions.size() + deletions.size());
+        response.setCollectionSize(collectionSize);
+
         return response;
     }
 
@@ -58,7 +60,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         // Retrieve changes
         List<ChangeSetDTO<TransformCS>> insertions = transformSRV.getInsertions(lastUpdate);
         List<ChangeSetDTO<TransformCS>> deletions = transformSRV.getDeletions(lastUpdate);
-        int totalNumberOfElements = insertions.size() + deletions.size();
+        long collectionSize = transformSRV.getCollectionSize();
         // Retrieve log trace
         LogTraceInfoDTO trace = getLogTraceInfo();
         // Build response
@@ -69,7 +71,9 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         response.setTimestamp(new Date());
         response.setInsertions(insertions);
         response.setDeletions(deletions);
-        response.setTotalNumberOfElements(totalNumberOfElements);
+        response.setTotalNumberOfElements(insertions.size() + deletions.size());
+        response.setCollectionSize(collectionSize);
+
         return response;
     }
 }

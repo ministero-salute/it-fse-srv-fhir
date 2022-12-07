@@ -196,4 +196,26 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		}
 		return objects;
 	}
+
+	/**
+	 * Count all the not-deleted extensions items
+	 *
+	 * @return Number of active documents
+	 * @throws OperationException If a data-layer error occurs
+	 */
+	@Override
+	public long getActiveDocumentCount() throws OperationException {
+		// Working var
+		long size;
+		// Create query
+		Query q = query(where(Constants.App.DELETED).ne(true));
+		try {
+			// Execute count
+			size = mongoTemplate.count(q, TransformETY.class);
+		}catch (MongoException e) {
+			// Catch data-layer runtime exceptions and turn into a checked exception
+			throw new OperationException(Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC, e);
+		}
+		return size;
+	}
 }

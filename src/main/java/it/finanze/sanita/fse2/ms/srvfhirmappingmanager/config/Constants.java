@@ -161,6 +161,7 @@ public final class Constants {
 		public static final String CALLED_API_GET_ACTIVE_TRANSFORM = "Called GET /transform/active";
 		public static final String ERROR_DOCUMENT_ALREADY_EXIST = "Cannot insert the given document, it already exists";
 
+		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
 
 		private Logs() {
 			//This method is intentionally left blank. 

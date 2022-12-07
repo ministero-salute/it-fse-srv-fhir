@@ -3,10 +3,9 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
-import org.springframework.lang.Nullable;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import org.springframework.lang.Nullable;
 
 import java.util.Date;
 import java.util.List;
@@ -27,4 +26,11 @@ public interface IChangeSetSRV<T> {
      * @throws OperationException If a data-layer error occurs
      */
     List<ChangeSetDTO<T>> getDeletions(@Nullable Date lastUpdate) throws OperationException;
+
+    /**
+     * Retrieves the expected collection size after the alignment
+     * @return The collection size
+     * @throws OperationException If a data-layer error occurs
+     */
+    long getCollectionSize() throws OperationException;
 }
