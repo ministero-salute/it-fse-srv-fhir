@@ -10,16 +10,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The Class XslTransformResponseDTO.
+ * The Class TransformResponseDTO.
  *
  * 
- *         Xsl Transform Creation Response.
+ *         Transform Creation Response.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TransformUploadResponseDTO extends ResponseDTO {
 
-	@Schema(implementation = Map.class, description = "Map of the uploaded XSLT files", minLength = 1, maxLength = 1000)
+	@Schema(implementation = Map.class, description = "Map of the uploaded transform files", minLength = 1, maxLength = 1000)
 	private Map<String, Integer> items;
 
 	public TransformUploadResponseDTO() {

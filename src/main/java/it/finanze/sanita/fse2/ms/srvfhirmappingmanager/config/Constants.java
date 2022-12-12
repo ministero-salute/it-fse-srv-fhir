@@ -102,10 +102,6 @@ public final class Constants {
 	}
 
 	public static final class Collections {
-		public static final String STRUCTURE_DEFINITION = "structure-definition";
-		public static final String MAP = "structure-map";
-		public static final String VALUESET = "structure-valueset";
-		public static final String XSL_TRANSFORM = "xsl_transform_eds";
 		public static final String TRANSFORM = "transform_eds";
 
 		private Collections() {
@@ -115,26 +111,7 @@ public final class Constants {
 	public static final class Logs {
 
 		public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire %s nel tipo %s";
-		public static final String CALLED_API_POST_XSL_TRANSFORM = "Called POST /xslt"; 
-
-		public static final String CALLED_API_PUT_XSL_TRANSFORM = "Called PUT /xslt"; 
-
-		public static final String CALLED_API_GET_XSL_TRANSFORM = "Called GET /xslt"; 
-
-		public static final String CALLED_API_DELETE_XSL_TRANSFORM = "Called DELETE /xslt"; 
-
-		public static final String CALLED_API_QUERY_ROOT_EXTENSION = "Called GET /xslt by ID Root and Version";
-
-		public static final String CALLED_API_QUERY_ID = "Called GET /xslt by ID";
-
-		public static final String ERROR_INSERT_XSL_TRANSFORM = "Error inserting all ety xslTransform :"; 
-
-		public static final String ERROR_FIND_XSL_TRANSFORM = "Error find by id ety xslTransform :"; 
-
-		public static final String ERROR_UPDATING_XSL_TRANSFORM = "Error while updating XSLT "; 
-
-		public static final String ERROR_XSL_TRANSFORM_ALREADY_PRESENT = "Error: xslTransform already present in the database";
-
+		
 		public static final String ERROR_UNABLE_FIND_INSERTIONS = "Unable to retrieve change-set insertions"; 
 
 		public static final String ERROR_UNABLE_FIND_DELETIONS = "Unable to retrieve change-set deletions"; 

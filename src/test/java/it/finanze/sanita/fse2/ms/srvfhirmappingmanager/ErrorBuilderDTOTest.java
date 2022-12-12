@@ -34,9 +34,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationExcep
 @ActiveProfiles(Constants.Profile.TEST)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class ErrorBuilderDTOTest extends AbstractTest {
-
-
-
+	
     @Test
     void createGenericErrorTest() {
 

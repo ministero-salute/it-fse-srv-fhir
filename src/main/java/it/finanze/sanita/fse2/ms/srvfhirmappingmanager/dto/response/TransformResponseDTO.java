@@ -8,10 +8,10 @@ import lombok.EqualsAndHashCode;
 
 
 /**
- * The Class XslTransformResponseDTO.
+ * The Class TransformResponseDTO.
  *
  * 
- * 	Xsl Transform Creation Response.
+ * 	Transform Creation Response.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
