@@ -7,16 +7,14 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByIdMockRequest;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformsMockRequest;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.queryActiveTransformMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.queryTransformMockRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentMatchers;
@@ -35,11 +33,14 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.util.CollectionUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.MongoException;
 
 import brave.Tracer;
@@ -411,31 +412,6 @@ class TransformControllerTest extends AbstractTest {
 	}
 
 	@Test
-	void findTransformByIdRootAndExtensionTest() throws Exception {
-		prepareCollection();
-		ResultActions actions = mvc.perform(queryTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl()));
-		actions.andExpectAll(status().is2xxSuccessful());
-		TransformDTO returnedResult = JsonUtility.toJsonObject(actions.andReturn().getResponse().getContentAsString(), TransformDTO.class);
-		assertNotNull(returnedResult);
-	}
-
-	@Test
-	void findTransformByIdRootAndExtensionInvalidRootTest() throws Exception {
-		prepareCollection();
-		ResultActions actions = mvc.perform(queryTransformMockRequest(TEST_ID_ROOT_INV, TEST_ID_VERSION, getBaseUrl()));
-		actions.andExpectAll(status().is4xxClientError());
-	}
-
-	@Test
-	void findTransformByIdRootAndExtensionExceptionsTest() throws Exception {
-		prepareCollection();
-		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(queryTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(status().is5xxServerError());
-		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(queryTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(status().is5xxServerError());
-	}
-
-	@Test
 	void findTransformByIdDocumentNotFoundTest() throws Exception {
 		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpect(status().isNotFound());
 	}
@@ -460,16 +436,17 @@ class TransformControllerTest extends AbstractTest {
 	@Test
 	void getZeroActiveTransformsTest() throws Exception {
 		this.deleteTransformTest();
-		String res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn().getResponse().getContentAsString();
-		List<?> list = JsonUtility.toJsonObject(res, List.class);
-		assertEquals(0, list.size());
+		MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
+
+		List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
+		assertTrue(CollectionUtils.isEmpty(resultList));
 	}
 
 	@Test
 	void getActiveTransformsOneFoundTest() throws Exception {
 		prepareCollection();
-		String res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn().getResponse().getContentAsString();
-		List<?> list = JsonUtility.toJsonObject(res, List.class);
-		assertEquals(1, list.size());
+		MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
+		List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
+		assertEquals(1, resultList.size());
 	}
 }

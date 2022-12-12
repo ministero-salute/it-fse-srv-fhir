@@ -49,15 +49,10 @@ public final class MockRequests {
         return obj;
     }
 
-    public static MockHttpServletRequestBuilder queryTransformMockRequest(String root, String version,
-                                                                             String baseUrl) {
-        return get(getBaseUrl() + "/transform/root/" + root + "/version/" + version)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
     public static MockHttpServletRequestBuilder queryActiveTransformMockRequest(String baseUrl) {
-        return get(getBaseUrl() + "/transform/active")
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
+        return get(getBaseUrl() + "/transform")
+            .param("includeDeleted", String.valueOf(false))
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
 }
