@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.XslTransformETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
 
 public abstract class AbstractTest {
 
@@ -194,6 +197,6 @@ public abstract class AbstractTest {
 	}
 
 	public void prepareCollection() {
-		mongo.insert(Document.parse(TRANSFORM_DEMO_ETY), "test_transform");
+		mongo.insert(Document.parse(TRANSFORM_DEMO_ETY), mongo.getCollectionName(TransformETY.class));
 	}
 }

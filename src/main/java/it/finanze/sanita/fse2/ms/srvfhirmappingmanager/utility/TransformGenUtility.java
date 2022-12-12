@@ -77,9 +77,8 @@ public class TransformGenUtility {
      */
     public static Map<String, StructureMap> createMaps(String rootMapFileName, MultipartFile[] files) throws DataProcessingException, DocumentNotFoundException {
         Map<String, StructureMap> filesToAdd = new HashMap<>();
+        boolean rootFind = false;
         try {
-//        	checkRootMap(rootMapFileName, files);
-        	boolean rootFind = false;
         	for (MultipartFile file : files) {
         		String fileString = new String(file.getBytes());
         		Pattern pattern = Pattern.compile("^ *map.*= *\"(.*)\"++");
@@ -97,12 +96,13 @@ public class TransformGenUtility {
         		filesToAdd.put(name, StructureMap.fromMultipart(name, file));
         	}
         	
-        	if(!rootFind) {
-        		throw new BusinessException("Root not found ");
-        	}
         } catch(Exception ex) {
-        	log.error("Error while perform create maps : " , ex);
-        	throw new BusinessException("Error while perform create maps : " , ex);
+            log.error("Error while perform create maps : " , ex);
+            throw new BusinessException("Error while perform create maps : " , ex);
+        }
+        
+        if(!rootFind) {
+            throw new DocumentNotFoundException("Root not found");
         }
         
         return filesToAdd;

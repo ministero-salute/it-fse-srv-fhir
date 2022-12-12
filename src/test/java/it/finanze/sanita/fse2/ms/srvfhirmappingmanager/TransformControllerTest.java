@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentMatchers;
@@ -284,8 +285,7 @@ class TransformControllerTest extends AbstractTest {
 		prepareCollection();
 
 		// Update ETY
-
-		MockMultipartFile newMap = new MockMultipartFile("maps", "map2.json",
+		MockMultipartFile newMap = new MockMultipartFile("maps", "map1.json",
 				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
 
 		MockMultipartFile newStructureDefs = new MockMultipartFile("structureDefinitions", "structureDefinitions2.json",
@@ -326,7 +326,7 @@ class TransformControllerTest extends AbstractTest {
 
 		// Update ETY
 
-		MockMultipartFile newMap = new MockMultipartFile("maps", "map2.json",
+		MockMultipartFile newMap = new MockMultipartFile("maps", "map1.json",
 				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
 
 		MockMultipartFile newStructureDefs = new MockMultipartFile("structureDefinitions", "structureDefinitions2.json",
@@ -399,14 +399,14 @@ class TransformControllerTest extends AbstractTest {
 
 	@Test
 	void deleteTransformNotFoundTest() throws Exception {
-		mvc.perform(deleteTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_VERSION, getBaseUrl())).andExpectAll(
-				status().is4xxClientError());
+		mvc.perform(deleteTransformMockRequest(TEST_ID_ROOT_NOT_FOUND, getBaseUrl())).andExpectAll(
+				status().isNotFound());
 	}
 
 	@Test
 	void deleteTransformTest() throws Exception {
 		prepareCollection();
-		mvc.perform(deleteTransformMockRequest(TEST_ID_ROOT, TEST_ID_VERSION, getBaseUrl())).andExpectAll(
+		mvc.perform(deleteTransformMockRequest(TEST_ID_ROOT, getBaseUrl())).andExpectAll(
 				status().is2xxSuccessful());
 	}
 

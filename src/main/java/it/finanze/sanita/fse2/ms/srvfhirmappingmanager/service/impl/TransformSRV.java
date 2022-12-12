@@ -78,36 +78,32 @@ public class TransformSRV implements ITransformSRV {
 	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
 		Map<String,Integer> output = new LinkedHashMap<>();
-		try {
-			TransformETY lastDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
+		TransformETY lastDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 
-			if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
-				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-			}
-
-			if (!ValidationUtility.isMajorVersion(body.getVersion(), lastDocument.getVersion())) {
-				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", body.getVersion(), lastDocument.getVersion()));
-			}
-
-			Map<String, StructureMap> mapsToUpdate = TransformGenUtility.createMaps(body.getRootMapIdentifier(), maps);
-			Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.createDefinitions(null, structureDefinitions);
-			Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.createValuesets(valueSets);
-
-			delete(lastDocument.getTemplateIdRoot());
-			// Insert rootMapName at root level of ety
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), body.getRootMapIdentifier(),
-				new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
-			transformRepo.insert(transformETY);
-	
-			output.put("updatedMaps", mapsToUpdate.size());
-			output.put("updatedDefinitions", definitionsToUpdate.size());
-			output.put("updatedValuesets", valuesetsToUpdate.size());
-	
-			return output;
-		} catch (MongoException ex) {
-			log.error(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
-			throw new OperationException(Constants.Logs.ERROR_UPDATE_TRANSFORM , ex);
+		if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
+			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
+
+		if (!ValidationUtility.isMajorVersion(body.getVersion(), lastDocument.getVersion())) {
+			throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", body.getVersion(), lastDocument.getVersion()));
+		}
+
+		Map<String, StructureMap> mapsToUpdate = TransformGenUtility.createMaps(body.getRootMapIdentifier(), maps);
+		Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.createDefinitions(null, structureDefinitions);
+		Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.createValuesets(valueSets);
+
+		delete(lastDocument.getTemplateIdRoot());
+		// Insert rootMapName at root level of ety
+		TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), body.getRootMapIdentifier(),
+			new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+		transformRepo.insert(transformETY);
+
+		output.put("updatedMaps", mapsToUpdate.size());
+		output.put("updatedDefinitions", definitionsToUpdate.size());
+		output.put("updatedValuesets", valuesetsToUpdate.size());
+
+		return output;
+		
 	}
 
 	@Override
@@ -115,7 +111,7 @@ public class TransformSRV implements ITransformSRV {
 		Map<String, Integer> output = new LinkedHashMap<>();
 		try {
 			List<TransformETY> deletedTransform = transformRepo.remove(templateIdRoot);
-			if (deletedTransform != null) {
+			if (!CollectionUtils.isEmpty(deletedTransform)) {
 				output.put(
 					"deletedMaps",
 					deletedTransform.stream().mapToInt(s -> s.getStructureMaps().size()).sum()

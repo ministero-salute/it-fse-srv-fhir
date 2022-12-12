@@ -49,7 +49,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         response.setTimestamp(new Date());
         response.setInsertions(insertions);
         response.setDeletions(deletions);
-        response.setTotalNumberOfElements(insertions.size() + deletions.size());
+        response.setTotalNumberOfElements((long) insertions.size() + deletions.size());
         response.setCollectionSize(collectionSize);
 
         return response;
@@ -71,7 +71,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL {
         response.setTimestamp(new Date());
         response.setInsertions(insertions);
         response.setDeletions(deletions);
-        response.setTotalNumberOfElements(insertions.size() + deletions.size());
+        response.setTotalNumberOfElements((long) insertions.size() + deletions.size());
         response.setCollectionSize(collectionSize);
 
         return response;

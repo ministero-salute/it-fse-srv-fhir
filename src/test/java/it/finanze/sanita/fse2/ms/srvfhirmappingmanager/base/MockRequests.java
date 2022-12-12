@@ -90,9 +90,8 @@ public final class MockRequests {
 
     /** TRANSFORM **/
 
-    public static MockHttpServletRequestBuilder deleteTransformMockRequest(String root, String version,
-                                                                              String baseUrl) {
-        return delete(getBaseUrl() + "/transform/root/" + root + "/version/" + version)
+    public static MockHttpServletRequestBuilder deleteTransformMockRequest(String templateIdRoot, String baseUrl) {
+        return delete(getBaseUrl() + "/transform/{templateIdRoot}", templateIdRoot)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
