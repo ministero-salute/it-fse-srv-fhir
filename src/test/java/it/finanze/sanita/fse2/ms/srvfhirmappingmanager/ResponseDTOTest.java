@@ -3,20 +3,20 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.XslTransformResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 
 @SuppressWarnings("rawtypes")
 class ResponseDTOTest extends AbstractTest {
@@ -99,30 +99,6 @@ class ResponseDTOTest extends AbstractTest {
 		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
 	} 
-	
-	@Test
-	void xslTransformResponseDtoNoArgsTest() {
-
-		XslTransformResponseDTO dto = new XslTransformResponseDTO(); 
-		
-		assertEquals(XslTransformResponseDTO.class, dto.getClass()); 
-
-		
-	}
-	
-	@Test
-	void xslTransformResponseDtoTest() {
-		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-
-		XslTransformResponseDTO dto = new XslTransformResponseDTO(logTraceInfoDto); 
-		
-		assertEquals(XslTransformResponseDTO.class, dto.getClass()); 
-		assertEquals(String.class, dto.getSpanID().getClass()); 
-		assertEquals(String.class, dto.getTraceID().getClass()); 
-		
-		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
-		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
-	}
 	
 	@Test
 	void changesetResponseDtoTest() {

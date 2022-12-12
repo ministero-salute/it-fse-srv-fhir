@@ -15,14 +15,6 @@ public class CollectionNaming {
     @Autowired
     private ProfileUtility profileUtility;
 
-    @Bean("xslTransformBean")
-    public String getDefinitionCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.XSL_TRANSFORM;
-        }
-        return Constants.Collections.XSL_TRANSFORM;
-    }
-
     @Bean("transformBean")
     public String getTransformCollection() {
         if (profileUtility.isTestProfile()) {
