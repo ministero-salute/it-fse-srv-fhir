@@ -10,47 +10,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config;
  */
 public final class Constants {
 
-	/**
-	 *	Path scan.
-	 */
-	public static final class ComponentScan {
-
-		/**
-		 * Base path.
-		 */
-		public static final String BASE = "it.finanze.sanita.fse2.ms.srvfhirmappingmanager";
-
-		/**
-		 * Controller path.
-		 */
-		public static final String CONTROLLER = "it.sanita.srvfhirmappingmanager.controller";
-
-		/**
-		 * Service path.
-		 */
-		public static final String SERVICE = "it.sanita.srvfhirmappingmanager.service";
-
-		/**
-		 * Configuration path.
-		 */
-		public static final String CONFIG = "it.sanita.srvfhirmappingmanager.config";
-
-		/**
-		 * Configuration mongo path.
-		 */
-		public static final String CONFIG_MONGO = "it.sanita.srvfhirmappingmanager.config.mongo";
-
-		/**
-		 * Configuration mongo repository path.
-		 */
-		public static final String REPOSITORY_MONGO = "it.sanita.srvfhirmappingmanager.repository";	 
-
-		private ComponentScan() {
-			//This method is intentionally left blank.
-		}
-
-	}
-
+	 
 
 	public static final class Profile {
 		public static final String TEST = "test";

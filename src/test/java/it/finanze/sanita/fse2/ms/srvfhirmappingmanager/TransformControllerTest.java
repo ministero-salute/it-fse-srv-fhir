@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,14 +54,10 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
 class TransformControllerTest extends AbstractTest {
 	private final String TEST_ID_ROOT = "Root_A";
-	private final String TEST_ID_VERSION = "1.1";
-
-	private final String TEST_ID_ROOT_INV = "Root_A_INV";
 
 	private final String TEST_ID_ROOT_NOT_FOUND = "Root_A_NF";
 

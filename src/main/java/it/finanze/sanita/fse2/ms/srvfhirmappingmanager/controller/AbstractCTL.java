@@ -7,15 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import lombok.extern.slf4j.Slf4j; 
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO; 
 
 /**
- * 
- *
  *	Abstract controller.
  */
-@Slf4j
 public abstract class AbstractCTL {
 
 	@Autowired
