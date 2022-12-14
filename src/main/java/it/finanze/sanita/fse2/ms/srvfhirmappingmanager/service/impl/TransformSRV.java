@@ -3,7 +3,22 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.mongodb.MongoException;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
@@ -12,7 +27,13 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
@@ -23,15 +44,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.TransformGenUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -44,9 +56,9 @@ public class TransformSRV implements ITransformSRV {
 	private ITransformRepo transformRepo;
 
 	@Override
-	public Map<String,Integer> insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+	public CrudInfoDTO insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
 		log.debug("[EDS] Insertion of transform - START");
-		Map<String,Integer> output = new LinkedHashMap<>();
+		CrudInfoDTO output = new CrudInfoDTO();
 		try {
 			TransformETY existingDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 			if (existingDocument != null) {
@@ -63,9 +75,9 @@ public class TransformSRV implements ITransformSRV {
 					new ArrayList<>(mapsToInsert.values()), new ArrayList<>(definitionsToInsert.values()), new ArrayList<>(valuesetsToInsert.values()));
 			transformRepo.insert(transformETY);
 			
-			output.put("insertedMaps", mapsToInsert.values().size());
-			output.put("insertedDefinitions", definitionsToInsert.values().size());
-			output.put("insertedValuesets", valuesetsToInsert.values().size());
+			output.setMaps(mapsToInsert.values().size());
+			output.setDefinitions(definitionsToInsert.values().size());
+			output.setValuesets(valuesetsToInsert.values().size());
 
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
@@ -75,9 +87,9 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public Map<String, Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
+	public CrudInfoDTO updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
-		Map<String,Integer> output = new LinkedHashMap<>();
+		CrudInfoDTO output = new CrudInfoDTO();
 		TransformETY lastDocument = transformRepo.findByTemplateIdRoot(body.getTemplateIdRoot());
 
 		if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
@@ -98,30 +110,27 @@ public class TransformSRV implements ITransformSRV {
 			new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
 		transformRepo.insert(transformETY);
 
-		output.put("updatedMaps", mapsToUpdate.size());
-		output.put("updatedDefinitions", definitionsToUpdate.size());
-		output.put("updatedValuesets", valuesetsToUpdate.size());
+		output.setMaps(mapsToUpdate.size());
+		output.setDefinitions(definitionsToUpdate.size());
+		output.setValuesets(valuesetsToUpdate.size());
 
 		return output;
 		
 	}
 
 	@Override
-	public Map<String, Integer> delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
-		Map<String, Integer> output = new LinkedHashMap<>();
+	public CrudInfoDTO delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
+		CrudInfoDTO output = new CrudInfoDTO();
 		try {
 			List<TransformETY> deletedTransform = transformRepo.remove(templateIdRoot);
 			if (!CollectionUtils.isEmpty(deletedTransform)) {
-				output.put(
-					"deletedMaps",
+				output.setMaps(
 					deletedTransform.stream().mapToInt(s -> s.getStructureMaps().size()).sum()
 				);
-				output.put(
-					"deletedDefinitions",
+				output.setDefinitions(
 					deletedTransform.stream().mapToInt(s -> s.getStructureDefinitions().size()).sum()
 				);
-				output.put(
-					"deletedValuesets",
+				output.setValuesets(
 					deletedTransform.stream().mapToInt(s -> s.getStructureValuesets().size()).sum()
 				);
 			} else {

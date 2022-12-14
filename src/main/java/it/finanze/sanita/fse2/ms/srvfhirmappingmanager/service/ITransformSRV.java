@@ -3,18 +3,19 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Transform interface service.
@@ -29,7 +30,7 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param maps
 	 * @param valueSets
 	 */
-	Map<String,Integer> insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
+	CrudInfoDTO insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException;
 
 	/**
 	 * Update a FHIR transform by request's components
@@ -39,7 +40,7 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param valueSets
 	 * @throws InvalidVersionException
 	 */
-	Map<String,Integer> updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException;
+	CrudInfoDTO updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException;
 
 	/**
 	 * Delete transform by templateIdRoot and version
@@ -47,7 +48,7 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * @param templateIdRoot
 	 * @return
 	 */
-	Map<String, Integer> delete(String templateIdRoot) throws OperationException, DocumentNotFoundException;
+	CrudInfoDTO delete(String templateIdRoot) throws OperationException, DocumentNotFoundException;
 
 	/**
 	 * Find transform by templateIdRoot and version
