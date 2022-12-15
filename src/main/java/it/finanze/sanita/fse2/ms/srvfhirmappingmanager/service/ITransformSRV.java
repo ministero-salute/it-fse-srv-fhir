@@ -3,19 +3,14 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
-
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * Transform interface service.
@@ -61,13 +56,13 @@ public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
 	 * Find all transform saved on database
 	 * @return
 	 */
-	List<TransformDTO> findAll() throws OperationException;
+	List<TransformDTO> findAll(TransformDTO.Options opts) throws OperationException;
 
 	/**
 	 * Find all active transform saved on database
 	 * @return
 	 */
-	List<TransformDTO> findAllActive() throws OperationException;
+	List<TransformDTO> findAllActive(TransformDTO.Options opts) throws OperationException;
 
 	/**
 	 * Find transform by its id

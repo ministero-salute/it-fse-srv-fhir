@@ -3,21 +3,23 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
-
-import java.util.Date;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.DefinitionDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
 @Data
 @AllArgsConstructor
@@ -51,4 +53,31 @@ public class TransformDTO {
     private String rootMap;
 
     private boolean deleted;
+
+    @AllArgsConstructor
+    public static class Options {
+        private final boolean binary;
+    }
+
+    public static TransformDTO fromEntity(TransformETY e) {
+        return new TransformDTO(
+            e.getId(),
+            e.getTemplateIdRoot(),
+            e.getVersion(),
+            e.getInsertionDate(),
+            e.getLastUpdateDate(),
+            e.getStructureMaps().stream().map(MapDTO::fromEntity).collect(Collectors.toList()),
+            e.getStructureValuesets().stream().map(ValuesetDTO::fromEntity).collect(Collectors.toList()),
+            e.getStructureDefinitions().stream().map(DefinitionDTO::fromEntity).collect(Collectors.toList()),
+            e.getRootStructureMap(),
+            e.isDeleted()
+        );
+    }
+
+    public TransformDTO applyOptions(Options o) {
+        maps.forEach(m -> m.applyOptions(new MapDTO.Options(o.binary)));
+        valuesets.forEach(v -> v.applyOptions(new ValuesetDTO.Options(o.binary)));
+        definitions.forEach(d -> d.applyOptions(new DefinitionDTO.Options(o.binary)));
+        return this;
+    }
 }

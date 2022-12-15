@@ -11,6 +11,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocs
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +67,13 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public List<TransformDTO> getTransform(boolean includeDeleted) throws OperationException {
-		return includeDeleted ? transformSRV.findAll() : transformSRV.findAllActive();
+	public GetDocumentsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
+		// Create options
+		TransformDTO.Options opts = new TransformDTO.Options(binary);
+		// Retrieve data
+		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
+		// Transform and return
+		return new GetDocumentsResDTO(getLogTraceInfo(), items);
 	}
 	
 }
