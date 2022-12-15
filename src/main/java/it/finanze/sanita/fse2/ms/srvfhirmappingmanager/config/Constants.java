@@ -82,20 +82,11 @@ public final class Constants {
 
 		public static final String ERROR_DELETING_ETY = "Error deleting entity ";
 		public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists";
-		public static final String CALLED_API_QUERY_TRANSFORM_ROOT_EXTENSION = "Called GET /transform by ID Root and Version";
-		public static final String CALLED_API_UPLOAD_TRANSFORM = "Called POST /transform";
-		public static final String CALLED_API_UPDATE_TRANSFORM = "Called PUT /transform";
-		public static final String CALLED_API_DELETE_TRANSFORM = "Called DELETE /transform";
 		public static final String ERROR_INSERT_TRANSFORM = "Error while inserting transform";
 		public static final String ERROR_UPDATE_TRANSFORM = "Error while updating transform";
-
 		public static final String ERROR_FIND_TRANSFORM = "Error find by id ety transform :";
 		public static final String ERROR_UPDATING_TRANSFORM = "Error while updating transform ";
-		public static final String CALLED_API_GET_TRANSFORM = "Called GET /transform/id";
-		public static final String CALLED_API_GET_ALL_TRANSFORM = "Called GET /transform";
-
 		public static final String ERROR_FIND_ALL_TRANSFORM = "Error find all active ety transform :";
-		public static final String CALLED_API_GET_ACTIVE_TRANSFORM = "Called GET /transform/active";
 		public static final String ERROR_DOCUMENT_ALREADY_EXIST = "Cannot insert the given document, it already exists";
 
 		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";

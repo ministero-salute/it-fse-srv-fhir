@@ -3,18 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
@@ -23,82 +11,63 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocs
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Slf4j
 public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
 	@Autowired
-	private transient ITransformSRV transformSRV;
-
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -3766806530281454403L;
-
+	private ITransformSRV transformSRV;
 
 	@Override
-	public ResponseEntity<PostDocsResDTO> uploadTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
-		log.debug(Constants.Logs.CALLED_API_UPLOAD_TRANSFORM);
-		if (validateFiles(maps)) {
-			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-							.templateIdRoot(templateIdRoot)
-							.version(version)
-							.rootMapIdentifier(rootMapIdentifier).build();
-			CrudInfoDTO output = transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-			return new ResponseEntity<>(new PostDocsResDTO(getLogTraceInfo(), output), HttpStatus.CREATED);
-		} else {
-			throw new InvalidContentException("One or more files appear to be empty");
-		}
+	public PostDocsResDTO uploadTransform(String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
+		if (!validateFiles(maps)) throw new InvalidContentException("One or more files appear to be empty");
+		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+						.templateIdRoot(templateIdRoot)
+						.version(version)
+						.rootMapIdentifier(rootMapIdentifier).build();
+		CrudInfoDTO output = transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+		return new PostDocsResDTO(getLogTraceInfo(), output);
 	}
 
 	@Override
-	public ResponseEntity<PutDocsResDTO> updateTransform(HttpServletRequest request, String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
-		log.debug(Constants.Logs.CALLED_API_UPDATE_TRANSFORM);
-		if (validateFiles(maps)) {
-			TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-					.templateIdRoot(templateIdRoot)
-					.version(version)
-					.rootMapIdentifier(rootMapIdentifier).build();
-			CrudInfoDTO output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-			return new ResponseEntity<>(new PutDocsResDTO(getLogTraceInfo(), output), HttpStatus.OK);
-		} else {
-			throw new InvalidContentException("One or more files appear to be empty");
-		}
+	public PutDocsResDTO updateTransform(String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
+		if (!validateFiles(maps)) throw new InvalidContentException("One or more files appear to be empty");
+		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
+				.templateIdRoot(templateIdRoot)
+				.version(version)
+				.rootMapIdentifier(rootMapIdentifier).build();
+		CrudInfoDTO output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
+		return new PutDocsResDTO(getLogTraceInfo(), output);
 	}
 
 	@Override
-	public ResponseEntity<DelDocsResDTO> deleteTransform(HttpServletRequest request, String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		log.debug(Constants.Logs.CALLED_API_DELETE_TRANSFORM);
-		CrudInfoDTO existsTransform = transformSRV.delete(templateIdRoot);
-		return new ResponseEntity<>(new DelDocsResDTO(getLogTraceInfo(), existsTransform), HttpStatus.OK);
+	public DelDocsResDTO deleteTransform(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return new DelDocsResDTO(getLogTraceInfo(), transformSRV.delete(templateIdRoot));
 	}
 
 	@Override
-	public ResponseEntity<TransformDTO> getTransformByTemplateIdRootAndVersion(HttpServletRequest request, String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		log.info(Constants.Logs.CALLED_API_QUERY_TRANSFORM_ROOT_EXTENSION);
-		return ResponseEntity.status(HttpStatus.OK).body(transformSRV.findByTemplateIdRoot(templateIdRoot));
+	public TransformDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return transformSRV.findByTemplateIdRoot(templateIdRoot);
 	}
 
 	@Override
-	public ResponseEntity<TransformDTO> getTransformById(HttpServletRequest request, String id) throws OperationException, DocumentNotFoundException {
-		log.info(Constants.Logs.CALLED_API_GET_TRANSFORM);
-		TransformDTO response = transformSRV.findById(id);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+	public TransformDTO getTransformById(String id) throws OperationException, DocumentNotFoundException {
+		return transformSRV.findById(id);
 	}
 
 	@Override
-	public ResponseEntity<List<TransformDTO>> getTransform(HttpServletRequest request, boolean includeDeleted) throws OperationException {
-		log.info(Constants.Logs.CALLED_API_GET_ALL_TRANSFORM);
-		List<TransformDTO> response = includeDeleted ? transformSRV.findAll() : transformSRV.findAllActive();
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+	public List<TransformDTO> getTransform(boolean includeDeleted) throws OperationException {
+		return includeDeleted ? transformSRV.findAll() : transformSRV.findAllActive();
 	}
 	
 }
