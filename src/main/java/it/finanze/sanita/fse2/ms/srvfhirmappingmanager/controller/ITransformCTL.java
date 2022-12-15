@@ -7,6 +7,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -54,8 +55,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
 /**
  * Transform Controller
  */
-@RequestMapping(path = "/v1/transform")
-@Tag(name = "Transform Controller")
+@RequestMapping(path = API_TRANSFORM_MAPPER)
+@Tag(name = API_TRANSFORM_TAG)
 @Validated
 public interface ITransformCTL extends Serializable {
 
@@ -69,9 +70,9 @@ public interface ITransformCTL extends Serializable {
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         ResponseEntity<PostDocsResDTO> uploadTransform(HttpServletRequest request,
-                        @RequestPart("rootMapIdentifier") @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") @NotBlank(message = "Root map identifier cannot be blank") String rootMapIdentifier,
-                        @RequestPart("templateIdRoot") @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
-                        @RequestPart("version") @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
+                        @RequestPart(API_PATH_ROOTMAPIDENTIFIER_VAR) @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") @NotBlank(message = "Root map identifier cannot be blank") String rootMapIdentifier,
+                        @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
+                        @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "structureDefinitions", required = false) MultipartFile[] structureDefinitions,
                         @Parameter(description = "Map files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("maps") MultipartFile[] maps,
                         @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "valueSets", required = false) MultipartFile[] valueSets) throws IOException, OperationException,
@@ -87,16 +88,16 @@ public interface ITransformCTL extends Serializable {
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         ResponseEntity<PutDocsResDTO> updateTransform(HttpServletRequest request,
-                        @RequestPart("rootMapIdentifier") @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") String rootMapIdentifier,
-                        @RequestPart("templateIdRoot") @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
-                        @RequestPart("version") @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
+                        @RequestPart(API_PATH_ROOTMAPIDENTIFIER_VAR) @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") String rootMapIdentifier,
+                        @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
+                        @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "structureDefinitions", required = false) MultipartFile[] structureDefinitions,
                         @Parameter(description = "Maps files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart("maps") MultipartFile[] maps,
                         @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = "valueSets", required = false) MultipartFile[] valueSets) throws IOException, OperationException,
                         DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException,
                         InvalidContentException;
 
-        @DeleteMapping(value = "/{templateIdRoot}", produces = {
+        @DeleteMapping(value = API_DELETE_BY_TEMPLATEIDROOT, produces = {
                         MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Delete transform from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare una trasformata dalla base dati tramite il Template ID Root.")
         @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class)))
@@ -107,7 +108,7 @@ public interface ITransformCTL extends Serializable {
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         ResponseEntity<DelDocsResDTO> deleteTransform(HttpServletRequest request, @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot) throws DocumentNotFoundException, OperationException;
 
-        @GetMapping(value = "/{templateIdRoot}", produces = { MediaType.APPLICATION_JSON_VALUE })
+        @GetMapping(value = API_GET_BY_TEMPLATEIDROOT, produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a transform from MongoDB, given its Template ID Root and its Version", description = "Servizio che consente di ritornare una trasformata dalla base dati tramite il suo Template ID Root e Version.")
         @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
         @ApiResponses(value = {
@@ -119,7 +120,7 @@ public interface ITransformCTL extends Serializable {
                                                                             @PathVariable @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot)
                         throws DocumentNotFoundException, OperationException;
 
-        @GetMapping(value = "/id/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+        @GetMapping(value = API_GET_ONE_BY_ID, produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a transform from MongoDB, given its ID", description = "Servizio che consente di ritornare una trasformata dalla base dati tramite il suo ID.")
         @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = TransformResponseDTO.class)))
         @ApiResponses(value = {
