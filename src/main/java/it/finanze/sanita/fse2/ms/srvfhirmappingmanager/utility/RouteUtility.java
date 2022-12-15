@@ -13,13 +13,20 @@ public final class RouteUtility {
     public static final String API_VERSION = "v1";
     public static final String API_CHANGESET = "changeset";
     public static final String API_TRANSFORM = "transform";
+    public static final String API_STATUS = "status";
+
     public static final String API_ID = "id";
     public static final String API_TRANSFORM_MAPPER = "/" + API_VERSION + "/" + API_TRANSFORM;
 
+    public static final String API_CHANGESET_TAG = "ChangeSet";
     public static final String API_TRANSFORM_TAG = "Transform Controller";
+
+    public static final String API_CHANGESET_STATUS = "/" + API_VERSION + "/" + API_CHANGESET + "/" + API_TRANSFORM + "/" + API_STATUS ;
 
     public static final String API_QP_INCLUDE_DELETED = "includeDeleted";
     public static final String API_QP_BINARY = "includeBinary";
+    public static final String API_QP_LAST_UPDATE = "lastUpdate";
+
     public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "templateIdRoot";
     public static final String API_PATH_ROOT_MAP_IDENTIFIER_VAR = "rootMapIdentifier";
     public static final String API_PATH_VALUESETS_VAR = "valueSets";

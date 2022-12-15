@@ -4,15 +4,6 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 
-import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,13 +15,20 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.spec
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.NoFutureDate;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Date;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
 
 /**
  * ChangeSet retriever controller
- *
  */
-@RequestMapping(path = "/v1/changeset")
-@Tag(name = "Change Set controller")
+@Tag(name = API_CHANGESET_TAG)
 @Validated
 public interface IChangeSetCTL {
 
@@ -39,8 +37,8 @@ public interface IChangeSetCTL {
 			@ApiResponse(responseCode = "200",description = "Documents uploaded",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,schema = @Schema(implementation = ChangeSetResDTO.class))),
 			@ApiResponse(responseCode = "400",description = "Invalid parameters",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500",description = "Internal Server Error",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class)))})
-	@GetMapping("/transform/status")
-	ChangeSetResDTO<TransformCS> getTransformChangeSet(@RequestParam(value="lastUpdate", required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = "The last update date cannot be in the future")Date lastUpdate)throws OperationException;
+	@GetMapping(API_CHANGESET_STATUS)
+	ChangeSetResDTO<TransformCS> getTransformChangeSet(@RequestParam(value=API_QP_LAST_UPDATE, required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = "The last update date cannot be in the future")Date lastUpdate)throws OperationException;
 
 
 }
