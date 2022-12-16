@@ -104,9 +104,6 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-		} catch (Exception ex) {
-			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
-			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
 		}
 		return entities;
 	}
