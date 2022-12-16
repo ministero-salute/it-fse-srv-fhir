@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FUTURE_DATE;
 
 /**
  * ChangeSet retriever controller
@@ -38,7 +39,7 @@ public interface IChangeSetCTL {
 			@ApiResponse(responseCode = "400",description = "Invalid parameters",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500",description = "Internal Server Error",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class)))})
 	@GetMapping(API_CHANGESET_STATUS)
-	ChangeSetResDTO<TransformCS> getTransformChangeSet(@RequestParam(value=API_QP_LAST_UPDATE, required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = "The last update date cannot be in the future")Date lastUpdate)throws OperationException;
+	ChangeSetResDTO<TransformCS> getTransformChangeSet(@RequestParam(value=API_QP_LAST_UPDATE, required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = ERR_VAL_FUTURE_DATE)Date lastUpdate)throws OperationException;
 
 
 }

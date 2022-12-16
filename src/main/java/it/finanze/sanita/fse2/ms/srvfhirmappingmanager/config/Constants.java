@@ -79,6 +79,8 @@ public final class Constants {
 		public static final String ERROR_EXECUTE_EXIST_VERSION_QUERY = "Error while execute exists by version query "; 
 
 		public static final String ERROR_INSERTING_ETY = "Error inserting entity "; 
+		
+		public static final String ERR_VAL_FUTURE_DATE = "The last update date cannot be in the future";
 
 		public static final String ERROR_DELETING_ETY = "Error deleting entity ";
 		public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists";
