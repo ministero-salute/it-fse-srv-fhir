@@ -5,12 +5,14 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ARRAY_FILES_MAX;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ARRAY_FILES_MIN;
@@ -33,10 +35,15 @@ public class GetDocumentsResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param items     The available documents object
      */
-    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, List<TransformDTO> items) {
+    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, List<TransformDTO> items, Options o) {
         super(traceInfo);
-        this.items = items;
+        this.items = applyOptions(items, o);
         this.numberOfItems = items.size();
     }
+    
+	private List<TransformDTO> applyOptions(List<TransformDTO> documents, Options options) {
+		return documents.stream().map(d -> d.applyOptions(options)).collect(Collectors.toList());
+	}
+
 
 }

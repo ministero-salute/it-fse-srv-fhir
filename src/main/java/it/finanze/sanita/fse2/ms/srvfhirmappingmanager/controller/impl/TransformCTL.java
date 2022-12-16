@@ -6,6 +6,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
@@ -58,8 +59,10 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public TransformDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return transformSRV.findByTemplateIdRoot(templateIdRoot);
+	public GetDocumentsResDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
+		return new GetDocumentsResDTO(getLogTraceInfo(), transformSRV.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
+
+//		return transformSRV.findByTemplateIdRoot(templateIdRoot);
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 		// Retrieve data
 		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
 		// Transform and return
-		return new GetDocumentsResDTO(getLogTraceInfo(), items);
+		return new GetDocumentsResDTO(getLogTraceInfo(), items, opts);
 	}
 	
 }

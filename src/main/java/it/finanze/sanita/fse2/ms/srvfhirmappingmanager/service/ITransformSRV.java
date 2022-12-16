@@ -69,4 +69,7 @@ public interface ITransformSRV extends IChangeSetSRV{
 	 * @return
 	 */
     TransformDTO findById(String id) throws OperationException, DocumentNotFoundException;
+
+	List<TransformDTO> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted)
+			throws DocumentNotFoundException, OperationException;
 }

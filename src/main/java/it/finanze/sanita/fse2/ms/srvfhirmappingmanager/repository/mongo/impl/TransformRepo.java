@@ -13,8 +13,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.Transfo
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY.FIELD_TEMPLATE_ID_ROOT;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -77,14 +78,20 @@ public class TransformRepo implements ITransformRepo, Serializable {
 
 	@Override
 	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+		return mongoTemplate.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)), TransformETY.class);
+	}
+	
+	@Override
+	public List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException {
+		List<TransformETY> entities;
+		// Search by template id
+		Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot));
+		// Check if deleted are not allowed
+		if(!deleted) q.addCriteria(where(FIELD_DELETED).ne(true));
+		// Sort by insertion
+		q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 		try {
-			SortOperation sortOperation = Aggregation.sort(Sort.Direction.DESC, Constants.App.INSERTION_DATE);
-			MatchOperation matchOperation = Aggregation.match(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
-			LimitOperation limitOperation = Aggregation.limit(1);
-
-			TypedAggregation<TransformETY> typedAggregation = new TypedAggregation<>(TransformETY.class, matchOperation, sortOperation, limitOperation);
-
-			return mongoTemplate.aggregate(typedAggregation, TransformETY.class).getUniqueMappedResult();
+			entities = mongoTemplate.find(q, TransformETY.class); 
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
@@ -92,7 +99,9 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
 			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
 		}
+		return entities;
 	}
+
 
 	@Override
 	public List<TransformETY> findAll() throws OperationException {

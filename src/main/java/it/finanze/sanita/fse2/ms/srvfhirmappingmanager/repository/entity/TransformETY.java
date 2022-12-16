@@ -6,6 +6,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.*;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

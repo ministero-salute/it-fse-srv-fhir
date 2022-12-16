@@ -9,6 +9,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
@@ -130,6 +131,14 @@ public class TransformSRV implements ITransformSRV {
 		}
 	}
 
+	
+	@Override
+	public List<TransformDTO> findByTemplateIdRootAndDeleted(final String templateIdRoot, boolean deleted) throws DocumentNotFoundException, OperationException {
+		List<TransformETY> entities = repository.findByTemplateIdRootAndDeleted(templateIdRoot, deleted);
+		if(entities.isEmpty()) throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+		return entities.stream().map(TransformDTO::fromEntity).collect(Collectors.toList());
+	}
+	
 	@Override
 	public TransformDTO findByTemplateIdRoot(final String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		TransformETY output = repository.findByTemplateIdRoot(templateIdRoot);
@@ -139,7 +148,9 @@ public class TransformSRV implements ITransformSRV {
 		}
 
 		return TransformDTO.fromEntity(output);
+
 	}
+
 
 	@Override
 	public List<TransformDTO> findAll(TransformDTO.Options opts) throws OperationException {

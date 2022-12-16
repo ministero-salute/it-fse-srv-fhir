@@ -40,6 +40,15 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
 
 	/**
+	 * Find a transform by templateIdRoot
+	 * @param templateIdRoot
+	 * @param deleted
+	 * @return
+	 * @throws OperationException
+	 */
+	List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException;
+
+	/**
 	 * Find all active transforms (not marked deleted)
 	 * @return
 	 * @throws OperationException
