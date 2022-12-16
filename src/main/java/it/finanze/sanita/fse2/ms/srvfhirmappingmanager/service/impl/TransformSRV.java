@@ -5,11 +5,10 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;

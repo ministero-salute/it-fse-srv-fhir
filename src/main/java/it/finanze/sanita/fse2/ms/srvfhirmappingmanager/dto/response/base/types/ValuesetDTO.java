@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.types;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;

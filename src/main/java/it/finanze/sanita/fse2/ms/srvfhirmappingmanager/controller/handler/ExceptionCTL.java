@@ -5,7 +5,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.handler;
 
 
 import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import lombok.extern.slf4j.Slf4j;

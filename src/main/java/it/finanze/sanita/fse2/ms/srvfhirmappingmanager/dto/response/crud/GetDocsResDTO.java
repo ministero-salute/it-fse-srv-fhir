@@ -1,14 +1,14 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO.Options;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.ResponseDTO;
 import lombok.Getter;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ARRAY_FILES_MIN;
 
 @Getter
-public class GetDocumentsResDTO extends ResponseDTO {
+public class GetDocsResDTO extends ResponseDTO {
 
     @ArraySchema(
             minItems = OA_ARRAY_FILES_MIN,
@@ -35,7 +35,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
      * @param traceInfo The {@link LogTraceInfoDTO} instance
      * @param items     The available documents object
      */
-    public GetDocumentsResDTO(LogTraceInfoDTO traceInfo, List<TransformDTO> items, Options o) {
+    public GetDocsResDTO(LogTraceInfoDTO traceInfo, List<TransformDTO> items, Options o) {
         super(traceInfo);
         this.items = applyOptions(items, o);
         this.numberOfItems = items.size();

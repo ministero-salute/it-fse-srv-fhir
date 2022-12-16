@@ -5,15 +5,15 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO.Options;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.impl.GetDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +59,8 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public GetDocumentsResDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
-		return new GetDocumentsResDTO(getLogTraceInfo(), transformSRV.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
+	public GetDocsResDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
+		return new GetDocsResDTO(getLogTraceInfo(), transformSRV.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
 
 //		return transformSRV.findByTemplateIdRoot(templateIdRoot);
 	}
@@ -71,13 +71,13 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public GetDocumentsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
+	public GetDocsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
 		// Create options
 		TransformDTO.Options opts = new TransformDTO.Options(binary);
 		// Retrieve data
 		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
 		// Transform and return
-		return new GetDocumentsResDTO(getLogTraceInfo(), items, opts);
+		return new GetDocsResDTO(getLogTraceInfo(), items, opts);
 	}
 	
 }

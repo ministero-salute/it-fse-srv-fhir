@@ -1,13 +1,13 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto;
+package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.DefinitionDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.MapDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ValuesetDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.types.DefinitionDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.types.MapDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.types.ValuesetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
