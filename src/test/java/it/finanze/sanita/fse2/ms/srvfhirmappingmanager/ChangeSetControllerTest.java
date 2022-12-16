@@ -3,11 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.google.gson.Gson;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -20,12 +20,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.google.gson.Gson;
-
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ComponentScan
@@ -43,7 +41,6 @@ class ChangeSetControllerTest extends AbstractTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	void getTransformChangeSetEmptyTest() throws Exception {
 
 		final String queryDate = "2022-06-04T12:08:56.000-00:00";
@@ -52,7 +49,7 @@ class ChangeSetControllerTest extends AbstractTest {
 					.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk())
 				.andReturn();
 
-		final ChangeSetResDTO<TransformETY> changeSet = new Gson().fromJson(result.getResponse().getContentAsString(),
+		final ChangeSetResDTO changeSet = new Gson().fromJson(result.getResponse().getContentAsString(),
 				ChangeSetResDTO.class);
 		assertEquals(0, changeSet.getDeletions().size(), "With empty database should be returned 0 deletion");
 		assertEquals(0, changeSet.getInsertions().size(), "With empty database should be returned 0 insertions");

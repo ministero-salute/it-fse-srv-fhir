@@ -24,7 +24,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangeSetResDTO<T> {
+public class ChangeSetResDTO {
 
 	/**
 	 * Trace id log.
@@ -42,10 +42,10 @@ public class ChangeSetResDTO<T> {
 	private Date timestamp;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
-	private List<ChangeSetDTO<T>> insertions;
+	private List<ChangeSetDTO> insertions;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
-	private List<ChangeSetDTO<T>> deletions;
+	private List<ChangeSetDTO> deletions;
 
     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = 10000)
 	@Size(min = 0, max = 10000)

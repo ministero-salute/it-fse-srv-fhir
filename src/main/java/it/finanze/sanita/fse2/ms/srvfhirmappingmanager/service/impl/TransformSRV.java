@@ -8,7 +8,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
@@ -172,7 +171,7 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public List<ChangeSetDTO<TransformCS>> getInsertions(Date lastUpdate) throws OperationException {
+	public List<ChangeSetDTO> getInsertions(Date lastUpdate) throws OperationException {
 		List<TransformETY> insertions;
 		if (lastUpdate != null) {
 			insertions = repository.getInsertions(lastUpdate);
@@ -183,9 +182,9 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public List<ChangeSetDTO<TransformCS>> getDeletions(Date lastUpdate) throws OperationException {
+	public List<ChangeSetDTO> getDeletions(Date lastUpdate) throws OperationException {
 		try {
-			List<ChangeSetDTO<TransformCS>> deletions = new ArrayList<>();
+			List<ChangeSetDTO> deletions = new ArrayList<>();
 
 			if (lastUpdate != null) {
 				List<TransformETY> deletionsETY = repository.getDeletions(lastUpdate);

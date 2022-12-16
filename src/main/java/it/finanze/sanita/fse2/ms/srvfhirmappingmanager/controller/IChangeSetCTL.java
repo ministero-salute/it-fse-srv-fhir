@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.NoFutureDate;
@@ -39,7 +38,7 @@ public interface IChangeSetCTL {
 			@ApiResponse(responseCode = "400",description = "Invalid parameters",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class))),
 			@ApiResponse(responseCode = "500",description = "Internal Server Error",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class)))})
 	@GetMapping(API_CHANGESET_STATUS)
-	ChangeSetResDTO<TransformCS> getTransformChangeSet(@RequestParam(value=API_QP_LAST_UPDATE, required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = ERR_VAL_FUTURE_DATE)Date lastUpdate)throws OperationException;
+	ChangeSetResDTO getTransformChangeSet(@RequestParam(value=API_QP_LAST_UPDATE, required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)@NoFutureDate(message = ERR_VAL_FUTURE_DATE)Date lastUpdate)throws OperationException;
 
 
 }

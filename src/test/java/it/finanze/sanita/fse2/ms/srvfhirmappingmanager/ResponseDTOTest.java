@@ -3,22 +3,19 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
-
-@SuppressWarnings("rawtypes")
 class ResponseDTOTest extends AbstractTest {
 
 	public HttpStatus RESPONSE_CODE_TEST = HttpStatus.OK; 
@@ -102,7 +99,7 @@ class ResponseDTOTest extends AbstractTest {
 	
 	@Test
 	void changesetResponseDtoTest() {
-		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>();
+		ChangeSetResDTO changesetResponse = new ChangeSetResDTO();
 		
 		Date date = new Date(); 
 		
@@ -125,7 +122,7 @@ class ResponseDTOTest extends AbstractTest {
 	
 	@Test
 	void changesetResponseDtoInitTest() {
-		ChangeSetResDTO<ChangeSetDTO> changesetResponse = new ChangeSetResDTO<>(
+		ChangeSetResDTO changesetResponse = new ChangeSetResDTO(
 			TRACE_ID_TEST,
 			SPAN_ID_TEST,
 			new Date(),

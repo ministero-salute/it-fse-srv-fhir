@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.specs.TransformCS;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +15,7 @@ import java.util.List;
  * Transform interface service.
  */
 
-public interface ITransformSRV extends IChangeSetSRV<TransformCS>{
+public interface ITransformSRV extends IChangeSetSRV{
 
 	/**
 	 * Insert a FHIR transform using all components passed in the request

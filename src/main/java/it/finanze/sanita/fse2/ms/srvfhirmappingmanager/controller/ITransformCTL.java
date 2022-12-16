@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
@@ -104,11 +105,11 @@ public interface ITransformCTL {
         @GetMapping(value = API_GET_ONE_BY_ID, produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a transform from MongoDB, given its ID", description = "Servizio che consente di ritornare una trasformata dalla base dati tramite il suo ID.")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TransformDTO.class))),
+                        @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocByIdResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Trasformata non trovata sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        TransformDTO getTransformById(
+        GetDocByIdResDTO getTransformById(
                         @PathVariable(API_PATH_ID_VAR) @NotBlank(message = "Id cannot be null") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
                         throws OperationException, DocumentNotFoundException;
 

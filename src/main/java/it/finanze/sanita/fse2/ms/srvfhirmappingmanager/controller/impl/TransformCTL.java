@@ -7,6 +7,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
@@ -62,8 +63,8 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public TransformDTO getTransformById(String id) throws OperationException, DocumentNotFoundException {
-		return transformSRV.findById(id);
+	public GetDocByIdResDTO getTransformById(String id) throws OperationException, DocumentNotFoundException {
+		return new GetDocByIdResDTO(getLogTraceInfo(), transformSRV.findById(id));
 	}
 
 	@Override
