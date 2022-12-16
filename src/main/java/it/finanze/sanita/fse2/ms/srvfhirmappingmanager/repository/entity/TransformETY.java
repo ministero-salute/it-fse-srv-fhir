@@ -15,6 +15,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.*;
+
 
 /**
  * Model to save generic transform.
@@ -24,34 +26,41 @@ import java.util.List;
 @NoArgsConstructor
 public class TransformETY {
 
+	public static final String FIELD_TEMPLATE_ID_ROOT = "template_id_root";
+	public static final String FIELD_VERSION = "version";
+	public static final String FIELD_ROOT_MAP = "root_map";
+	public static final String FIELD_MAPS = "maps";
+	public static final String FIELD_VALUESETS = "valuesets";
+	public static final String FIELD_DEFINITIONS = "definitions";
+
 	@Id
 	private String id;
 	
-	@Field(name = "template_id_root")
+	@Field(name = FIELD_TEMPLATE_ID_ROOT)
 	private String templateIdRoot;
 	
-	@Field(name = "version")
+	@Field(name = FIELD_VERSION)
 	private String version;
 
-	@Field(name = "insertion_date")
+	@Field(name = FIELD_INSERTION_DATE)
 	private Date insertionDate; 
 	
-	@Field(name = "last_update_date")
+	@Field(name = FIELD_LAST_UPDATE)
 	private Date lastUpdateDate; 
 
-	@Field(name = "root_map")
+	@Field(name = FIELD_ROOT_MAP)
 	private String rootStructureMap;
 
-	@Field(name = "maps")
+	@Field(name = FIELD_MAPS)
 	private List<StructureMap> structureMaps;
 
-	@Field(name = "valuesets")
+	@Field(name = FIELD_VALUESETS)
 	private List<StructureValueset> structureValuesets;
 
-	@Field(name = "definitions")
+	@Field(name = FIELD_DEFINITIONS)
 	private List<StructureDefinition> structureDefinitions;
 
-	@Field(name = "deleted")
+	@Field(name = FIELD_DELETED)
 	private boolean deleted;
 
 	public static TransformETY fromComponents(String templateIdRoot, String version, String rootMap, List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
