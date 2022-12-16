@@ -78,7 +78,16 @@ public class TransformRepo implements ITransformRepo, Serializable {
 
 	@Override
 	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
-		return mongoTemplate.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)), TransformETY.class);
+		try {
+			// Search by template id
+			Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
+			// Sort by insertion
+			q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
+			return mongoTemplate.findOne(q, TransformETY.class);
+		} catch (MongoException e) {
+			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+		}
 	}
 	
 	@Override
