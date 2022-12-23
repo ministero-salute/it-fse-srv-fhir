@@ -428,20 +428,20 @@ class TransformControllerTest extends AbstractTest {
 				status().is2xxSuccessful());
 	}
 
-	@Test
-	void getZeroActiveTransformsTest() throws Exception {
-		this.deleteTransformTest();
-		MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
+	// @Test
+	// void getZeroActiveTransformsTest() throws Exception {
+	// 	this.deleteTransformTest();
+	// 	MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
 
-		List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
-		assertTrue(CollectionUtils.isEmpty(resultList));
-	}
+	// 	List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
+	// 	assertTrue(CollectionUtils.isEmpty(resultList));
+	// }
 
-	@Test
-	void getActiveTransformsOneFoundTest() throws Exception {
-		prepareCollection();
-		MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
-		List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
-		assertEquals(1, resultList.size());
-	}
+	// @Test
+	// void getActiveTransformsOneFoundTest() throws Exception {
+	// 	prepareCollection();
+	// 	MvcResult res = mvc.perform(queryActiveTransformMockRequest(getBaseUrl())).andReturn();
+	// 	List<TransformDTO> resultList = new Gson().fromJson(res.getResponse().getContentAsString(), new TypeToken<List<TransformDTO>>(){}.getType());
+	// 	assertEquals(1, resultList.size());
+	// }
 }
