@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 
 class ExceptionTest extends AbstractTest {
 
@@ -26,6 +27,14 @@ class ExceptionTest extends AbstractTest {
 		BusinessException exc = new BusinessException(new RuntimeException()); 
 		
 		assertEquals(BusinessException.class, exc.getClass()); 
+		
+	} 
+	
+	@Test
+	void dataProcessingExceptionTest() {
+		DataProcessingException exc = new DataProcessingException("Error", new Exception()); 
+		
+		assertEquals(DataProcessingException.class, exc.getClass()); 
 		
 	} 
 	
