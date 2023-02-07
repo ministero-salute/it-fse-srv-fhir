@@ -30,11 +30,12 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.IOException;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Regex.REG_VERSION;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MAX;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
 
 /**
  * Transform Controller
@@ -44,26 +45,34 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 @Validated
 public interface ITransformCTL {
 
-        @PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
-                        MediaType.MULTIPART_FORM_DATA_VALUE })
-        @Operation(summary = "Add transform to MongoDB", description = "Servizio che consente di aggiungere una trasformata alla base dati.")
+        @PostMapping(
+            produces = { MediaType.APPLICATION_JSON_VALUE },
+            consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
+        )
+        @Operation(summary = "Aggiunta entità FHIR su MongoDB")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "201", description = "Creazione trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDocsResDTO.class))),
-                        @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-                        @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
+                @ApiResponse(responseCode = "201", description = "Creazione entità avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDocsResDTO.class))),
+                @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
+                @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
+                @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
+        })
         @ResponseStatus(HttpStatus.CREATED)
         PostDocsResDTO uploadTransform(
-                        @RequestPart(API_PATH_TEMPLATE_ID_ROOT_VAR)
-                        @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
-                        @RequestPart(API_PATH_VERSION_VAR)
-                        @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestPart(API_PATH_FILE_VAR)
-                        MultipartFile file,
-                        @RequestPart(API_PATH_URI_VAR) String uri,
-                        @RequestPart(API_PATH_TYPE_VAR) FhirTypeEnum type
-        ) throws IOException, OperationException,
-        DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException;
+                @RequestPart(API_PATH_URI_VAR)
+                @NotBlank(message = ERR_VAL_URI_BLANK)
+                String uri,
+                @RequestPart(API_PATH_VERSION_VAR)
+                @NotBlank(message = ERR_VAL_VERSION_BLANK)
+                @Pattern(message = ERR_VAL_VERSION_INVALID, regexp = REG_VERSION)
+                String version,
+                @RequestParam(API_PATH_TYPE_VAR)
+                FhirTypeEnum type,
+                @RequestPart(value = API_PATH_TEMPLATE_ID_ROOT_VAR, required = false)
+                @Parameter(description = VAL_DESC_ROOT)
+                String templateIdRoot,
+                @RequestPart(API_PATH_FILE_VAR)
+                MultipartFile file
+        ) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException;
 
         @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
         @Operation(summary = "Update transform to MongoDB", description = "Servizio che consente di aggiornare una trasformata nella base dati.")
@@ -112,7 +121,7 @@ public interface ITransformCTL {
                         @ApiResponse(responseCode = "404", description = "Trasformata non trovata sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         GetDocByIdResDTO getTransformById(
-                        @PathVariable(API_PATH_ID_VAR) @NotBlank(message = "Id cannot be null") @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
+                        @PathVariable(API_PATH_ID_VAR) @NotBlank(message = "Id cannot be null") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id)
                         throws OperationException, DocumentNotFoundException;
 
         @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })

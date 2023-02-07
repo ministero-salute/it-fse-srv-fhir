@@ -3,24 +3,23 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.Content;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 
 @Configuration
@@ -69,8 +68,8 @@ public class OpenApiCFG {
 				final Schema<MediaType> schema = item.getPost().getRequestBody().getContent().get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE).getSchema();
 
 				schema.additionalProperties(false);
-				if(schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE) != null){
-					schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE).setMaxLength(customOpenapi.getFileMaxLength());
+				if(schema.getProperties().get(API_PATH_FILE_VAR) != null){
+					schema.getProperties().get(API_PATH_FILE_VAR).setMaxLength(customOpenapi.getFileMaxLength());
 				}
 			});
 
@@ -79,8 +78,8 @@ public class OpenApiCFG {
 				final Schema<MediaType> schema = item.getPut().getRequestBody().getContent().get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE).getSchema();
 
 				schema.additionalProperties(false);
-				if(schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE) != null){
-					schema.getProperties().get(Constants.App.CONTENT_MULTIPART_FILE).setMaxLength(customOpenapi.getFileMaxLength());
+				if(schema.getProperties().get(API_PATH_FILE_VAR) != null){
+					schema.getProperties().get(API_PATH_FILE_VAR).setMaxLength(customOpenapi.getFileMaxLength());
 				}
 			});
 		};

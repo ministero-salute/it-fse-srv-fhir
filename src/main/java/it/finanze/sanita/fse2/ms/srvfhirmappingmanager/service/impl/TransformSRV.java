@@ -4,7 +4,6 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
 import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
@@ -27,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
+
 
 /**
  *	Transform service.
@@ -38,31 +39,32 @@ public class TransformSRV implements ITransformSRV {
 	private ITransformRepo repository;
 
 	@Override
-	public void insertTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+	public void insertTransformByComponents(String root, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
 		log.debug("[EDS] Insertion of transform - START");
-		try {
-			TransformETY existingDocument = repository.findByTemplateIdRoot(templateIdRoot);
-			if (existingDocument != null) {
-				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
-			}
-
-			// Insert rootMapName at root level of ety
-			TransformETY transformETY = TransformETY.fromComponents(templateIdRoot, version, uri, file, type);
-			repository.insert(transformETY);
-			
-		} catch (MongoException ex) {
-			log.error(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
-			throw new OperationException(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
+		// Retrieve most recent one
+		TransformETY exists = repository.findByUri(uri);
+		// Verify it doesn't exist
+		if (exists != null) throw new DocumentAlreadyPresentException(ERR_SRV_DOC_ALREADY_EXIST);
+		// Check root id is available if provided
+		if (type == FhirTypeEnum.Map && root != null && !root.isEmpty()) {
+			// Retrieve most recent one
+			TransformETY id = repository.findByTemplateIdRoot(root);
+			// It must be null otherwise is already used by some other resource
+			if (id != null) throw new DocumentAlreadyPresentException(ERR_SRV_ROOT_ALREADY_EXIST);
 		}
+		// Convert from DTO to entity
+		TransformETY out = TransformETY.fromComponents(uri, version, root, type, file);
+		// Save
+		repository.insert(out);
 	}
 
 	@Override
 	public void updateTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
-		TransformETY lastDocument = repository.findByTemplateIdRoot(templateIdRoot);
+		TransformETY lastDocument = repository.findByUri(templateIdRoot);
 
 		if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+			throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
 
 		if (!ValidationUtility.isMajorVersion(version, lastDocument.getVersion())) {
@@ -71,7 +73,7 @@ public class TransformSRV implements ITransformSRV {
 
 		delete(lastDocument.getTemplateIdRoot());
 		// Insert rootMapName at root level of ety
-		TransformETY transformETY = TransformETY.fromComponents(templateIdRoot, version, uri, file, type);
+		TransformETY transformETY = TransformETY.fromComponents(templateIdRoot, version, uri, type, file);
 		repository.insert(transformETY);
 		
 	}
@@ -81,7 +83,7 @@ public class TransformSRV implements ITransformSRV {
 		try {
 			List<TransformETY> deletedTransform = repository.remove(templateIdRoot);
 			if (CollectionUtils.isEmpty(deletedTransform)) {
-				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+				throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 			}
 		} catch(MongoException e) {
 			throw new OperationException(e.getMessage(), e);
@@ -92,22 +94,9 @@ public class TransformSRV implements ITransformSRV {
 	@Override
 	public List<TransformDTO> findByTemplateIdRootAndDeleted(final String templateIdRoot, boolean deleted) throws DocumentNotFoundException, OperationException {
 		List<TransformETY> entities = repository.findByTemplateIdRootAndDeleted(templateIdRoot, deleted);
-		if(entities.isEmpty()) throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+		if(entities.isEmpty()) throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		return entities.stream().map(TransformDTO::fromEntity).collect(Collectors.toList());
 	}
-	
-	@Override
-	public TransformDTO findByTemplateIdRoot(final String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		TransformETY output = repository.findByTemplateIdRoot(templateIdRoot);
-
-		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-		}
-
-		return TransformDTO.fromEntity(output);
-
-	}
-
 
 	@Override
 	public List<TransformDTO> findAll(Options opts) throws OperationException {
@@ -132,7 +121,7 @@ public class TransformSRV implements ITransformSRV {
 		TransformETY output = repository.findById(id);
 
 		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+			throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
 
 		return TransformDTO.fromEntity(output);
@@ -151,19 +140,13 @@ public class TransformSRV implements ITransformSRV {
 
 	@Override
 	public List<ChangeSetDTO> getDeletions(Date lastUpdate) throws OperationException {
-		try {
-			List<ChangeSetDTO> deletions = new ArrayList<>();
-
-			if (lastUpdate != null) {
-				List<TransformETY> deletionsETY = repository.getDeletions(lastUpdate);
-				deletions = deletionsETY.stream().map(ChangeSetUtility::transformToChangeset)
-						.collect(Collectors.toList());
-			}
-			return deletions;
-		} catch (Exception e) {
-			log.error("Error retrieving modifications", e);
-			throw new BusinessException("Error retrieving modifications", e);
+		List<ChangeSetDTO> deletions = new ArrayList<>();
+		if (lastUpdate != null) {
+			List<TransformETY> deletionsETY = repository.getDeletions(lastUpdate);
+			deletions = deletionsETY.stream().map(ChangeSetUtility::transformToChangeset)
+					.collect(Collectors.toList());
 		}
+		return deletions;
 	}
 
 	@Override

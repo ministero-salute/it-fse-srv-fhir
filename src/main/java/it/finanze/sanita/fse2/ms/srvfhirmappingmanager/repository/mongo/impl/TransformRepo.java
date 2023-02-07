@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 
 import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
@@ -23,7 +22,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY.FIELD_TEMPLATE_ID_ROOT;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY.FIELD_URI;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -33,63 +34,72 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Slf4j
 @Repository
 public class TransformRepo implements ITransformRepo, Serializable {
-	
-	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = -8314433348647769361L; 
-	
+
 	@Autowired
-	private transient MongoTemplate mongoTemplate;
+	private MongoTemplate mongo;
 	
 	@Override
-	public TransformETY insert(TransformETY ety) throws OperationException {
+	public TransformETY insert(TransformETY entity) throws OperationException {
+		TransformETY out;
 		try {
-			return mongoTemplate.insert(ety);
+			out = mongo.insert(entity);
 		} catch(MongoException e) {
-			log.error(Constants.Logs.ERROR_INSERTING_ETY, e);
-			throw new OperationException(Constants.Logs.ERROR_INSERTING_ETY, e);
-		} catch(Exception ex) {
-			log.error(Constants.Logs.ERROR_INSERTING_ETY, ex);
-			throw new BusinessException(Constants.Logs.ERROR_INSERTING_ETY, ex);
+			log.error(ERR_REP_INS_DOCS_BY_URI, e);
+			throw new OperationException(ERR_REP_INS_DOCS_BY_URI, e);
 		}
+		return out;
 	}
 
 	@Override
 	public List<TransformETY> remove(final String templateIdRoot) throws OperationException {
 		try {
-			Query query = query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
+			Query query = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
 			Update update = new Update();
-			update.set(Constants.App.DELETED, true);
+			update.set(FIELD_DELETED, true);
 			update.set(FIELD_LAST_UPDATE, new Date());
 
-			List<TransformETY> list = mongoTemplate.find(query, TransformETY.class);
-			mongoTemplate.updateMulti(query, update, TransformETY.class);
+			List<TransformETY> list = mongo.find(query, TransformETY.class);
+			mongo.updateMulti(query, update, TransformETY.class);
 			return list;
 		} catch (MongoException e) {
-			log.error(Constants.Logs.ERROR_DELETING_ETY, e);
-			throw new OperationException(Constants.Logs.ERROR_DELETING_ETY, e);
+			log.error(ERROR_DELETING_ETY, e);
+			throw new OperationException(ERROR_DELETING_ETY, e);
 		} catch (Exception ex) {
-			log.error(Constants.Logs.ERROR_DELETING_ETY + getClass(), ex);
-			throw new BusinessException(Constants.Logs.ERROR_DELETING_ETY + getClass(), ex);
+			log.error(ERROR_DELETING_ETY + getClass(), ex);
+			throw new BusinessException(ERROR_DELETING_ETY + getClass(), ex);
 		}
 	}
 
 	@Override
-	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+	public TransformETY findByUri(String uri) throws OperationException {
+		TransformETY out;
+		// Search by uri and version
+		Query q = query(where(FIELD_URI).is(uri).and(FIELD_DELETED).ne(true));
+		// Sort by insertion
+		q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 		try {
-			// Search by template id
-			Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
-			// Sort by insertion
-			q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
-			return mongoTemplate.findOne(q, TransformETY.class);
+			out = mongo.findOne(q, TransformETY.class);
 		} catch (MongoException e) {
-			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			log.error(ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(ERROR_FIND_TRANSFORM, e);
 		}
+		return out;
 	}
-	
+
+	@Override
+	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+		TransformETY out;
+		// Search by uri and version
+		Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
+		try {
+			out = mongo.findOne(q, TransformETY.class);
+		} catch (MongoException e) {
+			log.error(ERR_REP_FIND_BY_ROOT, e);
+			throw new OperationException(ERR_REP_FIND_BY_ROOT, e);
+		}
+		return out;
+	}
+
 	@Override
 	public List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException {
 		List<TransformETY> entities;
@@ -100,10 +110,10 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Sort by insertion
 		q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 		try {
-			entities = mongoTemplate.find(q, TransformETY.class);
+			entities = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
-			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			log.error(ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(ERROR_FIND_TRANSFORM, e);
 		}
 		return entities;
 	}
@@ -112,28 +122,28 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	@Override
 	public List<TransformETY> findAll() throws OperationException {
 		try {
-			return mongoTemplate.findAll(TransformETY.class);
+			return mongo.findAll(TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(Constants.Logs.ERROR_FIND_ALL_TRANSFORM, e);
+			throw new OperationException(ERROR_FIND_ALL_TRANSFORM, e);
 		} catch (Exception ex) {
-			log.error(Constants.Logs.ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
-			throw new BusinessException(Constants.Logs.ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
+			log.error(ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
+			throw new BusinessException(ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
 		}
 	}
 
 	@Override
 	public TransformETY findById(String id) throws OperationException {
 		try {
-			return mongoTemplate.findOne(query(where(Constants.App.MONGO_ID).is(id)
-							.and(Constants.App.DELETED).ne(true)),
+			return mongo.findOne(query(where(FIELD_ID).is(id)
+							.and(FIELD_DELETED).ne(true)),
 					TransformETY.class);
 		} catch (MongoException e) {
-			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
+			log.error(ERROR_FIND_TRANSFORM, e);
+			throw new OperationException(ERROR_FIND_TRANSFORM, e);
 		} catch (Exception ex) {
-			log.error(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
-			throw new BusinessException(Constants.Logs.ERROR_UPDATING_TRANSFORM + getClass(), ex);
+			log.error(ERROR_UPDATING_TRANSFORM + getClass(), ex);
+			throw new BusinessException(ERROR_UPDATING_TRANSFORM + getClass(), ex);
 		}
 	}
 
@@ -151,14 +161,14 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		List<TransformETY> objects;
 		// Create query
 		Query q = query(
-				where(FIELD_INSERTION_DATE).gt(lastUpdate).and(Constants.App.DELETED).ne(true)
+				where(FIELD_INSERTION_DATE).gt(lastUpdate).and(FIELD_DELETED).ne(true)
 		);
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, TransformETY.class);
+			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
+			throw new OperationException(ERROR_UNABLE_FIND_INSERTIONS, e);
 		}
 		return objects;
 	}
@@ -178,14 +188,14 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		Query q = query(
 				where(FIELD_LAST_UPDATE).gt(lastUpdate)
 						.and(FIELD_INSERTION_DATE).lte(lastUpdate)
-						.and(Constants.App.DELETED).is(true)
+						.and(FIELD_DELETED).is(true)
 		);
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, TransformETY.class);
+			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_DELETIONS, e);
+			throw new OperationException(ERROR_UNABLE_FIND_DELETIONS, e);
 		}
 		return objects;
 	}
@@ -201,10 +211,10 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Working var
 		List<TransformETY> objects;
 		// Create query
-		Query q = query(where(Constants.App.DELETED).ne(true));
+		Query q = query(where(FIELD_DELETED).ne(true));
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, TransformETY.class);
+			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException("Unable to retrieve every available extension with their documents", e);
@@ -223,13 +233,13 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Working var
 		long size;
 		// Create query
-		Query q = query(where(Constants.App.DELETED).ne(true));
+		Query q = query(where(FIELD_DELETED).ne(true));
 		try {
 			// Execute count
-			size = mongoTemplate.count(q, TransformETY.class);
+			size = mongo.count(q, TransformETY.class);
 		}catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC, e);
+			throw new OperationException(ERR_REP_COUNT_ACTIVE_DOC, e);
 		}
 		return size;
 	}

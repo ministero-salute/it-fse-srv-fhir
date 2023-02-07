@@ -23,46 +23,50 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
+
 @RestController
 @Slf4j
 public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
 	@Autowired
-	private ITransformSRV transformSRV;
+	private ITransformSRV service;
 
 	@Override
-	public PostDocsResDTO uploadTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
-		transformSRV.insertTransformByComponents(templateIdRoot, version, uri, file, type);
+	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, String root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
+		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
+		service.insertTransformByComponents(root, version, uri, file, type);
 		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
 	public PutDocsResDTO updateTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
-		transformSRV.updateTransformByComponents(templateIdRoot, version, uri, file, type);
+		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
+		service.updateTransformByComponents(templateIdRoot, version, uri, file, type);
 		return new PutDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
 	public DelDocsResDTO deleteTransform(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		transformSRV.delete(templateIdRoot);
+		service.delete(templateIdRoot);
 		return new DelDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
 	public GetDocsResDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
-		return new GetDocsResDTO(getLogTraceInfo(), transformSRV.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
+		return new GetDocsResDTO(getLogTraceInfo(), service.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
 	}
 
 	@Override
 	public GetDocByIdResDTO getTransformById(String id) throws OperationException, DocumentNotFoundException {
-		return new GetDocByIdResDTO(getLogTraceInfo(), transformSRV.findById(id));
+		return new GetDocByIdResDTO(getLogTraceInfo(), service.findById(id));
 	}
 
 	@Override
 	public GetDocsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
 		Options opts = new Options(binary);
 		// Retrieve data
-		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
+		List<TransformDTO> items = deleted ? service.findAll(opts) : service.findAllActive(opts);
 		// Transform and return
 		return new GetDocsResDTO(getLogTraceInfo(), items, opts);
 	}

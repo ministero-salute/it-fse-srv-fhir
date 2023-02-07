@@ -28,10 +28,6 @@ public final class RouteUtility {
     public static final String API_QP_LAST_UPDATE = "lastUpdate";
 
     public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "templateIdRoot";
-    public static final String API_PATH_ROOT_MAP_IDENTIFIER_VAR = "rootMapIdentifier";
-    public static final String API_PATH_VALUESETS_VAR = "valueSets";
-    public static final String API_PATH_MAPS_VAR = "maps";
-    public static final String API_PATH_STRUCTURE_DEFINITIONS_VAR = "structureDefinitions";
     public static final String API_PATH_ID_VAR = "id";
     public static final String API_PATH_VERSION_VAR = "version";
     public static final String API_PATH_TEMPLATE_ID_ROOT = "/{" + API_PATH_TEMPLATE_ID_ROOT_VAR + "}";

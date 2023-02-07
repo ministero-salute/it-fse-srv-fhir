@@ -69,18 +69,18 @@ public class TransformETY {
 	    }
 	}
 	
-	public static TransformETY fromComponents(String root, String uri, String version, MultipartFile file, FhirTypeEnum type) throws DataProcessingException {
+	public static TransformETY fromComponents(String uri, String version, String root, FhirTypeEnum type, MultipartFile file) throws DataProcessingException {
 		Date date = new Date();
-		TransformETY entity = new TransformETY();
-		entity.setTemplateIdRoot(root);
-		entity.setVersion(version);
-		entity.setInsertionDate(date);
-		entity.setLastUpdateDate(date);
-		entity.setUri(uri);
-		entity.setContent(file);
-		entity.setType(type);
-		entity.setDeleted(false);
-		return entity;
+		TransformETY e = new TransformETY();
+		e.setUri(uri);
+		e.setVersion(version);
+		if (type == FhirTypeEnum.Map) e.setTemplateIdRoot(root);
+		e.setType(type);
+		e.setContent(file);
+		e.setInsertionDate(date);
+		e.setLastUpdateDate(date);
+		e.setDeleted(false);
+		return e;
 	}
 	
 

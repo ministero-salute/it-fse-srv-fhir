@@ -3,11 +3,10 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
-
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *	Abstract controller.
@@ -27,7 +26,7 @@ public abstract class AbstractCTL {
 		return out;
 	}
 
-	protected boolean validateFiles(MultipartFile[] files) {
+	protected boolean isValidFile(MultipartFile ...files) {
 		boolean isValid = true;
 		if (files != null && files.length > 0) {
 			for (MultipartFile file : files) {
