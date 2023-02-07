@@ -27,9 +27,8 @@ public class PutDocsResDTO extends ResponseDTO {
 
 	private CrudInfoDTO updatedItems;
 
-	public PutDocsResDTO(final LogTraceInfoDTO traceInfo, final CrudInfoDTO updatedItems) {
+	public PutDocsResDTO(final LogTraceInfoDTO traceInfo) {
 		super(traceInfo);
-		this.updatedItems = updatedItems;
 	}
 	
 }

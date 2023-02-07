@@ -5,22 +5,17 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureDefinition;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureMap;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.model.StructureValueset;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.TransformGenUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -44,145 +38,109 @@ public class TransformSRV implements ITransformSRV {
 	private ITransformRepo repository;
 
 	@Override
-	public CrudInfoDTO insertTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
+	public void insertTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException {
 		log.debug("[EDS] Insertion of transform - START");
-		CrudInfoDTO output = new CrudInfoDTO();
 		try {
-			TransformETY existingDocument = repository.findByTemplateIdRoot(body.getTemplateIdRoot());
+			FhirETY existingDocument = repository.findByTemplateIdRoot(templateIdRoot);
 			if (existingDocument != null) {
 				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_DOCUMENT_ALREADY_EXIST);
 			}
 
-			String rootMapFileName = FilenameUtils.removeExtension(body.getRootMapIdentifier());
-			Map<String, StructureMap> mapsToInsert = TransformGenUtility.createMaps(rootMapFileName, maps);
-			Map<String, StructureDefinition> definitionsToInsert = TransformGenUtility.createDefinitions(null, structureDefinitions);
-			Map<String, StructureValueset> valuesetsToInsert = TransformGenUtility.createValuesets(valueSets);
-
 			// Insert rootMapName at root level of ety
-			TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), rootMapFileName,
-					new ArrayList<>(mapsToInsert.values()), new ArrayList<>(definitionsToInsert.values()), new ArrayList<>(valuesetsToInsert.values()));
+			FhirETY transformETY = FhirETY.fromComponents(templateIdRoot, version, uri, file, type);
 			repository.insert(transformETY);
 			
-			output.setMaps(mapsToInsert.values().size());
-			output.setDefinitions(definitionsToInsert.values().size());
-			output.setValuesets(valuesetsToInsert.values().size());
-
 		} catch (MongoException ex) {
 			log.error(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
 			throw new OperationException(Constants.Logs.ERROR_INSERT_TRANSFORM , ex);
 		}
-		return output;
 	}
 
 	@Override
-	public CrudInfoDTO updateTransformByComponents(TransformBodyDTO body, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
+	public void updateTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
-		CrudInfoDTO output = new CrudInfoDTO();
-		TransformETY lastDocument = repository.findByTemplateIdRoot(body.getTemplateIdRoot());
+		FhirETY lastDocument = repository.findByTemplateIdRoot(templateIdRoot);
 
 		if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
 
-		if (!ValidationUtility.isMajorVersion(body.getVersion(), lastDocument.getVersion())) {
-			throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", body.getVersion(), lastDocument.getVersion()));
+		if (!ValidationUtility.isMajorVersion(version, lastDocument.getVersion())) {
+			throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", version, lastDocument.getVersion()));
 		}
-
-		Map<String, StructureMap> mapsToUpdate = TransformGenUtility.createMaps(body.getRootMapIdentifier(), maps);
-		Map<String, StructureDefinition> definitionsToUpdate = TransformGenUtility.createDefinitions(null, structureDefinitions);
-		Map<String, StructureValueset> valuesetsToUpdate = TransformGenUtility.createValuesets(valueSets);
 
 		delete(lastDocument.getTemplateIdRoot());
 		// Insert rootMapName at root level of ety
-		TransformETY transformETY = TransformETY.fromComponents(body.getTemplateIdRoot(), body.getVersion(), body.getRootMapIdentifier(),
-			new ArrayList<>(mapsToUpdate.values()), new ArrayList<>(definitionsToUpdate.values()), new ArrayList<>(valuesetsToUpdate.values()));
+		FhirETY transformETY = FhirETY.fromComponents(templateIdRoot, version, uri, file, type);
 		repository.insert(transformETY);
-
-		output.setMaps(mapsToUpdate.size());
-		output.setDefinitions(definitionsToUpdate.size());
-		output.setValuesets(valuesetsToUpdate.size());
-
-		return output;
 		
 	}
 
 	@Override
-	public CrudInfoDTO delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
-		CrudInfoDTO output = new CrudInfoDTO();
+	public void delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
 		try {
-			List<TransformETY> deletedTransform = repository.remove(templateIdRoot);
-			if (!CollectionUtils.isEmpty(deletedTransform)) {
-				output.setMaps(
-					deletedTransform.stream().mapToInt(s -> s.getStructureMaps().size()).sum()
-				);
-				output.setDefinitions(
-					deletedTransform.stream().mapToInt(s -> s.getStructureDefinitions().size()).sum()
-				);
-				output.setValuesets(
-					deletedTransform.stream().mapToInt(s -> s.getStructureValuesets().size()).sum()
-				);
-			} else {
+			List<FhirETY> deletedTransform = repository.remove(templateIdRoot);
+			if (CollectionUtils.isEmpty(deletedTransform)) {
 				throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 			}
-			return output;
 		} catch(MongoException e) {
 			throw new OperationException(e.getMessage(), e);
-		}
+			}
 	}
 
 	
 	@Override
-	public List<TransformDTO> findByTemplateIdRootAndDeleted(final String templateIdRoot, boolean deleted) throws DocumentNotFoundException, OperationException {
-		List<TransformETY> entities = repository.findByTemplateIdRootAndDeleted(templateIdRoot, deleted);
+	public List<FhirDTO> findByTemplateIdRootAndDeleted(final String templateIdRoot, boolean deleted) throws DocumentNotFoundException, OperationException {
+		List<FhirETY> entities = repository.findByTemplateIdRootAndDeleted(templateIdRoot, deleted);
 		if(entities.isEmpty()) throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-		return entities.stream().map(TransformDTO::fromEntity).collect(Collectors.toList());
+		return entities.stream().map(FhirDTO::fromEntity).collect(Collectors.toList());
 	}
 	
 	@Override
-	public TransformDTO findByTemplateIdRoot(final String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		TransformETY output = repository.findByTemplateIdRoot(templateIdRoot);
+	public FhirDTO findByTemplateIdRoot(final String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		FhirETY output = repository.findByTemplateIdRoot(templateIdRoot);
 
 		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
 
-		return TransformDTO.fromEntity(output);
+		return FhirDTO.fromEntity(output);
 
 	}
 
 
 	@Override
-	public List<TransformDTO> findAll(TransformDTO.Options opts) throws OperationException {
+	public List<FhirDTO> findAll(Options opts) throws OperationException {
 		return repository.findAll()
 			.stream()
-			.map(TransformDTO::fromEntity)
+			.map(FhirDTO::fromEntity)
 			.map(i -> i.applyOptions(opts))
 			.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<TransformDTO> findAllActive(TransformDTO.Options opts) throws OperationException {
+	public List<FhirDTO> findAllActive(Options opts) throws OperationException {
 		return repository.getEveryActiveDocument()
 			.stream()
-			.map(TransformDTO::fromEntity)
+			.map(FhirDTO::fromEntity)
 			.map(i -> i.applyOptions(opts))
 			.collect(Collectors.toList());
 	}
 
 	@Override
-	public TransformDTO findById(String id) throws OperationException, DocumentNotFoundException {
-		TransformETY output = repository.findById(id);
+	public FhirDTO findById(String id) throws OperationException, DocumentNotFoundException {
+		FhirETY output = repository.findById(id);
 
 		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
 		}
 
-		return TransformDTO.fromEntity(output);
+		return FhirDTO.fromEntity(output);
 	}
 
 	@Override
 	public List<ChangeSetDTO> getInsertions(Date lastUpdate) throws OperationException {
-		List<TransformETY> insertions;
+		List<FhirETY> insertions;
 		if (lastUpdate != null) {
 			insertions = repository.getInsertions(lastUpdate);
 		} else {
@@ -197,7 +155,7 @@ public class TransformSRV implements ITransformSRV {
 			List<ChangeSetDTO> deletions = new ArrayList<>();
 
 			if (lastUpdate != null) {
-				List<TransformETY> deletionsETY = repository.getDeletions(lastUpdate);
+				List<FhirETY> deletionsETY = repository.getDeletions(lastUpdate);
 				deletions = deletionsETY.stream().map(ChangeSetUtility::transformToChangeset)
 						.collect(Collectors.toList());
 			}

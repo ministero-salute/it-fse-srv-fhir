@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +15,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocs
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.ValidObjectId;
@@ -54,13 +54,10 @@ public interface ITransformCTL {
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         @ResponseStatus(HttpStatus.CREATED)
         PostDocsResDTO uploadTransform(
-                        @RequestPart(API_PATH_ROOT_MAP_IDENTIFIER_VAR) @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") @NotBlank(message = "Root map identifier cannot be blank") String rootMapIdentifier,
                         @RequestPart(API_PATH_TEMPLATE_ID_ROOT_VAR) @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "Version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = API_PATH_STRUCTURE_DEFINITIONS_VAR, required = false) MultipartFile[] structureDefinitions,
-                        @Parameter(description = "Map files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(API_PATH_MAPS_VAR) MultipartFile[] maps,
-                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = API_PATH_VALUESETS_VAR, required = false) MultipartFile[] valueSets) throws IOException, OperationException,
-                        DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException;
+                        @RequestPart(API_PATH_FILE_VAR)MultipartFile file, @RequestPart(API_PATH_URI_VAR) String uri, @RequestPart(API_PATH_TYPE_VAR) FhirTypeEnum type) throws IOException, OperationException, 
+        DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException;
 
         @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
         @Operation(summary = "Update transform to MongoDB", description = "Servizio che consente di aggiornare una trasformata nella base dati.")
@@ -71,12 +68,9 @@ public interface ITransformCTL {
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
         PutDocsResDTO updateTransform(
-                        @RequestPart(API_PATH_ROOT_MAP_IDENTIFIER_VAR) @Parameter(description = "Root map identifier", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = 0, max = OA_EXTS_STRING_MAX, message = "rootMapIdentifier does not match the expected size") String rootMapIdentifier,
                         @RequestPart(API_PATH_TEMPLATE_ID_ROOT_VAR) @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @Parameter(description = "Structure definitions files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = API_PATH_STRUCTURE_DEFINITIONS_VAR, required = false) MultipartFile[] structureDefinitions,
-                        @Parameter(description = "Maps files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(API_PATH_MAPS_VAR) MultipartFile[] maps,
-                        @Parameter(description = "Valueset files", array = @ArraySchema(minItems = 1, maxItems = 1000, schema = @Schema(type = "string", format = "binary", maxLength = 1000))) @Size(min = 1, max = 1000, message = "File array does not match the expected size") @RequestPart(value = API_PATH_VALUESETS_VAR, required = false) MultipartFile[] valueSets) throws IOException, OperationException,
+                        @RequestPart(API_PATH_FILE_VAR)MultipartFile file, @RequestPart(API_PATH_URI_VAR) String uri, @RequestPart(API_PATH_TYPE_VAR) FhirTypeEnum type) throws IOException, OperationException,
                         DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException,
                         InvalidContentException;
 

@@ -5,8 +5,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO.Options;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.ResponseDTO;
 import lombok.Getter;
@@ -23,9 +23,9 @@ public class GetDocsResDTO extends ResponseDTO {
     @ArraySchema(
             minItems = OA_ARRAY_FILES_MIN,
             maxItems = OA_ARRAY_FILES_MAX,
-            schema = @Schema(implementation = TransformDTO.class)
+            schema = @Schema(implementation = FhirDTO.class)
     )
-    private final List<TransformDTO> items;
+    private final List<FhirDTO> items;
 
     private final long numberOfItems;
 
@@ -33,16 +33,16 @@ public class GetDocsResDTO extends ResponseDTO {
      * Instantiates a new response DTO.
      *
      * @param traceInfo The {@link LogTraceInfoDTO} instance
-     * @param items     The available documents object
+     * @param list     The available documents object
      */
-    public GetDocsResDTO(LogTraceInfoDTO traceInfo, List<TransformDTO> items, Options o) {
+    public GetDocsResDTO(LogTraceInfoDTO traceInfo, List<FhirDTO> list, Options options) {
         super(traceInfo);
-        this.items = applyOptions(items, o);
-        this.numberOfItems = items.size();
+        this.items = applyOptions(list, options);
+        this.numberOfItems = list.size();
     }
     
-	private List<TransformDTO> applyOptions(List<TransformDTO> documents, Options options) {
-		return documents.stream().map(d -> d.applyOptions(options)).collect(Collectors.toList());
+	private List<FhirDTO> applyOptions(List<FhirDTO> list, Options options) {
+		return list.stream().map(d -> d.applyOptions(options)).collect(Collectors.toList());
 	}
 
 

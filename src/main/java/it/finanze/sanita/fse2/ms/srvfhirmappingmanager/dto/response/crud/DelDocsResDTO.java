@@ -27,9 +27,8 @@ public class DelDocsResDTO extends ResponseDTO {
 
 	private CrudInfoDTO deletedItems;
 
-	public DelDocsResDTO(final LogTraceInfoDTO traceInfo, final CrudInfoDTO deletedItems) {
+	public DelDocsResDTO(final LogTraceInfoDTO traceInfo) {
 		super(traceInfo);
-		this.deletedItems = deletedItems;
 	}
 	
 }

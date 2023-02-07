@@ -5,6 +5,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository;
 
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY;
 
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ public interface IChangeSetRepo<T> {
      * @return The missing insertions
      * @throws OperationException If a data-layer error occurs
      */
-    List<T> getInsertions(Date lastUpdate) throws OperationException;
+    List<FhirETY> getInsertions(Date lastUpdate) throws OperationException;
 
     /**
      * Retrieves the latest deletions according to the given timeframe
@@ -31,7 +32,7 @@ public interface IChangeSetRepo<T> {
      * @return The missing deletions
      * @throws OperationException If a data-layer error occurs
      */
-    List<T> getDeletions(Date lastUpdate) throws OperationException;
+    List<FhirETY> getDeletions(Date lastUpdate) throws OperationException;
 
     /**
      * Retrieves all the not-deleted extensions with their documents data
@@ -39,7 +40,7 @@ public interface IChangeSetRepo<T> {
      * @return Any available schema
      * @throws OperationException If a data-layer error occurs
      */
-    List<T> getEveryActiveDocument() throws OperationException;
+    List<FhirETY> getEveryActiveDocument() throws OperationException;
 
     /**
      * Count all the not-deleted extensions items

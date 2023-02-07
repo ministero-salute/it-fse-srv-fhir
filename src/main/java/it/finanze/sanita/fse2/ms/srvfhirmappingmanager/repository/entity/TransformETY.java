@@ -65,7 +65,8 @@ public class TransformETY {
 	@Field(name = FIELD_DELETED)
 	private boolean deleted;
 
-	public static TransformETY fromComponents(String templateIdRoot, String version, String rootMap, List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
+	public static TransformETY fromComponents(String templateIdRoot, String version, String rootMap, 
+			List<StructureMap> structureMaps, List<StructureDefinition> structureDefinitions, List<StructureValueset> structureValuesets) {
 		Date date = new Date();
 		TransformETY entity = new TransformETY();
 		entity.setTemplateIdRoot(templateIdRoot);

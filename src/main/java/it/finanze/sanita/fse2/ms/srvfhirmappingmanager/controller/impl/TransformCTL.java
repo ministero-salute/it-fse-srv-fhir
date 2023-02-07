@@ -5,14 +5,13 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
@@ -32,37 +31,27 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	private ITransformSRV transformSRV;
 
 	@Override
-	public PostDocsResDTO uploadTransform(String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
-		if (!validateFiles(maps)) throw new InvalidContentException("One or more files appear to be empty");
-		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-						.templateIdRoot(templateIdRoot)
-						.version(version)
-						.rootMapIdentifier(rootMapIdentifier).build();
-		CrudInfoDTO output = transformSRV.insertTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-		return new PostDocsResDTO(getLogTraceInfo(), output);
+	public PostDocsResDTO uploadTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
+
+		transformSRV.insertTransformByComponents(templateIdRoot, version, uri, file, type);
+		return new PostDocsResDTO(getLogTraceInfo());
 	}
 
 	@Override
-	public PutDocsResDTO updateTransform(String rootMapIdentifier, String templateIdRoot, String version, MultipartFile[] structureDefinitions, MultipartFile[] maps, MultipartFile[] valueSets) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
-		if (!validateFiles(maps)) throw new InvalidContentException("One or more files appear to be empty");
-		TransformBodyDTO transformBodyDTO = TransformBodyDTO.builder()
-				.templateIdRoot(templateIdRoot)
-				.version(version)
-				.rootMapIdentifier(rootMapIdentifier).build();
-		CrudInfoDTO output = transformSRV.updateTransformByComponents(transformBodyDTO, structureDefinitions, maps, valueSets);
-		return new PutDocsResDTO(getLogTraceInfo(), output);
+	public PutDocsResDTO updateTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
+		transformSRV.updateTransformByComponents(templateIdRoot, version, uri, file, type);
+		return new PutDocsResDTO(getLogTraceInfo());
 	}
 
 	@Override
 	public DelDocsResDTO deleteTransform(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return new DelDocsResDTO(getLogTraceInfo(), transformSRV.delete(templateIdRoot));
+		transformSRV.delete(templateIdRoot);
+		return new DelDocsResDTO(getLogTraceInfo());
 	}
 
 	@Override
 	public GetDocsResDTO getTransformByTemplateIdRootAndVersion(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
 		return new GetDocsResDTO(getLogTraceInfo(), transformSRV.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
-
-//		return transformSRV.findByTemplateIdRoot(templateIdRoot);
 	}
 
 	@Override
@@ -72,10 +61,9 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
 	@Override
 	public GetDocsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
-		// Create options
-		TransformDTO.Options opts = new TransformDTO.Options(binary);
+		Options opts = new Options(binary);
 		// Retrieve data
-		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
+		List<FhirDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
 		// Transform and return
 		return new GetDocsResDTO(getLogTraceInfo(), items, opts);
 	}

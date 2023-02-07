@@ -27,9 +27,8 @@ public class PostDocsResDTO extends ResponseDTO {
 
 	private CrudInfoDTO insertedItems;
 
-	public PostDocsResDTO(final LogTraceInfoDTO traceInfo, final CrudInfoDTO insertedItems) {
+	public PostDocsResDTO(final LogTraceInfoDTO traceInfo) {
 		super(traceInfo);
-		this.insertedItems = insertedItems;
 	}
 	
 }
