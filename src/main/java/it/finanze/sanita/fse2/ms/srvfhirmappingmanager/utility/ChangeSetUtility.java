@@ -4,7 +4,7 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 
 public final class ChangeSetUtility {
 
@@ -17,7 +17,7 @@ public final class ChangeSetUtility {
 	 * @param entity
 	 * @return
 	 */
-	public static ChangeSetDTO transformToChangeset(FhirETY entity) {
+	public static ChangeSetDTO transformToChangeset(TransformETY entity) {
 		return new ChangeSetDTO(entity.getId(), new ChangeSetDTO.Payload(entity.getTemplateIdRoot(), entity.getVersion()));
 	}
 }

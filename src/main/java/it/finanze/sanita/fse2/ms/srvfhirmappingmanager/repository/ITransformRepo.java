@@ -4,7 +4,6 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	 * @param ety transform to insert.
 	 * @return transform inserted.
 	 */
-	FhirETY insert(FhirETY ety) throws OperationException;
+	TransformETY insert(TransformETY ety) throws OperationException;
 
 	/**
 	 * Mark a transform as deleted on database
@@ -30,7 +29,7 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	 * @return
 	 * @throws OperationException
 	 */
-	List<FhirETY> remove(String templateIdRoot) throws OperationException;
+	List<TransformETY> remove(String templateIdRoot) throws OperationException;
 
 	/**
 	 * Find a transform by templateIdRoot
@@ -38,7 +37,7 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	 * @return
 	 * @throws OperationException
 	 */
-	FhirETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
+	TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
 
 	/**
 	 * Find a transform by templateIdRoot
@@ -47,19 +46,19 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 	 * @return
 	 * @throws OperationException
 	 */
-	List<FhirETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException;
+	List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException;
 
 	/**
 	 * Find all active transforms (not marked deleted)
 	 * @return
 	 * @throws OperationException
 	 */
-	List<FhirETY> findAll() throws OperationException;
+	List<TransformETY> findAll() throws OperationException;
 
 	/**
 	 * Find a transform on database by id
 	 * @param id
 	 * @return
 	 */
-    FhirETY findById(String id) throws OperationException;
+    TransformETY findById(String id) throws OperationException;
 }

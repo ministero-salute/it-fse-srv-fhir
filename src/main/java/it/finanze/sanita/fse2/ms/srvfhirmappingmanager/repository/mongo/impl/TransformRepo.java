@@ -9,7 +9,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.FhirETY.FIELD_TEMPLATE_ID_ROOT;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY.FIELD_TEMPLATE_ID_ROOT;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -44,7 +44,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	private transient MongoTemplate mongoTemplate;
 	
 	@Override
-	public FhirETY insert(FhirETY ety) throws OperationException {
+	public TransformETY insert(TransformETY ety) throws OperationException {
 		try {
 			return mongoTemplate.insert(ety);
 		} catch(MongoException e) {
@@ -57,15 +57,15 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public List<FhirETY> remove(final String templateIdRoot) throws OperationException {
+	public List<TransformETY> remove(final String templateIdRoot) throws OperationException {
 		try {
 			Query query = query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
 			Update update = new Update();
 			update.set(Constants.App.DELETED, true);
 			update.set(FIELD_LAST_UPDATE, new Date());
 
-			List<FhirETY> list = mongoTemplate.find(query, FhirETY.class);
-			mongoTemplate.updateMulti(query, update, FhirETY.class);
+			List<TransformETY> list = mongoTemplate.find(query, TransformETY.class);
+			mongoTemplate.updateMulti(query, update, TransformETY.class);
 			return list;
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_DELETING_ETY, e);
@@ -77,13 +77,13 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public FhirETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+	public TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
 		try {
 			// Search by template id
 			Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
 			// Sort by insertion
 			q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
-			return mongoTemplate.findOne(q, FhirETY.class);
+			return mongoTemplate.findOne(q, TransformETY.class);
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
@@ -91,8 +91,8 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 	
 	@Override
-	public List<FhirETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException {
-		List<FhirETY> entities;
+	public List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException {
+		List<TransformETY> entities;
 		// Search by template id
 		Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot));
 		// Check if deleted are not allowed
@@ -100,7 +100,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		// Sort by insertion
 		q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 		try {
-			entities = mongoTemplate.find(q, FhirETY.class); 
+			entities = mongoTemplate.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
@@ -110,9 +110,9 @@ public class TransformRepo implements ITransformRepo, Serializable {
 
 
 	@Override
-	public List<FhirETY> findAll() throws OperationException {
+	public List<TransformETY> findAll() throws OperationException {
 		try {
-			return mongoTemplate.findAll(FhirETY.class);
+			return mongoTemplate.findAll(TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException(Constants.Logs.ERROR_FIND_ALL_TRANSFORM, e);
@@ -123,11 +123,11 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public FhirETY findById(String id) throws OperationException {
+	public TransformETY findById(String id) throws OperationException {
 		try {
 			return mongoTemplate.findOne(query(where(Constants.App.MONGO_ID).is(id)
 							.and(Constants.App.DELETED).ne(true)),
-					FhirETY.class);
+					TransformETY.class);
 		} catch (MongoException e) {
 			log.error(Constants.Logs.ERROR_FIND_TRANSFORM, e);
 			throw new OperationException(Constants.Logs.ERROR_FIND_TRANSFORM, e);
@@ -146,16 +146,16 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	 * @throws OperationException If a data-layer error occurs
 	 */
 	@Override
-	public List<FhirETY> getInsertions(Date lastUpdate) throws OperationException {
+	public List<TransformETY> getInsertions(Date lastUpdate) throws OperationException {
 		// Working var
-		List<FhirETY> objects;
+		List<TransformETY> objects;
 		// Create query
 		Query q = query(
 				where(FIELD_INSERTION_DATE).gt(lastUpdate).and(Constants.App.DELETED).ne(true)
 		);
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, FhirETY.class);
+			objects = mongoTemplate.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
@@ -171,9 +171,9 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	 * @throws OperationException If a data-layer error occurs
 	 */
 	@Override
-	public List<FhirETY> getDeletions(Date lastUpdate) throws OperationException {
+	public List<TransformETY> getDeletions(Date lastUpdate) throws OperationException {
 		// Working var
-		List<FhirETY> objects;
+		List<TransformETY> objects;
 		// Create query
 		Query q = query(
 				where(FIELD_LAST_UPDATE).gt(lastUpdate)
@@ -182,7 +182,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		);
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, FhirETY.class);
+			objects = mongoTemplate.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_DELETIONS, e);
@@ -197,14 +197,14 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	 * @throws OperationException If a data-layer error occurs
 	 */
 	@Override
-	public List<FhirETY> getEveryActiveDocument() throws OperationException {
+	public List<TransformETY> getEveryActiveDocument() throws OperationException {
 		// Working var
-		List<FhirETY> objects;
+		List<TransformETY> objects;
 		// Create query
 		Query q = query(where(Constants.App.DELETED).ne(true));
 		try {
 			// Execute
-			objects = mongoTemplate.find(q, FhirETY.class);
+			objects = mongoTemplate.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException("Unable to retrieve every available extension with their documents", e);
@@ -226,7 +226,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		Query q = query(where(Constants.App.DELETED).ne(true));
 		try {
 			// Execute count
-			size = mongoTemplate.count(q, FhirETY.class);
+			size = mongoTemplate.count(q, TransformETY.class);
 		}catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException(Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC, e);

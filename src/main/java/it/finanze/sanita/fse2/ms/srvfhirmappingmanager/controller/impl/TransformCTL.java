@@ -5,14 +5,14 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.FhirDTO.Options;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -34,19 +34,19 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	public PostDocsResDTO uploadTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
 
 		transformSRV.insertTransformByComponents(templateIdRoot, version, uri, file, type);
-		return new PostDocsResDTO(getLogTraceInfo());
+		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
 	public PutDocsResDTO updateTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
 		transformSRV.updateTransformByComponents(templateIdRoot, version, uri, file, type);
-		return new PutDocsResDTO(getLogTraceInfo());
+		return new PutDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
 	public DelDocsResDTO deleteTransform(String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		transformSRV.delete(templateIdRoot);
-		return new DelDocsResDTO(getLogTraceInfo());
+		return new DelDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	public GetDocsResDTO getTransform(boolean binary, boolean deleted) throws OperationException {
 		Options opts = new Options(binary);
 		// Retrieve data
-		List<FhirDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
+		List<TransformDTO> items = deleted ? transformSRV.findAll(opts) : transformSRV.findAllActive(opts);
 		// Transform and return
 		return new GetDocsResDTO(getLogTraceInfo(), items, opts);
 	}

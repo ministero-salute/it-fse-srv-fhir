@@ -1,5 +1,18 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums;
 
-public class FhirTypeEnum {
-	
+public enum FhirTypeEnum {
+
+    Map("Map"),
+    Definition("Definition"),
+    Valueset("Valueset");
+
+    private final String name;
+
+    FhirTypeEnum(String name){
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

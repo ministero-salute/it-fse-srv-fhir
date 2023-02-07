@@ -3,32 +3,18 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
+import lombok.Getter;
 
-
-/**
- * The Class TransformResponseDTO.
- *
- * 
- * 	Transform Response.
- */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
 public class DelDocsResDTO extends ResponseDTO {
 
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 5857199886068379718L;
+	private final int deletedItems;
 
-	private CrudInfoDTO deletedItems;
-
-	public DelDocsResDTO(final LogTraceInfoDTO traceInfo) {
+	public DelDocsResDTO(final LogTraceInfoDTO traceInfo, int deletedItems) {
 		super(traceInfo);
+		this.deletedItems = deletedItems;
 	}
 	
 }

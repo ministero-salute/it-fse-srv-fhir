@@ -3,32 +3,19 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.base.CrudInfoDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
+import lombok.Getter;
 
 
-/**
- * The Class TransformResponseDTO.
- *
- * 
- * 	Transform Response.
- */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
 public class PostDocsResDTO extends ResponseDTO {
 
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 5857199886068379718L;
+	private final int insertedItems;
 
-	private CrudInfoDTO insertedItems;
-
-	public PostDocsResDTO(final LogTraceInfoDTO traceInfo) {
+	public PostDocsResDTO(final LogTraceInfoDTO traceInfo, int insertedItems) {
 		super(traceInfo);
+		this.insertedItems = insertedItems;
 	}
-	
+
 }

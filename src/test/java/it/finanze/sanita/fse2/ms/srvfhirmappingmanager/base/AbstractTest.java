@@ -3,14 +3,13 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import org.bson.Document;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 public abstract class AbstractTest {
 
