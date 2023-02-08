@@ -59,6 +59,8 @@ public final class Constants {
 		public static final String VAL_DESC_ROOT = "Questo campo ha effetto solo per le mappe";
 
 		// Validation
+		public static final String ERR_VAL_ID_BLANK = "L'identificatore documento non può essere vuoto";
+		public static final String ERR_VAL_ID_NOT_VALID = "L'identificatore documento non è valido";
 		public static final String ERR_VAL_URI_BLANK = "Il campo 'uri' non può essere vuoto";
 		public static final String ERR_VAL_VERSION_BLANK = "Il campo 'version' non può essere vuoto";
 		public static final String ERR_VAL_VERSION_INVALID = "Il campo 'version' non rispetta il formato previsto";
