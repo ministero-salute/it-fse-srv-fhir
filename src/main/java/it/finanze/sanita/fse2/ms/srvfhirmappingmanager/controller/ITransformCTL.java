@@ -96,15 +96,21 @@ public interface ITransformCTL {
             MultipartFile file
         ) throws OperationException, DocumentNotFoundException, InvalidVersionException, DataProcessingException, InvalidContentException;
 
-        @DeleteMapping(value = API_DELETE_BY_TEMPLATE_ID_ROOT, produces = {
-                        MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Delete transform from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare una trasformata dalla base dati tramite il Template ID Root.")
+        @DeleteMapping(
+            produces = { MediaType.APPLICATION_JSON_VALUE }
+        )
+        @Operation(summary = "Rimozione entità FHIR su MongoDB")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Cancellazione avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-                        @ApiResponse(responseCode = "404", description = "Trasformata non trovata sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        DelDocsResDTO deleteTransform(@PathVariable(API_PATH_TEMPLATE_ID_ROOT_VAR) @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot) throws DocumentNotFoundException, OperationException;
+                        @ApiResponse(responseCode = "404", description = "Risorsa non trovata", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
+        })
+        DelDocsResDTO deleteTransform(
+            @RequestParam(API_PATH_URI_VAR)
+            @NotBlank(message = ERR_VAL_URI_BLANK)
+            String uri
+        ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = API_GET_BY_TEMPLATE_ID_ROOT, produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a transform from MongoDB, given its Template ID Root and its Version", description = "Servizio che consente di ritornare una trasformata dalla base dati tramite il suo Template ID Root e Version.")
@@ -113,8 +119,8 @@ public interface ITransformCTL {
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Trasformata non trovata sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
-        GetDocsResDTO getTransformByTemplateIdRootAndVersion(
-           @PathVariable(API_PATH_TEMPLATE_ID_ROOT_VAR) @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
+        GetDocsResDTO getTransformByUri(
+           @PathVariable(API_PATH_URI_VAR) @NotBlank(message = "templateIdRoot cannot be blank") @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot,
            @RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
            @RequestParam(value = API_QP_INCLUDE_DELETED, defaultValue = "false") @Parameter(description = "Include deleted content") boolean deleted
 )

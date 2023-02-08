@@ -29,14 +29,15 @@ public final class RouteUtility {
 
     public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "templateIdRoot";
     public static final String API_PATH_ID_VAR = "id";
-    public static final String API_PATH_VERSION_VAR = "version";
-    public static final String API_PATH_TEMPLATE_ID_ROOT = "/{" + API_PATH_TEMPLATE_ID_ROOT_VAR + "}";
-    public static final String API_DELETE_BY_TEMPLATE_ID_ROOT = API_PATH_TEMPLATE_ID_ROOT;
-    public static final String API_GET_BY_TEMPLATE_ID_ROOT = API_PATH_TEMPLATE_ID_ROOT;
-    public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";
-    public static final String API_GET_ONE_BY_ID = API_ID + API_ID_EXTS;
-    
     public static final String API_PATH_FILE_VAR = "file";
     public static final String API_PATH_URI_VAR = "uri";
     public static final String API_PATH_TYPE_VAR = "type";
+    public static final String API_PATH_VERSION_VAR = "version";
+
+    public static final String API_PATH_URI = "/{" + API_PATH_URI_VAR + "}";
+    public static final String API_DELETE_BY_URI = API_PATH_URI;
+    public static final String API_GET_BY_TEMPLATE_ID_ROOT = API_PATH_URI;
+    public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";
+    public static final String API_GET_ONE_BY_ID = API_ID + API_ID_EXTS;
+
 }
