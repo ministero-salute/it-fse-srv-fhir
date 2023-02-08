@@ -22,7 +22,7 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 
 	TransformETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
 
-	List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException;
+	List<TransformETY> findByUriAndDeleted(String templateIdRoot, boolean deleted) throws OperationException;
 
 	List<TransformETY> findAll() throws OperationException;
 

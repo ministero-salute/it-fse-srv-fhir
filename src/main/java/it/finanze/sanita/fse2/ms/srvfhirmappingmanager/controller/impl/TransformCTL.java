@@ -52,8 +52,8 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public GetDocsResDTO getTransformByUri(String templateIdRoot, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
-		return new GetDocsResDTO(getLogTraceInfo(), service.findByTemplateIdRootAndDeleted(templateIdRoot, deleted), new Options(binary));
+	public GetDocsResDTO getTransformByUri(String uri, boolean binary, boolean deleted) throws DocumentNotFoundException, OperationException {
+		return new GetDocsResDTO(getLogTraceInfo(), service.findByUriAndDeleted(uri, deleted), new Options(binary));
 	}
 
 	@Override

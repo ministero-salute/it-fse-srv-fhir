@@ -79,8 +79,8 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		try {
 			out = mongo.findOne(q, TransformETY.class);
 		} catch (MongoException e) {
-			log.error(ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(ERROR_FIND_TRANSFORM, e);
+			log.error(ERR_REP_FIND_BY_URI, e);
+			throw new OperationException(ERR_REP_FIND_BY_URI, e);
 		}
 		return out;
 	}
@@ -100,10 +100,10 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public List<TransformETY> findByTemplateIdRootAndDeleted(String templateIdRoot, boolean deleted) throws OperationException {
+	public List<TransformETY> findByUriAndDeleted(String uri, boolean deleted) throws OperationException {
 		List<TransformETY> entities;
 		// Search by template id
-		Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot));
+		Query q = query(where(FIELD_URI).is(uri));
 		// Check if deleted are not allowed
 		if(!deleted) q.addCriteria(where(FIELD_DELETED).ne(true));
 		// Sort by insertion
@@ -111,8 +111,8 @@ public class TransformRepo implements ITransformRepo, Serializable {
 		try {
 			entities = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
-			log.error(ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(ERROR_FIND_TRANSFORM, e);
+			log.error(ERR_REP_FIND_BY_URI, e);
+			throw new OperationException(ERR_REP_FIND_BY_URI, e);
 		}
 		return entities;
 	}
@@ -133,17 +133,15 @@ public class TransformRepo implements ITransformRepo, Serializable {
 
 	@Override
 	public TransformETY findById(String id) throws OperationException {
+		TransformETY out;
+		Query q = query(where(FIELD_ID).is(id).and(FIELD_DELETED).ne(true));
 		try {
-			return mongo.findOne(query(where(FIELD_ID).is(id)
-							.and(FIELD_DELETED).ne(true)),
-					TransformETY.class);
+			out = mongo.findOne(q, TransformETY.class);
 		} catch (MongoException e) {
-			log.error(ERROR_FIND_TRANSFORM, e);
-			throw new OperationException(ERROR_FIND_TRANSFORM, e);
-		} catch (Exception ex) {
-			log.error(ERROR_UPDATING_TRANSFORM + getClass(), ex);
-			throw new BusinessException(ERROR_UPDATING_TRANSFORM + getClass(), ex);
+			log.error(ERR_REP_FIND_BY_ID, e);
+			throw new OperationException(ERR_REP_FIND_BY_ID, e);
 		}
+		return out;
 	}
 
 

@@ -51,8 +51,6 @@ public final class Constants {
 
 		public static final String ERR_VAL_FUTURE_DATE = "The last update date cannot be in the future";
 		public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists";
-		public static final String ERROR_FIND_TRANSFORM = "Error find by id ety transform :";
-		public static final String ERROR_UPDATING_TRANSFORM = "Error while updating transform ";
 		public static final String ERROR_FIND_ALL_TRANSFORM = "Error find all active ety transform :";
 
 		// Descriptions
@@ -73,6 +71,8 @@ public final class Constants {
 		public static final String ERR_SRV_VERSION_MISMATCH = "Versione non valida: %s. La versione deve essere maggiore di %s";
 
 		// Repositories
+		public static final String ERR_REP_FIND_BY_ID = "Impossibile cercare documento per OID";
+		public static final String ERR_REP_FIND_BY_URI = "Impossibile cercare documento per URI";
 		public static final String ERR_REP_FIND_BY_ROOT = "Impossibile cercare documento per root id";
 		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
 		public static final String ERR_REP_INS_DOCS_BY_URI = "Impossibile inserire il documento richiesto";

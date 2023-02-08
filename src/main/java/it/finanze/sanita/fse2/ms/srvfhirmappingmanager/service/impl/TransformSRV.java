@@ -83,9 +83,9 @@ public class TransformSRV implements ITransformSRV {
 
 	
 	@Override
-	public List<TransformDTO> findByTemplateIdRootAndDeleted(final String templateIdRoot, boolean deleted) throws DocumentNotFoundException, OperationException {
-		List<TransformETY> entities = repository.findByTemplateIdRootAndDeleted(templateIdRoot, deleted);
-		if(entities.isEmpty()) throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+	public List<TransformDTO> findByUriAndDeleted(final String uri, boolean deleted) throws DocumentNotFoundException, OperationException {
+		List<TransformETY> entities = repository.findByUriAndDeleted(uri, deleted);
+		if(entities.isEmpty()) throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_EXIST);
 		return entities.stream().map(TransformDTO::fromEntity).collect(Collectors.toList());
 	}
 
