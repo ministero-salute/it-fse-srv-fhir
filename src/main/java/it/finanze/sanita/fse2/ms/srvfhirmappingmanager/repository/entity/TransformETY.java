@@ -76,6 +76,7 @@ public class TransformETY {
 		e.setVersion(version);
 		if (type == FhirTypeEnum.Map) e.setTemplateIdRoot(root);
 		e.setType(type);
+		e.setFilename(file.getOriginalFilename());
 		e.setContent(file);
 		e.setInsertionDate(date);
 		e.setLastUpdateDate(date);
