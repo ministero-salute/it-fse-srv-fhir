@@ -29,7 +29,11 @@ public interface ITransformSRV extends IChangeSetSRV{
 	) throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
 
 
-	void updateTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException;
+	void updateTransformByComponents(
+		String version,
+		String uri,
+		MultipartFile file
+	) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException;
 
 	void delete(String templateIdRoot) throws OperationException, DocumentNotFoundException;
 

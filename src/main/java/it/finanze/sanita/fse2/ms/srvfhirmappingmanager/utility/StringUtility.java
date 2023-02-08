@@ -19,11 +19,6 @@ public final class StringUtility {
 	 * @return		{@code true} if the String passed as parameter is null or empty.
 	 */
 	public static boolean isNullOrEmpty(final String str) {
-	    boolean out = false;
-		if (str == null || str.isEmpty()) {
-			out = true;
-		}
-		return out;
-	} 
-	 
+		return str == null || str.isEmpty();
+	}
 }

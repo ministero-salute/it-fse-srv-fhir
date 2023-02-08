@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
@@ -40,15 +39,15 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	}
 
 	@Override
-	public PutDocsResDTO updateTransform(String templateIdRoot, String version, MultipartFile file, String uri, FhirTypeEnum type) throws IOException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException, InvalidContentException {
+	public PutDocsResDTO updateTransform(String uri, String version, MultipartFile file) throws OperationException, DocumentNotFoundException, InvalidVersionException, InvalidContentException, DataProcessingException {
 		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
-		service.updateTransformByComponents(templateIdRoot, version, uri, file, type);
+		service.updateTransformByComponents(version, uri, file);
 		return new PutDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
-	public DelDocsResDTO deleteTransform(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		service.delete(templateIdRoot);
+	public DelDocsResDTO deleteTransform(String uri) throws DocumentNotFoundException, OperationException {
+		service.delete(uri);
 		return new DelDocsResDTO(getLogTraceInfo(), 1);
 	}
 

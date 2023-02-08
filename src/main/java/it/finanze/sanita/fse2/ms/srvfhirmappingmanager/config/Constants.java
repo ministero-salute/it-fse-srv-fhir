@@ -50,8 +50,6 @@ public final class Constants {
 		public static final String ERROR_UNABLE_FIND_DELETIONS = "Unable to retrieve change-set deletions"; 
 
 		public static final String ERR_VAL_FUTURE_DATE = "The last update date cannot be in the future";
-
-		public static final String ERROR_DELETING_ETY = "Error deleting entity ";
 		public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists";
 		public static final String ERROR_FIND_TRANSFORM = "Error find by id ety transform :";
 		public static final String ERROR_UPDATING_TRANSFORM = "Error while updating transform ";
@@ -67,14 +65,16 @@ public final class Constants {
 		public static final String ERR_VAL_FILES_INVALID = "Il 'file' fornito sembra invalido";
 
 		// Services
-		public static final String ERR_SRV_ROOT_ALREADY_EXIST = "Una o più versioni dello stesso root id sono già presenti";
-		public static final String ERR_SRV_DOC_ALREADY_EXIST = "Una o più versioni dello stesso documento sono già presenti";
+		public static final String ERR_SRV_ROOT_ALREADY_EXIST = "Una versione dello stesso root id è già presente";
+		public static final String ERR_SRV_DOC_ALREADY_EXIST = "Una versione dello stesso documento è già presenti";
+		public static final String ERR_SRV_DOC_NOT_EXIST = "Il documento richiesto non esiste";
+		public static final String ERR_SRV_VERSION_MISMATCH = "Versione non valida: %s. La versione deve essere maggiore di %s";
 
 		// Repositories
 		public static final String ERR_REP_FIND_BY_ROOT = "Impossibile cercare documento per root id";
 		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
 		public static final String ERR_REP_INS_DOCS_BY_URI = "Impossibile inserire il documento richiesto";
-
+		public static final String ERR_REP_DEL_DOCS_BY_URI = "Impossibile cancellare i documenti richiesti";
 		// Entities
 		public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";
 

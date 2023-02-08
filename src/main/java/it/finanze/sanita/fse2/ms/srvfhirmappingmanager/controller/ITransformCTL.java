@@ -33,8 +33,6 @@ import java.io.IOException;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Regex.REG_VERSION;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_EXTS_STRING_MIN;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 
 /**
@@ -74,20 +72,29 @@ public interface ITransformCTL {
                 MultipartFile file
         ) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException;
 
-        @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-        @Operation(summary = "Update transform to MongoDB", description = "Servizio che consente di aggiornare una trasformata nella base dati.")
+        @PutMapping(
+            produces = { MediaType.APPLICATION_JSON_VALUE },
+            consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
+        )
+        @Operation(summary = "Aggiornamento entità FHIR su MongoDB")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Aggiornamento trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PutDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Risorsa non trovata", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
-                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
+        })
         PutDocsResDTO updateTransform(
-                        @RequestPart(API_PATH_TEMPLATE_ID_ROOT_VAR) @Parameter(description = "Template id root", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "templateIdRoot does not match the expected size") @NotBlank(message = "Template id root cannot be blank") String templateIdRoot,
-                        @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Version", schema = @Schema(minLength = OA_EXTS_STRING_MIN, maxLength = OA_EXTS_STRING_MAX)) @Size(min = OA_EXTS_STRING_MIN, max = OA_EXTS_STRING_MAX, message = "version does not match the expected size") @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestPart(API_PATH_FILE_VAR)MultipartFile file, @RequestPart(API_PATH_URI_VAR) String uri, @RequestPart(API_PATH_TYPE_VAR) FhirTypeEnum type) throws IOException, OperationException,
-                        DocumentAlreadyPresentException, DocumentNotFoundException, InvalidVersionException,
-                        InvalidContentException;
+            @RequestPart(API_PATH_URI_VAR)
+            @NotBlank(message = ERR_VAL_URI_BLANK)
+            String uri,
+            @RequestPart(API_PATH_VERSION_VAR)
+            @NotBlank(message = ERR_VAL_VERSION_BLANK)
+            @Pattern(message = ERR_VAL_VERSION_INVALID, regexp = REG_VERSION)
+            String version,
+            @RequestPart(API_PATH_FILE_VAR)
+            MultipartFile file
+        ) throws OperationException, DocumentNotFoundException, InvalidVersionException, DataProcessingException, InvalidContentException;
 
         @DeleteMapping(value = API_DELETE_BY_TEMPLATE_ID_ROOT, produces = {
                         MediaType.APPLICATION_JSON_VALUE })

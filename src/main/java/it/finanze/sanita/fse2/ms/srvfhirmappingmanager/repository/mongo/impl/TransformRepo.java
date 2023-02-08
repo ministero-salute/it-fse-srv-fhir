@@ -51,23 +51,22 @@ public class TransformRepo implements ITransformRepo, Serializable {
 	}
 
 	@Override
-	public List<TransformETY> remove(final String templateIdRoot) throws OperationException {
+	public List<TransformETY> remove(final String uri) throws OperationException {
+		List<TransformETY> q;
+		// Prepare find query
+		Query query = query(where(FIELD_URI).is(uri).and(FIELD_DELETED).ne(true));
+		// Prepare update query
+		Update update = new Update();
+		update.set(FIELD_DELETED, true);
+		update.set(FIELD_LAST_UPDATE, new Date());
 		try {
-			Query query = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
-			Update update = new Update();
-			update.set(FIELD_DELETED, true);
-			update.set(FIELD_LAST_UPDATE, new Date());
-
-			List<TransformETY> list = mongo.find(query, TransformETY.class);
+			q = mongo.find(query, TransformETY.class);
 			mongo.updateMulti(query, update, TransformETY.class);
-			return list;
 		} catch (MongoException e) {
-			log.error(ERROR_DELETING_ETY, e);
-			throw new OperationException(ERROR_DELETING_ETY, e);
-		} catch (Exception ex) {
-			log.error(ERROR_DELETING_ETY + getClass(), ex);
-			throw new BusinessException(ERROR_DELETING_ETY + getClass(), ex);
+			log.error(ERR_REP_DEL_DOCS_BY_URI, e);
+			throw new OperationException(ERR_REP_DEL_DOCS_BY_URI, e);
 		}
+		return q;
 	}
 
 	@Override

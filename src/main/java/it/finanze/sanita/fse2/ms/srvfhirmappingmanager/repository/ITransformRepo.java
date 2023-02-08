@@ -16,7 +16,7 @@ public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
 
 	TransformETY insert(TransformETY ety) throws OperationException;
 
-	List<TransformETY> remove(String templateIdRoot) throws OperationException;
+	List<TransformETY> remove(String uri) throws OperationException;
 
 	TransformETY findByUri(String uri) throws OperationException;
 

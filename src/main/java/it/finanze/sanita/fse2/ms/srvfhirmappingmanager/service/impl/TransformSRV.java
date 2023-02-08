@@ -3,7 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.impl;
 
-import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -27,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum.Map;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility.isNullOrEmpty;
 
 
 /**
@@ -46,7 +46,7 @@ public class TransformSRV implements ITransformSRV {
 		// Verify it doesn't exist
 		if (exists != null) throw new DocumentAlreadyPresentException(ERR_SRV_DOC_ALREADY_EXIST);
 		// Check root id is available if provided
-		if (type == FhirTypeEnum.Map && root != null && !root.isEmpty()) {
+		if (type == Map && !isNullOrEmpty(root)) {
 			// Retrieve most recent one
 			TransformETY id = repository.findByTemplateIdRoot(root);
 			// It must be null otherwise is already used by some other resource
@@ -59,35 +59,26 @@ public class TransformSRV implements ITransformSRV {
 	}
 
 	@Override
-	public void updateTransformByComponents(String templateIdRoot, String version, String uri, MultipartFile file, FhirTypeEnum type) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
+	public void updateTransformByComponents(String version, String uri, MultipartFile file) throws OperationException, DataProcessingException, DocumentNotFoundException, InvalidVersionException {
 		log.debug("[EDS] Update of transform - START");
-		TransformETY lastDocument = repository.findByUri(templateIdRoot);
-
-		if (ObjectUtils.anyNull(lastDocument) || ObjectUtils.isEmpty(lastDocument)) {
-			throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
+		// Retrieve most recent one
+		TransformETY latest = repository.findByUri(uri);
+		// Verify it exists
+		if (latest == null) throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_EXIST);
+		// Check provided version is greater than the latest one
+		if (!ValidationUtility.isMajorVersion(version, latest.getVersion())) {
+			throw new InvalidVersionException(String.format(ERR_SRV_VERSION_MISMATCH, version, latest.getVersion()));
 		}
-
-		if (!ValidationUtility.isMajorVersion(version, lastDocument.getVersion())) {
-			throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", version, lastDocument.getVersion()));
-		}
-
-		delete(lastDocument.getTemplateIdRoot());
-		// Insert rootMapName at root level of ety
-		TransformETY transformETY = TransformETY.fromComponents(templateIdRoot, version, uri, type, file);
-		repository.insert(transformETY);
-		
+		// Mark as deleted the current file
+		repository.remove(uri);
+		// Insert the new one
+		repository.insert(TransformETY.fromComponents(uri, version, latest.getTemplateIdRoot(), latest.getType(), file));
 	}
 
 	@Override
-	public void delete(String templateIdRoot) throws OperationException, DocumentNotFoundException {
-		try {
-			List<TransformETY> deletedTransform = repository.remove(templateIdRoot);
-			if (CollectionUtils.isEmpty(deletedTransform)) {
-				throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-			}
-		} catch(MongoException e) {
-			throw new OperationException(e.getMessage(), e);
-			}
+	public void delete(String uri) throws OperationException, DocumentNotFoundException {
+		List<TransformETY> out = repository.remove(uri);
+		if (out == null || out.isEmpty()) throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_EXIST);
 	}
 
 	
