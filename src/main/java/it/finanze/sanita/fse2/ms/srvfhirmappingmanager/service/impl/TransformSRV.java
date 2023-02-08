@@ -14,7 +14,6 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ChangeSetUtility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -110,11 +109,7 @@ public class TransformSRV implements ITransformSRV {
 	@Override
 	public TransformDTO findById(String id) throws OperationException, DocumentNotFoundException {
 		TransformETY output = repository.findById(id);
-
-		if (ObjectUtils.anyNull(output) || ObjectUtils.isEmpty(output)) {
-			throw new DocumentNotFoundException(ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
-		}
-
+		if (output == null) throw new DocumentNotFoundException(ERR_SRV_DOC_NOT_EXIST);
 		return TransformDTO.fromEntity(output);
 	}
 

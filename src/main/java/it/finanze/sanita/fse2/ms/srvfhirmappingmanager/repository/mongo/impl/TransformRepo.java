@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.mongo.impl;
 
 
 import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.ITransformRepo;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
@@ -120,15 +119,14 @@ public class TransformRepo implements ITransformRepo, Serializable {
 
 	@Override
 	public List<TransformETY> findAll() throws OperationException {
+		List<TransformETY> out;
 		try {
-			return mongo.findAll(TransformETY.class);
+			out = mongo.findAll(TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(ERROR_FIND_ALL_TRANSFORM, e);
-		} catch (Exception ex) {
-			log.error(ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
-			throw new BusinessException(ERROR_FIND_ALL_TRANSFORM + getClass(), ex);
+			throw new OperationException(ERR_REP_FIND_BY_ANY, e);
 		}
+		return out;
 	}
 
 	@Override
@@ -165,7 +163,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(ERROR_UNABLE_FIND_INSERTIONS, e);
+			throw new OperationException(ERR_REP_CHANGESET_INSERT, e);
 		}
 		return objects;
 	}
@@ -192,7 +190,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException(ERROR_UNABLE_FIND_DELETIONS, e);
+			throw new OperationException(ERR_REP_CHANGESET_DELETE, e);
 		}
 		return objects;
 	}
@@ -214,7 +212,7 @@ public class TransformRepo implements ITransformRepo, Serializable {
 			objects = mongo.find(q, TransformETY.class);
 		} catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
-			throw new OperationException("Unable to retrieve every available extension with their documents", e);
+			throw new OperationException(ERR_REP_FIND_BY_ANY_ACTIVE, e);
 		}
 		return objects;
 	}

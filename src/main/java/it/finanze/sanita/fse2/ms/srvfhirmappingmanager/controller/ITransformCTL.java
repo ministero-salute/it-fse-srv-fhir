@@ -146,10 +146,11 @@ public interface ITransformCTL {
         ) throws OperationException, DocumentNotFoundException;
 
         @GetMapping(value = API_PATH_ALL_VAR, produces = { MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Returns the list of all transforms from MongoDB", description = "Servizio che consente di ritornare la lista delle trasformate dalla base dati.")
+        @Operation(summary = "Restituzione di tutte le entità FHIR disponibili")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocsResDTO.class))),
-                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
+                        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
+        })
         GetDocsResDTO getTransform(
             @RequestParam(value = API_QP_BINARY, defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
             @RequestParam(value = API_QP_INCLUDE_DELETED, defaultValue = "false") @Parameter(description = "Include deleted schema") boolean deleted

@@ -43,16 +43,6 @@ public final class Constants {
 
 	public static final class Logs {
 
-		public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire %s nel tipo %s";
-		
-		public static final String ERROR_UNABLE_FIND_INSERTIONS = "Unable to retrieve change-set insertions"; 
-
-		public static final String ERROR_UNABLE_FIND_DELETIONS = "Unable to retrieve change-set deletions"; 
-
-		public static final String ERR_VAL_FUTURE_DATE = "The last update date cannot be in the future";
-		public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists";
-		public static final String ERROR_FIND_ALL_TRANSFORM = "Error find all active ety transform :";
-
 		// Descriptions
 		public static final String VAL_DESC_ROOT = "Questo campo ha effetto solo per le mappe";
 
@@ -63,6 +53,8 @@ public final class Constants {
 		public static final String ERR_VAL_VERSION_BLANK = "Il campo 'version' non può essere vuoto";
 		public static final String ERR_VAL_VERSION_INVALID = "Il campo 'version' non rispetta il formato previsto";
 		public static final String ERR_VAL_FILES_INVALID = "Il 'file' fornito sembra invalido";
+		public static final String ERR_VAL_FUTURE_DATE = "La data del ultimo aggiornamento non può essere nel futuro";
+		public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire %s nel tipo %s";
 
 		// Services
 		public static final String ERR_SRV_ROOT_ALREADY_EXIST = "Una versione dello stesso root id è già presente";
@@ -73,10 +65,15 @@ public final class Constants {
 		// Repositories
 		public static final String ERR_REP_FIND_BY_ID = "Impossibile cercare documento per OID";
 		public static final String ERR_REP_FIND_BY_URI = "Impossibile cercare documento per URI";
+		public static final String ERR_REP_FIND_BY_ANY = "Impossibile cercare tra tutti i documenti";
+		public static final String ERR_REP_FIND_BY_ANY_ACTIVE = "Impossibile cercare tra tutti i documenti attivi";
 		public static final String ERR_REP_FIND_BY_ROOT = "Impossibile cercare documento per root id";
 		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
 		public static final String ERR_REP_INS_DOCS_BY_URI = "Impossibile inserire il documento richiesto";
 		public static final String ERR_REP_DEL_DOCS_BY_URI = "Impossibile cancellare i documenti richiesti";
+		public static final String ERR_REP_CHANGESET_INSERT = "Impossibile recuperare il change-set degli inserimenti";
+		public static final String ERR_REP_CHANGESET_DELETE = "Impossibile recuperare il change-set delle cancellazioni";
+
 		// Entities
 		public static final String ERR_ETY_BINARY_CONVERSION = "Impossibile convertire i dati binari nel formato richiesto (UTF-8)";
 
