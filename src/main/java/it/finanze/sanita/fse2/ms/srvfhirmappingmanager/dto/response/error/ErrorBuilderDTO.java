@@ -4,11 +4,11 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error;
 
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Resource;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Server;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorInstance.Validation;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -119,7 +119,7 @@ public final class ErrorBuilderDTO {
             ErrorType.VALIDATION.getTitle(),
             ex.getMessage(),
             SC_BAD_REQUEST,
-            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getField())
         );
 
     }

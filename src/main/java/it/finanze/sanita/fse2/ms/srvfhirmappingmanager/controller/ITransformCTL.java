@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.IOException;
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Regex.REG_VERSION;
@@ -63,9 +64,9 @@ public interface ITransformCTL {
                 String version,
                 @RequestParam(API_PATH_TYPE_VAR)
                 FhirTypeEnum type,
-                @RequestPart(value = API_PATH_TEMPLATE_ID_ROOT_VAR, required = false)
+                @RequestParam(value = API_PATH_TEMPLATE_ID_ROOT_VAR, required = false)
                 @Parameter(description = VAL_DESC_ROOT)
-                String templateIdRoot,
+                List<String> roots,
                 @RequestPart(API_PATH_FILE_VAR)
                 MultipartFile file
         ) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException;

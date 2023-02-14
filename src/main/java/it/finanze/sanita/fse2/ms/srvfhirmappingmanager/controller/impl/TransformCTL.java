@@ -32,7 +32,7 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	private ITransformSRV service;
 
 	@Override
-	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, String root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
+	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, List<String> root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
 		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
 		service.insertTransformByComponents(root, version, uri, file, type);
 		return new PostDocsResDTO(getLogTraceInfo(), 1);

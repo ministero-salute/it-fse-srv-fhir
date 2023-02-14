@@ -57,7 +57,8 @@ public final class Constants {
 		public static final String ERR_VAL_UNABLE_CONVERT = "Impossibile convertire %s nel tipo %s";
 
 		// Services
-		public static final String ERR_SRV_ROOT_ALREADY_EXIST = "Una versione dello stesso root id è già presente";
+		public static final String ERR_SRV_ROOT_ITEMS_INVALID = "Una o più root map indicate sono invalide oppure la lista è vuota";
+		public static final String ERR_SRV_ROOT_ALREADY_EXIST = "Uno o più root id sono già in uso ad un altra risorsa";
 		public static final String ERR_SRV_DOC_ALREADY_EXIST = "Una versione dello stesso documento è già presenti";
 		public static final String ERR_SRV_DOC_NOT_EXIST = "Il documento richiesto non esiste";
 		public static final String ERR_SRV_VERSION_MISMATCH = "Versione non valida: %s. La versione deve essere maggiore di %s";

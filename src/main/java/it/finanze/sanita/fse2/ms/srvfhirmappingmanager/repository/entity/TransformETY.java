@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChangeSetRepo.*;
 
@@ -38,7 +39,7 @@ public class TransformETY {
 	private String filename;
 
 	@Field(name = FIELD_TEMPLATE_ID_ROOT)
-	private String templateIdRoot;
+	private List<String> templateIdRoot;
 	
 	@Field(name = FIELD_VERSION)
 	private String version;
@@ -69,12 +70,12 @@ public class TransformETY {
 	    }
 	}
 	
-	public static TransformETY fromComponents(String uri, String version, String root, FhirTypeEnum type, MultipartFile file) throws DataProcessingException {
+	public static TransformETY fromComponents(String uri, String version, List<String> roots, FhirTypeEnum type, MultipartFile file) throws DataProcessingException {
 		Date date = new Date();
 		TransformETY e = new TransformETY();
 		e.setUri(uri);
 		e.setVersion(version);
-		if (type == FhirTypeEnum.Map) e.setTemplateIdRoot(root);
+		if (type == FhirTypeEnum.Map) e.setTemplateIdRoot(roots);
 		e.setType(type);
 		e.setFilename(file.getOriginalFilename());
 		e.setContent(file);

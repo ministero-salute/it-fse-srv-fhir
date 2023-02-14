@@ -27,7 +27,7 @@ public final class RouteUtility {
     public static final String API_QP_BINARY = "includeBinary";
     public static final String API_QP_LAST_UPDATE = "lastUpdate";
 
-    public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "templateIdRoot";
+    public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "roots";
     public static final String API_PATH_ID_VAR = "id";
     public static final String API_PATH_FILE_VAR = "file";
     public static final String API_PATH_URI_VAR = "uri";

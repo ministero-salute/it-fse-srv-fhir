@@ -21,12 +21,12 @@ public interface ITransformSRV extends IChangeSetSRV{
 	 * Insert a FHIR transform using all components passed in the request
 	 */
 	void insertTransformByComponents(
-		String root,
+		List<String> root,
 		String version,
 		String uri,
 		MultipartFile file,
 		FhirTypeEnum type
-	) throws DocumentAlreadyPresentException, OperationException, DataProcessingException;
+	) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, InvalidContentException;
 
 
 	void updateTransformByComponents(

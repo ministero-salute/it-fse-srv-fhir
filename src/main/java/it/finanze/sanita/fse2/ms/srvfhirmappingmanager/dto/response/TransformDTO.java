@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc.encodeBase64;
 
@@ -19,7 +20,7 @@ public class TransformDTO {
     private String id;
     private String uri;
     private String version;
-    private String templateIdRoot;
+    private List<String> templateIdRoot;
     private String content;
     private String filename;
 	private FhirTypeEnum type;

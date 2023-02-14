@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum.Map;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility.isNullOrEmpty;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_TEMPLATE_ID_ROOT_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility.*;
 
 
 /**
@@ -38,18 +39,25 @@ public class TransformSRV implements ITransformSRV {
 	private ITransformRepo repository;
 
 	@Override
-	public void insertTransformByComponents(String root, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException {
+	public void insertTransformByComponents(List<String> root, String version, String uri, MultipartFile file, FhirTypeEnum type) throws DocumentAlreadyPresentException, OperationException, DataProcessingException, InvalidContentException {
 		log.debug("[EDS] Insertion of transform - START");
 		// Retrieve most recent one
 		TransformETY exists = repository.findByUri(uri);
 		// Verify it doesn't exist
 		if (exists != null) throw new DocumentAlreadyPresentException(ERR_SRV_DOC_ALREADY_EXIST);
-		// Check root id is available if provided
+		// Check if root values are available
 		if (type == Map && !isNullOrEmpty(root)) {
-			// Retrieve most recent one
-			TransformETY id = repository.findByTemplateIdRoot(root);
-			// It must be null otherwise is already used by some other resource
-			if (id != null) throw new DocumentAlreadyPresentException(ERR_SRV_ROOT_ALREADY_EXIST);
+			// Normalize (remove whitespaces and null objects)
+			root = normalize(root);
+			// Check for empty items
+			if(isEmptyOrHasEmptyItems(root)) throw new InvalidContentException(ERR_SRV_ROOT_ITEMS_INVALID, API_PATH_TEMPLATE_ID_ROOT_VAR);
+			// Iterate for each root
+			for (String s : root) {
+				// Retrieve most recent one
+				TransformETY id = repository.findByTemplateIdRoot(s);
+				// It must be null otherwise is already used by some other resource
+				if (id != null) throw new DocumentAlreadyPresentException(ERR_SRV_ROOT_ALREADY_EXIST);
+			}
 		}
 		// Convert from DTO to entity
 		TransformETY out = TransformETY.fromComponents(uri, version, root, type, file);
