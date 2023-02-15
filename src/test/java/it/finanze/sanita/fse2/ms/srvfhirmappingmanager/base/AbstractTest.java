@@ -3,17 +3,34 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import org.bson.Document;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import java.util.Arrays;
+import java.util.List;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY.fromComponents;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
 
 public abstract class AbstractTest {
 
-	public final String TRANSFORM_DEMO_ETY = "{\"filename\":\"map1.map\",\"templateIdRoot\":[\"2.16.840.1.113883.2.9.10.1.1\"],\"version\":\"0.1\",\"content\":{\"$binary\":{\"base64\":\"\",\"subType\":\"00\"}},\"uri\":\"uri-test\",\"type\":\"Map\",\"insertion_date\":{\"$date\":{\"$numberLong\":\"1676370555758\"}},\"last_update_date\":{\"$date\":{\"$numberLong\":\"1676370555758\"}},\"deleted\":false}";
+	public static final String MOCK_FAKE_ID_ETY = "63eb78f7d02c57742ff8367a";
+
+	public static final String MOCK_URI_ETY = "https://ibm.example.com/StructureMap/MockEntity";
+	public static final String MOCK_VERSION_ETY = "0.1";
+	public static final String MOCK_TMP_ROOT_0_ETY = "2.16.840.1.113883.2.9.10.1.1";
+	public static final String MOCK_TMP_ROOT_1_ETY = "2.16.840.1.113883.2.9.10.1.2";
+	public static final FhirTypeEnum MOCK_TYPE_ETY = FhirTypeEnum.Map;
+	public static final List<String> MOCK_ROOTS_ETY = Arrays.asList(MOCK_TMP_ROOT_0_ETY, MOCK_TMP_ROOT_1_ETY);
+	public static final String MOCK_FILENAME_ETY = "MockEntity.map";
+	public static final byte[] MOCK_FILE_CONTENT_ETY = "hello-world".getBytes();
+	public static final MockMultipartFile MOCK_FILE_ETY = new MockMultipartFile(
+		API_PATH_FILE_VAR, MOCK_FILENAME_ETY, null, MOCK_FILE_CONTENT_ETY
+	);
 
 	protected String getBaseUrl() {
 		return "/v1";
@@ -22,23 +39,20 @@ public abstract class AbstractTest {
 	@SpyBean
 	protected MongoTemplate mongo;
 
-	public static MockMultipartFile createFakeFile(String filename) {
-		return new MockMultipartFile("files", filename, "multipart/form-data", "Hello world!".getBytes());
-	}
-
 	public final String FAKE_INVALID_DTO_ID = "||----test";
-	
-	/**
-	 * Sample parameter for multiple tests
-	 */
-	public static final String SCHEMA_TEST_ROOT_B = "file.xsd";
 
-
-	public static MockMultipartFile createFakeMultipart(String filename) {
-		return new MockMultipartFile("files", filename, APPLICATION_XML_VALUE, "Hello world!".getBytes());
+	public void prepareCollection() throws DataProcessingException {
+		mongo.insert(createTestEntity());
 	}
 
-	public void prepareCollection() {
-		mongo.insert(Document.parse(TRANSFORM_DEMO_ETY), mongo.getCollectionName(TransformETY.class));
+	protected TransformETY createTestEntity() throws DataProcessingException {
+		return fromComponents(
+			MOCK_URI_ETY,
+			MOCK_VERSION_ETY,
+			MOCK_ROOTS_ETY,
+			MOCK_TYPE_ETY,
+			MOCK_FILE_ETY
+		);
 	}
+
 }

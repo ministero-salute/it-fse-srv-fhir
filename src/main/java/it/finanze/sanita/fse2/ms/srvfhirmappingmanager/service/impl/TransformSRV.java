@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum.Map;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_TEMPLATE_ID_ROOT_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_ROOTS_VAR;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.StringUtility.*;
 
 
@@ -50,7 +50,7 @@ public class TransformSRV implements ITransformSRV {
 			// Normalize (remove whitespaces and null objects)
 			root = normalize(root);
 			// Check for empty items
-			if(isEmptyOrHasEmptyItems(root)) throw new InvalidContentException(ERR_SRV_ROOT_ITEMS_INVALID, API_PATH_TEMPLATE_ID_ROOT_VAR);
+			if(isEmptyOrHasEmptyItems(root)) throw new InvalidContentException(ERR_SRV_ROOT_ITEMS_INVALID, API_PATH_ROOTS_VAR);
 			// Iterate for each root
 			for (String s : root) {
 				// Retrieve most recent one

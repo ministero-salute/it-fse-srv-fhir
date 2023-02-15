@@ -64,7 +64,7 @@ public interface ITransformCTL {
                 String version,
                 @RequestParam(API_PATH_TYPE_VAR)
                 FhirTypeEnum type,
-                @RequestParam(value = API_PATH_TEMPLATE_ID_ROOT_VAR, required = false)
+                @RequestParam(value = API_PATH_ROOTS_VAR, required = false)
                 @Parameter(description = VAL_DESC_ROOT)
                 List<String> roots,
                 @RequestPart(API_PATH_FILE_VAR)

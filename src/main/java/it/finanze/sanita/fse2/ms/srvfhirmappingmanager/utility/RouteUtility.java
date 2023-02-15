@@ -27,7 +27,7 @@ public final class RouteUtility {
     public static final String API_QP_BINARY = "includeBinary";
     public static final String API_QP_LAST_UPDATE = "lastUpdate";
 
-    public static final String API_PATH_TEMPLATE_ID_ROOT_VAR = "roots";
+    public static final String API_PATH_ROOTS_VAR = "roots";
     public static final String API_PATH_ID_VAR = "id";
     public static final String API_PATH_FILE_VAR = "file";
     public static final String API_PATH_URI_VAR = "uri";
@@ -38,4 +38,8 @@ public final class RouteUtility {
     public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";
     public static final String API_GET_ONE_BY_ID = API_ID + API_ID_EXTS;
 
+    public static final String API_GET_ONE_BY_ID_FULL = "/" + API_VERSION + "/" + API_TRANSFORM + "/" + API_GET_ONE_BY_ID;
+    public static final String API_GET_ALL_FULL = API_TRANSFORM_MAPPER + "/" + API_PATH_ALL_VAR;
+
+    public static final String API_STATUS_FULL = "/" + API_STATUS;
 }

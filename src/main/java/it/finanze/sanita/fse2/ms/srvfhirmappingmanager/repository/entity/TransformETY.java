@@ -5,6 +5,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,6 +23,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.IChange
  */
 @Document(collection = "#{@transformBean}")
 @Data
+@Slf4j
 @NoArgsConstructor
 public class TransformETY {
 	
@@ -63,11 +65,15 @@ public class TransformETY {
 	private boolean deleted;
 
 	public void setContent(MultipartFile file) throws DataProcessingException {
-	    try {
-	        this.content = new Binary(file.getBytes());
-	    } catch (IOException e) {
-	        throw new DataProcessingException(Logs.ERR_ETY_BINARY_CONVERSION, e);
-	    }
+		if(file != null) {
+			try {
+				this.content = new Binary(file.getBytes());
+			} catch (IOException e) {
+				throw new DataProcessingException(Logs.ERR_ETY_BINARY_CONVERSION, e);
+			}
+		} else {
+			log.warn("Skipping setContent() file is null");
+		}
 	}
 	
 	public static TransformETY fromComponents(String uri, String version, List<String> roots, FhirTypeEnum type, MultipartFile file) throws DataProcessingException {

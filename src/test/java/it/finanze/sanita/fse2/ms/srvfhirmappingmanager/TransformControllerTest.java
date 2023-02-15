@@ -3,21 +3,19 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getAllTransformMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByIdMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_TYPE_VAR;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_URI_VAR;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_VERSION_VAR;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import brave.Tracer;
+import com.mongodb.MongoException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,25 +29,16 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.mongodb.MongoException;
-
-import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.request.TransformBodyDTO;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.JsonUtility;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -79,145 +68,54 @@ class TransformControllerTest extends AbstractTest {
 	
 	@Test
 	void livenessCheckCtlTest() throws Exception {
-		mvc.perform(get("/status").contentType(MediaType.APPLICATION_JSON_VALUE)).andExpectAll(
-				status().isOk());
+		mvc.perform(getLiveness()).andExpect(status().isOk());
 	}
 
 	@Test
 	void insertTransformTest() throws Exception {
-		MockMultipartFile map = new MockMultipartFile("map", "map1.map",
-				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
-
-		TransformBodyDTO dto = JsonUtility.toJsonObject(TEST_JSON_TRANSFORM, TransformBodyDTO.class);
-
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.part(new MockPart("template_id_root", dto.getTemplateIdRoot().toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().isCreated());
-
-		// if reinserting same transform, will throw a 4XX error
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.part(new MockPart("template_id_root", dto.getTemplateIdRoot().toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().isConflict());
-
+		mvc.perform(createTransform(createTestEntity())).andExpect(status().isCreated());
+		// if reinserting same transform, will throw a 409 error
+		mvc.perform(createTransform(createTestEntity())).andExpect(status().isConflict());
 	}
 
 	@Test
 	void insertTransformFailedForExceptionsOnMongo() throws Exception {
-		MockMultipartFile map = new MockMultipartFile("map", "map1.map",
-				MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
+		// Provide knowledge
+		doThrow(new MongoException("Test error")).when(mongo).insert(any(TransformETY.class));
+		mvc.perform(createTransform(createTestEntity())).andExpect(status().is5xxServerError());
 
-		TransformBodyDTO dto = JsonUtility.toJsonObject(TEST_JSON_TRANSFORM, TransformBodyDTO.class);
-
-		// Mongo exception
-		Mockito.doThrow(new MongoException("")).when(mongo).insert(any(TransformETY.class));
-
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is5xxServerError());
-
-		// Generic exception
-		Mockito.doThrow(new BusinessException("")).when(mongo).insert(any(TransformETY.class));
-
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is5xxServerError());
-
+		// Provide knowledge
+		doThrow(new BusinessException("Test error")).when(mongo).insert(any(TransformETY.class));
+		mvc.perform(createTransform(createTestEntity())).andExpect(status().is5xxServerError());
 	}
 
 	@Test
 	void insertTransformWithEmptyBody() throws Exception {
-		MockMultipartFile map = new MockMultipartFile("map", "map1.map",
-				MediaType.APPLICATION_JSON_VALUE, "".getBytes());
-
-		TransformBodyDTO dto = JsonUtility.toJsonObject(TEST_JSON_TRANSFORM, TransformBodyDTO.class);
-
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().isBadRequest());
-
+		// Provide knowledge
+		TransformETY e = createTestEntity();
+		e.setContent(new MockMultipartFile(API_PATH_FILE_VAR, new byte[0]));
+		// Execute
+		mvc.perform(createTransform(e)).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void insertTransformWithWrongParams() throws Exception {
-		MockMultipartFile map = new MockMultipartFile("map", "map1.map",
-				MediaType.APPLICATION_JSON_VALUE, "".getBytes());
-
-		TransformBodyDTO dto = JsonUtility.toJsonObject(TEST_JSON_TRANSFORM, TransformBodyDTO.class);
-
+		// Provide knowledge
+		TransformETY e = createTestEntity();
+		e.setUri(null);
+		e.setVersion(null);
 		// uri and version missing
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is4xxClientError());
-
-
+		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
+		// Set URI
+		e.setUri(MOCK_URI_ETY);
 		// version missing
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is4xxClientError());
-
-
+		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
+		e.setVersion(MOCK_FILENAME_ETY);
 		// wrong version
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, "version-wrong".getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.file(new MockMultipartFile(API_PATH_FILE_VAR, map.getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is4xxClientError());
-
+		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
+		e.setContent(null);
 		// map missing
-		mvc.perform(MockMvcRequestBuilders
-						.multipart(getBaseUrl() + "/transform")
-						.part(new MockPart(API_PATH_URI_VAR, "uri-test".getBytes()))
-						.part(new MockPart(API_PATH_VERSION_VAR, dto.getVersion().getBytes()))
-						.part(new MockPart(API_PATH_TYPE_VAR, FhirTypeEnum.Map.toString().getBytes()))
-						.contentType(MediaType.MULTIPART_FORM_DATA)
-				)
-				.andExpect(status().is4xxClientError());
-
+		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
 	}
 
 	@Test
@@ -231,12 +129,9 @@ class TransformControllerTest extends AbstractTest {
 
 		MockMultipartHttpServletRequestBuilder builderUpdate = MockMvcRequestBuilders.multipart(getBaseUrl() + "/transform");
 
-		builderUpdate.with(new RequestPostProcessor() {
-			@Override
-			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-				request.setMethod("PUT");
-				return request;
-			}
+		builderUpdate.with(request -> {
+			request.setMethod(PUT.name());
+			return request;
 		});
 
 		mvc.perform(builderUpdate
@@ -354,51 +249,28 @@ class TransformControllerTest extends AbstractTest {
 	
 	@Test
 	void findTransformByIdDocumentTest() throws Exception {
-		prepareCollection();
-		
-		MvcResult result = mvc.perform(getAllTransformMockRequest()).andReturn();
-		String response = result.getResponse().getContentAsString();
-		Gson gson = new Gson();
-		JsonObject json = gson.fromJson(response, JsonObject.class);
-		JsonArray items = json.getAsJsonArray("items");
-		String id = items.get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsString();
-		
-		mvc.perform(getTransformByIdMockRequest(id)).andExpect(status().is2xxSuccessful());
+		TransformETY e = mongo.insert(createTestEntity());
+		mvc.perform(getTransformByIdMockRequest(e.getId())).andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
 	void findTransformByIdDocumentNotFoundTest() throws Exception {
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpect(status().isNotFound());
+		mvc.perform(getTransformByIdMockRequest(MOCK_FAKE_ID_ETY)).andExpect(status().isNotFound());
 	}
 
 	@Test
 	void findTransformByIdExceptionsTest() throws Exception {
 		prepareCollection();
-		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpectAll(status().is5xxServerError());
-		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
-		mvc.perform(getTransformByIdMockRequest("690000000000000000000000")).andExpectAll(status().is5xxServerError());
+		doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
+		mvc.perform(getTransformByIdMockRequest(MOCK_FAKE_ID_ETY)).andExpectAll(status().is5xxServerError());
+		doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), ArgumentMatchers.eq(TransformETY.class));
+		mvc.perform(getTransformByIdMockRequest(MOCK_FAKE_ID_ETY)).andExpectAll(status().is5xxServerError());
 	}
 
 	@Test
 	void getTransformsTest() throws Exception {
 		prepareCollection();
-
-		MockMultipartHttpServletRequestBuilder builderGet = MockMvcRequestBuilders.multipart(getBaseUrl() + "/transform");
-
-		builderGet.with(new RequestPostProcessor() {
-			@Override
-			public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-				request.setMethod("GET");
-				return request;
-			}
-		});
-		
-		mvc.perform(builderGet
-				.part(new MockPart(API_PATH_URI_VAR, TEST_URI.getBytes()))
-				.contentType(MediaType.MULTIPART_FORM_DATA)
-		)
-		.andExpect(status().is2xxSuccessful());
+		mvc.perform(getTransformByUri(MOCK_URI_ETY)).andExpect(status().is2xxSuccessful());
 	}
 	
 	
