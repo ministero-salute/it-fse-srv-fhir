@@ -37,10 +37,6 @@ public abstract class AbstractTest {
 		API_PATH_FILE_VAR, MOCK_FILENAME_ETY, null, MOCK_FILE_NEW_CONTENT_ETY
 	);
 
-	protected String getBaseUrl() {
-		return "/v1";
-	}
-
 	@SpyBean
 	protected MongoTemplate mongo;
 
