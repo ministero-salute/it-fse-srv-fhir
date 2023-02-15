@@ -3,17 +3,28 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_GET_ALL_FULL;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_GET_ONE_BY_ID_FULL;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_ROOTS_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_TYPE_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_URI_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_VERSION_VAR;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_STATUS_FULL;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_TRANSFORM_MAPPER;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+
+import java.util.function.Supplier;
+
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.function.Supplier;
-
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 
 public final class MockRequests {
 
@@ -59,6 +70,32 @@ public final class MockRequests {
                 API_PATH_FILE_VAR, emptyOrContent(e.getContent(), () -> e.getContent().getData()))
             )
             .contentType(MediaType.MULTIPART_FORM_DATA);
+    }
+    
+    public static MockHttpServletRequestBuilder updateTransform(TransformETY e) {
+    	MockHttpServletRequestBuilder request = multipart(API_TRANSFORM_MAPPER)
+			.part(new MockPart(
+                API_PATH_URI_VAR, emptyOrContent(e.getUri(), () -> e.getUri().getBytes()))
+            )
+            .part(new MockPart(
+                API_PATH_VERSION_VAR, emptyOrContent(e.getVersion(), () -> e.getVersion().getBytes()))
+            )
+            .file(new MockMultipartFile(
+                API_PATH_FILE_VAR, emptyOrContent(e.getContent(), () -> e.getContent().getData()))
+            )
+            .contentType(MediaType.MULTIPART_FORM_DATA);
+    	
+    	request.with(req -> {
+    		req.setMethod(HttpMethod.PUT.name());
+    		return req;
+    	});
+    	return request;
+    }
+    
+    public static MockHttpServletRequestBuilder deleteTransformByUri(String uri) {
+        return delete(API_TRANSFORM_MAPPER).queryParam(
+            API_PATH_URI_VAR, uri
+        ).contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     private static <T> byte[] emptyOrContent(T obj, Supplier<byte[]> supplier) {
