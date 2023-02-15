@@ -3,7 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.springframework.http.MediaType;
@@ -34,25 +33,16 @@ public final class MockRequests {
 
     /** TRANSFORM **/
 
-    public static MockHttpServletRequestBuilder deleteTransformMockRequest(String templateIdRoot, String baseUrl) {
-        return delete(getBaseUrl() + "/transform/{templateIdRoot}", templateIdRoot)
-                .contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    public static MockHttpServletRequestBuilder getTransformsMockRequest(String baseUrl) {
-        return get(getBaseUrl() + "/transform").contentType(MediaType.APPLICATION_JSON_VALUE);
-    }
-
     public static MockHttpServletRequestBuilder getTransformByIdMockRequest(String id) {
-        MockHttpServletRequestBuilder obj = get(getBaseUrl() + "/transform/id/" + id)
+        MockHttpServletRequestBuilder obj = get(getBaseUrl() + "/transform/id/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON_VALUE);
         return obj;
     }
-
-    public static MockHttpServletRequestBuilder queryActiveTransformMockRequest(String baseUrl) {
-        return get(getBaseUrl() + "/transform")
-            .param("includeDeleted", String.valueOf(false))
-            .contentType(MediaType.APPLICATION_JSON_VALUE);
+    
+    public static MockHttpServletRequestBuilder getAllTransformMockRequest() {
+        MockHttpServletRequestBuilder obj = get(getBaseUrl() + "/transform/all")
+                .contentType(MediaType.APPLICATION_JSON_VALUE);
+        return obj;
     }
 
 }

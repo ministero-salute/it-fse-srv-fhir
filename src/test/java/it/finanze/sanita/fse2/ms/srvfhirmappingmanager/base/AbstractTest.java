@@ -13,19 +13,7 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 public abstract class AbstractTest {
 
-	public static final String TRANSFORM_TEST_ROOT_A = "T_Root_A";
-	public static final String TRANSFORM_TEST_ROOT_B = "T_Root_B";
-	public static final String TRANSFORM_TEST_ROOT_C = "T_Root_C";
-	public static final String TRANSFORM_TEST_ROOT_D = "T_Root_D";
-	public static final String TRANSFORM_TEST_ROOT_E = "T_Root_E";
-
-	public static final String TRANSFORM_TEST_VERSION_A = "T_Version_A";
-	public static final String TRANSFORM_TEST_VERSION_B = "T_Version_B";
-	public static final String TRANSFORM_TEST_VERSION_C = "T_Version_C";
-	public static final String TRANSFORM_TEST_VERSION_D = "T_Version_D";
-	public static final String TRANSFORM_TEST_VERSION_E = "T_Version_E";
-
-	public static final String TRANSFORM_DEMO_ETY = "{\"template_id_root\":\"Root_A\",\"version\":\"1.1\",\"insertion_date\":{\"$date\":{\"$numberLong\":\"1665493776553\"}},\"last_update_date\":{\"$date\":{\"$numberLong\":\"1665493776553\"}},\"root_map\":\"map1\",\"maps\":[{\"nameMap\":\"map1\",\"filenameMap\":\"map1.map\",\"contentMap\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"valuesets\":[{\"filenameValueset\":\"valueSet1.json\",\"nameValueset\":\"valueSet1\",\"contentValueset\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"definitions\":[{\"nameDefinition\":\"structureDefinition1\",\"filenameDefinition\":\"structureDefinition1.json\",\"contentDefinition\":{\"$binary\":{\"base64\":\"SGVsbG8gV29ybGQh\",\"subType\":\"00\"}}}],\"deleted\":false}";
+	public final String TRANSFORM_DEMO_ETY = "{\"filename\":\"map1.map\",\"templateIdRoot\":[\"2.16.840.1.113883.2.9.10.1.1\"],\"version\":\"0.1\",\"content\":{\"$binary\":{\"base64\":\"\",\"subType\":\"00\"}},\"uri\":\"uri-test\",\"type\":\"Map\",\"insertion_date\":{\"$date\":{\"$numberLong\":\"1676370555758\"}},\"last_update_date\":{\"$date\":{\"$numberLong\":\"1676370555758\"}},\"deleted\":false}";
 
 	protected String getBaseUrl() {
 		return "/v1";
