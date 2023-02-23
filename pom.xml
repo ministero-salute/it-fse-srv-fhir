@@ -74,12 +74,6 @@
 	    	<groupId>com.atlassian.oai</groupId>
 		    <artifactId>swagger-request-validator-core</artifactId>
 		    <version>2.27.2</version>
-		</dependency>	
-
-		<!-- GSON -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
 		</dependency>
 
 		<!-- TRACING -->

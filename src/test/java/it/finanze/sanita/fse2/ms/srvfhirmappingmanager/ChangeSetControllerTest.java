@@ -3,7 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetResDTO;
@@ -49,8 +49,7 @@ class ChangeSetControllerTest extends AbstractTest {
 					.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk())
 				.andReturn();
 
-		final ChangeSetResDTO changeSet = new Gson().fromJson(result.getResponse().getContentAsString(),
-				ChangeSetResDTO.class);
+		final ChangeSetResDTO changeSet = new ObjectMapper().readValue(result.getResponse().getContentAsString(), ChangeSetResDTO.class);
 		assertEquals(0, changeSet.getDeletions().size(), "With empty database should be returned 0 deletion");
 		assertEquals(0, changeSet.getInsertions().size(), "With empty database should be returned 0 insertions");
 		assertEquals(0, changeSet.getTotalNumberOfElements(), "With empty database should be returned 0 elements");
