@@ -19,18 +19,13 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ProfileUtility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CollectionNaming {
-
-    @Autowired
-    private ProfileUtility profileUtility;
-
     @Bean("transformBean")
-    public String getTransformCollection() {
+    public String getTransformCollection(ProfileUtility profileUtility) {
         if (profileUtility.isTestProfile()) {
             return Constants.Profile.TEST_PREFIX + Constants.Collections.TRANSFORM;
         }

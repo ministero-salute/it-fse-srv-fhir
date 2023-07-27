@@ -24,7 +24,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.Transfo
 import java.util.Date;
 import java.util.List;
 
-public interface IChangeSetRepo<T> {
+public interface IChangeSetRepo {
 
     String FIELD_ID = "_id";
     String FIELD_INSERTION_DATE = "insertion_date";

@@ -31,7 +31,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +45,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 @Slf4j
 @Repository
-public class TransformRepo implements ITransformRepo, Serializable {
+public class TransformRepo implements ITransformRepo {
 
 	@Autowired
 	private MongoTemplate mongo;

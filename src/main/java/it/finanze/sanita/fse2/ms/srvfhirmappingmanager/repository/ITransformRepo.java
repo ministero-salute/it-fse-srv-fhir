@@ -26,7 +26,7 @@ import java.util.List;
 /**
  *	Transform interface repository.
  */
-public interface ITransformRepo extends IChangeSetRepo<TransformETY> {
+public interface ITransformRepo extends IChangeSetRepo {
 
 	TransformETY insert(TransformETY ety) throws OperationException;
 
