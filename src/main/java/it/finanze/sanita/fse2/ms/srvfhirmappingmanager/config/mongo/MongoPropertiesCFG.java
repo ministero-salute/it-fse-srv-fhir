@@ -33,14 +33,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @Component
 @EqualsAndHashCode(callSuper = false)  
-public class MongoPropertiesCFG implements Serializable {
+public class MongoPropertiesCFG {
   
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 8112027984940371008L; 
- 
 	@Value("${data.mongodb.uri}")
 	private String uri;
+	
+	@Value("${data.mongodb.schema-name}")
+	private String schemaName;
 	
 }
