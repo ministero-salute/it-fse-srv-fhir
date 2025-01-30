@@ -17,16 +17,20 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ANY_STRING_MAX;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ANY_STRING_MIN;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ARRAY_FILES_MAX;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 
 @Data
@@ -34,7 +38,8 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 @AllArgsConstructor
 public class ChangeSetDTO {
 
-	@Size(max = DEFAULT_STRING_MAX_SIZE)
+	@Size(min = 0, max = DEFAULT_STRING_MAX_SIZE)
+	@Pattern(regexp = "^[a-zA-Z0-9-_]+$")
 	private String id;
 
 	Payload description;
@@ -44,6 +49,11 @@ public class ChangeSetDTO {
 		/**
 		 * The resource extension identifier
 		 */
+		@ArraySchema(
+				minItems = OA_ARRAY_FILES_MIN,
+				maxItems = OA_ARRAY_FILES_MAX,
+				schema = @Schema(implementation = String.class)
+		)
 		@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX)
 		List<String> templateIdRoot;
 		/**

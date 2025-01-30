@@ -26,6 +26,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTrac
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * Base response
  */
@@ -37,12 +39,14 @@ public class ResponseDTO implements AbstractDTO {
 	 * Trace id log.
 	 */
 	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Pattern(regexp = "^[a-zA-Z0-9-_]+$")
 	private String traceID;
 
 	/**
 	 * Span id log.
 	 */
 	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
+	@Pattern(regexp = "^[a-zA-Z0-9-_]+$")
 	private String spanID;
 
 	/**

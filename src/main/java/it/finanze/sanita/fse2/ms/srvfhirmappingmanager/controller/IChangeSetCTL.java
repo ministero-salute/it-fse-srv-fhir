@@ -46,7 +46,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.L
 @Validated
 public interface IChangeSetCTL {
 
-	@Operation(summary = "Transform Status check",description = "a check about Transform")
+	@Operation(summary = "Transform Status check",description = "a check about Transform", operationId = "getTransformChangeSet")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",description = "Documents uploaded",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,schema = @Schema(implementation = ChangeSetResDTO.class))),
 			@ApiResponse(responseCode = "400",description = "Invalid parameters",content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,schema = @Schema(implementation = ErrorResponseDTO.class))),

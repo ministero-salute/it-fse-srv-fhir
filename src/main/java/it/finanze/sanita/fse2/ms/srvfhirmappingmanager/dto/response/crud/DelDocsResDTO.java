@@ -17,13 +17,17 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.Size;
+
 @Getter
 public class DelDocsResDTO extends ResponseDTO {
 
+	@Schema(format = "int32", minLength = 0, maxLength = 10000)
 	private final int deletedItems;
 
 	public DelDocsResDTO(final LogTraceInfoDTO traceInfo, int deletedItems) {

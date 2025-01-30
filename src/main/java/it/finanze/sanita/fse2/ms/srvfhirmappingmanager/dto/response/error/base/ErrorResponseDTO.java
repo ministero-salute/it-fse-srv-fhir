@@ -36,20 +36,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ErrorResponseDTO extends ResponseDTO {
-	
-	/**
-	 * Trace id log.
-	 */
-	@Schema(description = "Indentificativo univoco della richiesta dell'utente")
-	@Size(min = 0, max = 100)
-	private String traceID;
-	
-	/**
-	 * Span id log.
-	 */
-	@Schema(description = "Indentificativo univoco di un task della richiesta dell'utente (differisce dal traceID solo in caso di chiamate sincrone in cascata)")
-	@Size(min = 0, max = 100)
-	private String spanID;
 
 	@Schema(description = "Identificativo del problema verificatosi")
 	@Size(min = 0, max = 100)
@@ -63,9 +49,7 @@ public class ErrorResponseDTO extends ResponseDTO {
 	@Size(min = 0, max = 1000)
 	private String detail;
 
-	@Schema(description = "Stato http")
-	@Min(value = 100)
-	@Max(value = 599)
+	@Schema(format = "int32",description = "Stato http", minLength = 100, maxLength = 599)
 	private Integer status;
 	
 	@Schema(description = "URI che potrebbe fornire ulteriori informazioni riguardo l'occorrenza del problema")
@@ -73,8 +57,7 @@ public class ErrorResponseDTO extends ResponseDTO {
 	private String instance;
 
 	public ErrorResponseDTO(final LogTraceInfoDTO traceInfo, final String inType, final String inTitle, final String inDetail, final Integer inStatus, final String inInstance) {
-		traceID = traceInfo.getTraceID();
-		spanID = traceInfo.getSpanID();
+		super(traceInfo);
 		type = inType;
 		title = inTitle;
 		detail = inDetail;
@@ -83,8 +66,7 @@ public class ErrorResponseDTO extends ResponseDTO {
 	}
 
 	public ErrorResponseDTO(final LogTraceInfoDTO traceInfo) {
-		traceID = traceInfo.getTraceID();
-		spanID = traceInfo.getSpanID(); 
+		super(traceInfo);
 	}
 
 }

@@ -18,12 +18,15 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
@@ -33,16 +36,44 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc.
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransformDTO {
-	
+
+    @Schema(maxLength = 255)
+    @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "ID must contain only alphanumeric, dashes, or underscores")
     private String id;
+
+    @Schema(maxLength = 255)
+    @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "URI must contain only alphanumeric, dashes, or underscores")
     private String uri;
+
+    @Schema(maxLength = 255)
+    @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Version must contain only alphanumeric, dashes, or underscores")
     private String version;
-    private List<String> templateIdRoot;
+
+    @Schema(minLength = 1, maxLength = 100)
+    @Size(min = 1, max = 100)
+    private List<
+            @Size(max = 255)
+            @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Template ID must contain only alphanumeric, dashes, or underscores")
+                    String
+            > templateIdRoot;
+
+    @Schema(maxLength = 255)
+    @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Content must contain only alphanumeric, dashes, or underscores")
     private String content;
+
+    @Schema(maxLength = 255)
+    @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Filename must contain only alphanumeric, dashes, or underscores")
     private String filename;
-	private FhirTypeEnum type;
+
+    @Schema(maxLength = 255)
+    private FhirTypeEnum type;
+
+    @Schema(format = "date-time", maxLength = 255)
     private Date insertionDate;
+
+    @Schema(format = "date-time", maxLength = 255)
     private Date lastUpdateDate;
+
     private boolean deleted;
 
     @AllArgsConstructor

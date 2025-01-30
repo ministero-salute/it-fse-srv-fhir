@@ -41,6 +41,7 @@ public class GetDocsResDTO extends ResponseDTO {
     )
     private final List<TransformDTO> items;
 
+    @Schema(format = "int64", minLength = OA_ARRAY_FILES_MIN, maxLength = OA_ARRAY_FILES_MAX)
     private final long numberOfItems;
 
     /**

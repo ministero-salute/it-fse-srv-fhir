@@ -51,8 +51,9 @@ public class ChangeSetResDTO {
 	 */
 	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String spanID;
-
+	@Schema(format = "date-time", maxLength = 255)
 	private Date lastUpdate;
+	@Schema(format = "date-time", maxLength = 255)
 	private Date timestamp;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
@@ -61,10 +62,11 @@ public class ChangeSetResDTO {
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
 	private List<ChangeSetDTO> deletions;
 
-    @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = 10000)
-	@Size(min = 0, max = 10000)
+    @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = 20000)
+	@Size(min = 0, max = 20000)
 	private long totalNumberOfElements;
 
+	@Schema(minLength = 0, maxLength = 10000)
 	private long collectionSize;
 
 }
