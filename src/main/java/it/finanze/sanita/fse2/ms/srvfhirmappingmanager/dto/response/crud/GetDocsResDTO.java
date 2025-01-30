@@ -25,6 +25,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.Respons
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,9 @@ public class GetDocsResDTO extends ResponseDTO {
     )
     private final List<TransformDTO> items;
 
-    @Schema(format = "int64", minLength = OA_ARRAY_FILES_MIN, maxLength = OA_ARRAY_FILES_MAX)
+    @Schema(format = "int64")
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
     private final long numberOfItems;
 
     /**

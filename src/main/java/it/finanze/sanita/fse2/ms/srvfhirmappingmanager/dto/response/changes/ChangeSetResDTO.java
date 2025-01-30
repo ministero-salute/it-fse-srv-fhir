@@ -24,6 +24,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
@@ -51,9 +53,9 @@ public class ChangeSetResDTO {
 	 */
 	@Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String spanID;
-	@Schema(format = "date-time", maxLength = 255)
+	@Schema(format = "date-time", maxLength = 50)
 	private Date lastUpdate;
-	@Schema(format = "date-time", maxLength = 255)
+	@Schema(format = "date-time", maxLength = 50)
 	private Date timestamp;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
@@ -63,10 +65,12 @@ public class ChangeSetResDTO {
 	private List<ChangeSetDTO> deletions;
 
     @Schema(minLength = DEFAULT_STRING_MIN_SIZE, maxLength = 20000)
-	@Size(min = 0, max = 20000)
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private long totalNumberOfElements;
 
-	@Schema(minLength = 0, maxLength = 10000)
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private long collectionSize;
 
 }

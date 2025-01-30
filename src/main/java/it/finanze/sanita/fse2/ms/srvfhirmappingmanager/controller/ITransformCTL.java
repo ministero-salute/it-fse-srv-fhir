@@ -41,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,7 +53,7 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtili
  * Transform Controller
  */
 @RequestMapping(path = API_TRANSFORM_MAPPER)
-@Tag(name = API_TRANSFORM_TAG)
+@Tag(name = API_TRANSFORM_TAG, description = "fhir transform controller")
 @Validated
 public interface ITransformCTL {
 
@@ -71,16 +72,19 @@ public interface ITransformCTL {
         PostDocsResDTO uploadTransform(
                 @RequestPart(API_PATH_URI_VAR)
                 @NotBlank(message = ERR_VAL_URI_BLANK)
+                @Size(max = 200)
                 String uri,
                 @RequestPart(API_PATH_VERSION_VAR)
                 @NotBlank(message = ERR_VAL_VERSION_BLANK)
                 @Pattern(message = ERR_VAL_VERSION_INVALID, regexp = REG_VERSION)
+                @Size(max = 100)
                 String version,
                 @RequestParam(API_PATH_TYPE_VAR)
                 FhirTypeEnum type,
                 @RequestParam(value = API_PATH_ROOTS_VAR, required = false)
                 @Parameter(description = VAL_DESC_ROOT)
-                List<String> roots,
+                @Schema(minLength = 0, maxLength = 10000)
+                List<@Size(max = 100) String> roots,
                 @RequestPart(API_PATH_FILE_VAR)
                 MultipartFile file
         ) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException;
@@ -100,10 +104,12 @@ public interface ITransformCTL {
         PutDocsResDTO updateTransform(
             @RequestPart(API_PATH_URI_VAR)
             @NotBlank(message = ERR_VAL_URI_BLANK)
+            @Size(max = 200)
             String uri,
             @RequestPart(API_PATH_VERSION_VAR)
             @NotBlank(message = ERR_VAL_VERSION_BLANK)
             @Pattern(message = ERR_VAL_VERSION_INVALID, regexp = REG_VERSION)
+            @Size(max = 100)
             String version,
             @RequestPart(API_PATH_FILE_VAR)
             MultipartFile file
@@ -122,6 +128,7 @@ public interface ITransformCTL {
         DelDocsResDTO deleteTransform(
             @RequestParam(API_PATH_URI_VAR)
             @NotBlank(message = ERR_VAL_URI_BLANK)
+            @Size(max = 200)
             String uri
         ) throws DocumentNotFoundException, OperationException;
 
@@ -136,6 +143,7 @@ public interface ITransformCTL {
         GetDocsResDTO getTransformByUri(
            @RequestParam(API_PATH_URI_VAR)
            @NotBlank(message = ERR_VAL_URI_BLANK)
+           @Size(max = 200)
            String uri,
            @RequestParam(value = API_QP_BINARY, defaultValue = "false")
            @Parameter(description = "Include binary content")
@@ -157,6 +165,7 @@ public interface ITransformCTL {
                 @PathVariable(API_PATH_ID_VAR)
                 @NotBlank(message = ERR_VAL_ID_BLANK)
                 @ValidObjectId(message = ERR_VAL_ID_NOT_VALID)
+                @Size(max = 1000)
                 String id
         ) throws OperationException, DocumentNotFoundException;
 

@@ -22,10 +22,15 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.Respons
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 @Getter
 public class PutDocsResDTO extends ResponseDTO {
 
-	@Schema(format = "int32", minLength = 0, maxLength = 10000)
+	@Schema(format = "int32")
+	@Min(0)
+	@Max(Integer.MAX_VALUE)
 	private final int updatedItems;
 
 	public PutDocsResDTO(final LogTraceInfoDTO traceInfo, int updatedItems) {

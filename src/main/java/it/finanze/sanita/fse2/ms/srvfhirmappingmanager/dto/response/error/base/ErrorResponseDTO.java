@@ -49,7 +49,9 @@ public class ErrorResponseDTO extends ResponseDTO {
 	@Size(min = 0, max = 1000)
 	private String detail;
 
-	@Schema(format = "int32",description = "Stato http", minLength = 100, maxLength = 599)
+	@Schema(format = "int32",description = "Stato http")
+	@Min(100)
+	@Max(600)
 	private Integer status;
 	
 	@Schema(description = "URI che potrebbe fornire ulteriori informazioni riguardo l'occorrenza del problema")

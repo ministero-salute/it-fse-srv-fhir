@@ -54,8 +54,7 @@ public class ChangeSetDTO {
 				maxItems = OA_ARRAY_FILES_MAX,
 				schema = @Schema(implementation = String.class)
 		)
-		@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX)
-		List<String> templateIdRoot;
+		List<@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX) String> templateIdRoot;
 		/**
 		 * The resource filename
 		 */
