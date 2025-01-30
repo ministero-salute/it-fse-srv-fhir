@@ -20,6 +20,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 
+import java.util.stream.Collectors;
+
 public final class ChangeSetUtility {
 
 	private ChangeSetUtility() {
@@ -32,6 +34,14 @@ public final class ChangeSetUtility {
 	 * @return
 	 */
 	public static ChangeSetDTO transformToChangeset(TransformETY entity) {
-		return new ChangeSetDTO(entity.getId(), new ChangeSetDTO.Payload(entity.getTemplateIdRoot(), entity.getVersion()));
+		return new ChangeSetDTO(
+				entity.getId(),
+				new ChangeSetDTO.Payload(
+						entity.getTemplateIdRoot().stream()
+								.map(ChangeSetDTO.TemplateIdRootItem::new)
+								.collect(Collectors.toList()),
+						entity.getVersion()
+				)
+		);
 	}
 }

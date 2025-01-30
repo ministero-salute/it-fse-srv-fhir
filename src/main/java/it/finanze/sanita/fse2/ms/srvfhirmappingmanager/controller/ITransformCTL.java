@@ -19,11 +19,13 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
@@ -83,8 +85,8 @@ public interface ITransformCTL {
                 FhirTypeEnum type,
                 @RequestParam(value = API_PATH_ROOTS_VAR, required = false)
                 @Parameter(description = VAL_DESC_ROOT)
-                @Schema(minLength = 0, maxLength = 10000)
-                List<@Size(max = 100) String> roots,
+                @ArraySchema(minItems = 0, maxItems = 100, schema = @Schema(implementation = ChangeSetDTO.TemplateIdRootItem.class, minLength = 0, maxLength = 10000))
+                List<ChangeSetDTO.TemplateIdRootItem> roots,
                 @RequestPart(API_PATH_FILE_VAR)
                 MultipartFile file
         ) throws IOException, OperationException, DocumentAlreadyPresentException, InvalidContentException;

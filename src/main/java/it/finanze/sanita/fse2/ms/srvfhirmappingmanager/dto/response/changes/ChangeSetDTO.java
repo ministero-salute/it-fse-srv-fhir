@@ -20,10 +20,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Value;
+import lombok.*;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -46,20 +43,28 @@ public class ChangeSetDTO {
 
 	@Value
 	public static class Payload {
-		/**
-		 * The resource extension identifier
-		 */
+
 		@ArraySchema(
 				minItems = OA_ARRAY_FILES_MIN,
 				maxItems = OA_ARRAY_FILES_MAX,
-				schema = @Schema(implementation = String.class)
+				schema = @Schema(implementation = TemplateIdRootItem.class)  // ✅ Uses wrapper class
 		)
-		List<@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX) String> templateIdRoot;
+		List<TemplateIdRootItem> templateIdRoot;
+
 		/**
 		 * The resource filename
 		 */
 		@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX)
-		String version;
+		@Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)  // ✅ Explicit constraints
+				String version;
 	}
 
+	@Value
+	@AllArgsConstructor
+	public static class TemplateIdRootItem {
+
+		@Getter
+		@Schema(maxLength = 1000)
+		String value;
+	}
 }

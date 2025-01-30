@@ -21,6 +21,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
 
@@ -46,9 +48,12 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	private ITransformSRV service;
 
 	@Override
-	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, List<String> root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
+	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, List<ChangeSetDTO.TemplateIdRootItem> root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
 		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
-		service.insertTransformByComponents(root, version, uri, file, type);
+		List<String> rootStrings = root.stream()
+				.map(ChangeSetDTO.TemplateIdRootItem::getValue)
+				.collect(Collectors.toList());
+		service.insertTransformByComponents(rootStrings, version, uri, file, type);
 		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
