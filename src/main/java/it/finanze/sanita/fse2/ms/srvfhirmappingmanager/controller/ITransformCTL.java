@@ -95,7 +95,7 @@ public interface ITransformCTL {
             produces = { MediaType.APPLICATION_JSON_VALUE },
             consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
         )
-        @Operation(summary = "Aggiornamento entità FHIR su MongoDB", operationId = "updateTransform", description = "Operation to update transform")
+        @Operation(summary = "Update FHIR entity on MongoDB", operationId = "updateTransform", description = "Operation to update transform")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Aggiornamento trasformata avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PutDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -120,7 +120,7 @@ public interface ITransformCTL {
         @DeleteMapping(
             produces = { MediaType.APPLICATION_JSON_VALUE }
         )
-        @Operation(summary = "Rimozione entità FHIR su MongoDB", operationId = "deleteTransform", description = "Operation to delete transform")
+        @Operation(summary = "Delete FHIR entity on MongoDB", operationId = "deleteTransform", description = "Operation to delete transform")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Cancellazione avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -135,7 +135,7 @@ public interface ITransformCTL {
         ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Restituzione entità FHIR per URI", operationId = "getTransformByUri", description = "Operation to get transform by uri")
+        @Operation(summary = "Get FHIR entity by URI", operationId = "getTransformByUri", description = "Operation to get transform by uri")
         @ApiResponses(value = {
                 @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocsResDTO.class))),
                 @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -156,7 +156,7 @@ public interface ITransformCTL {
         ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = API_GET_ONE_BY_ID, produces = { MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Restituzione entità FHIR per ID", operationId = "replaceTransformById", description = "Operation to replace transform by id")
+        @Operation(summary = "Get FHIR entity by ID", operationId = "replaceTransformById", description = "Operation to replace transform by id")
         @ApiResponses(value = {
                 @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocByIdResDTO.class))),
                 @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -172,7 +172,7 @@ public interface ITransformCTL {
         ) throws OperationException, DocumentNotFoundException;
 
         @GetMapping(value = API_PATH_ALL_VAR, produces = { MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Restituzione di tutte le entità FHIR disponibili", operationId = "getTransform", description = "Operation to get all transform")
+        @Operation(summary = "Get all FHIR entities", operationId = "getTransform", description = "Operation to get all transform")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocsResDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
