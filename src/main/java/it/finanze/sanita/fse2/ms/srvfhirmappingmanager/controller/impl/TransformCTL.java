@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
 
 @RestController
-@Validated
 @Slf4j
 public class TransformCTL extends AbstractCTL implements ITransformCTL {
 
