@@ -41,7 +41,6 @@ public class UniqueMultipartValidator implements ConstraintValidator<UniqueMulti
      */
     @Override
     public void initialize(UniqueMultipart constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     /**

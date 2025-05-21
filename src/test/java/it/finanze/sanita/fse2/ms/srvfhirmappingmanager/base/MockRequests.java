@@ -39,6 +39,7 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 
 public final class MockRequests {
 
@@ -67,25 +68,32 @@ public final class MockRequests {
     }
 
     public static MockHttpServletRequestBuilder createTransform(TransformETY e) {
-        return multipart(API_TRANSFORM_MAPPER)
-            .part(new MockPart(
-                API_PATH_URI_VAR, emptyOrContent(e.getUri(), () -> e.getUri().getBytes()))
-            )
-            .part(new MockPart(
-                API_PATH_VERSION_VAR, emptyOrContent(e.getVersion(), () -> e.getVersion().getBytes()))
-            )
-            .part(new MockPart(
-                API_PATH_TYPE_VAR, emptyOrContent(e.getType(), () -> e.getType().getName().getBytes()))
-            )
-            .part(new MockPart(
-                API_PATH_ROOTS_VAR, emptyOrContent(e.getTemplateIdRoot(), ()-> e.getTemplateIdRoot().toString().getBytes()))
-            )
-            .file(new MockMultipartFile(
-                API_PATH_FILE_VAR, emptyOrContent(e.getContent(), () -> e.getContent().getData()))
-            )
-            .contentType(MediaType.MULTIPART_FORM_DATA);
+        MockMultipartHttpServletRequestBuilder b = multipart(API_TRANSFORM_MAPPER);
+
+        if (e.getUri() != null) {
+            b.part(new MockPart(API_PATH_URI_VAR, e.getUri().getBytes()));
+        }
+        if (e.getVersion() != null) {
+            b.part(new MockPart(API_PATH_VERSION_VAR, e.getVersion().getBytes()));
+        }
+        b.part(new MockPart(API_PATH_TYPE_VAR, e.getType().getName().getBytes()));
+        b.part(new MockPart(API_PATH_ROOTS_VAR, e.getTemplateIdRoot().toString().getBytes()));
+
+        if (e.getContent() != null) {
+            byte[] data = e.getContent().getData();
+            MockMultipartFile mockFile = new MockMultipartFile(
+                    API_PATH_FILE_VAR,
+                    data
+            );
+            b.file(mockFile);
+        }
+
+        return b.contentType(MediaType.MULTIPART_FORM_DATA);
     }
-    
+
+
+
+
     public static MockHttpServletRequestBuilder updateTransform(TransformETY e) {
     	MockHttpServletRequestBuilder request = multipart(API_TRANSFORM_MAPPER)
 			.part(new MockPart(

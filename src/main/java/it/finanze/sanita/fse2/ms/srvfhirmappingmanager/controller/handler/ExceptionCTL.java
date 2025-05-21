@@ -18,7 +18,8 @@
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.handler;
 
 
-import brave.Tracer;
+
+import io.micrometer.tracing.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
@@ -187,16 +188,14 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Verify if context is available
         if (tracer.currentSpan() != null) {
             out = new LogTraceInfoDTO(
-                tracer.currentSpan().context().spanIdString(),
-                tracer.currentSpan().context().traceIdString());
+                tracer.currentSpan().context().spanId(),
+                tracer.currentSpan().context().traceId());
         }
         // Return the log trace
         return out;
     }
 
 
-
-    @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         // Log me
         log.error("HANDLER handleMissingServletRequestPart()", ex);

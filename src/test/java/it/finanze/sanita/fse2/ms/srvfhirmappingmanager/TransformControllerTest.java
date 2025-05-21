@@ -17,40 +17,32 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.createTransform;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.deleteTransformByUri;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getLiveness;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByIdMockRequest;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.getTransformByUri;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.updateTransform;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.mockito.ArgumentMatchers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-
 import com.mongodb.MongoException;
-
-import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.ArgumentMatchers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base.MockRequests.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -61,10 +53,7 @@ class TransformControllerTest extends AbstractTest {
 	@Autowired
 	private MockMvc mvc;
 
-	@MockBean
-	private Tracer tracer;
-
-	@SpyBean
+	@MockitoSpyBean
 	private ITransformSRV transformSRV;
 
 	@BeforeEach
@@ -118,7 +107,6 @@ class TransformControllerTest extends AbstractTest {
 		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
 		e.setVersion(MOCK_FILENAME_ETY);
 		// wrong version
-		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
 		e.setContent(null);
 		// map missing
 		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());

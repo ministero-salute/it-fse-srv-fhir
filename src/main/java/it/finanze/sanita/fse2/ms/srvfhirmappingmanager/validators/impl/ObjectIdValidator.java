@@ -40,7 +40,6 @@ public class ObjectIdValidator implements ConstraintValidator<ValidObjectId, Str
      */
     @Override
     public void initialize(ValidObjectId constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     /**

@@ -20,9 +20,9 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.base;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +51,7 @@ public abstract class AbstractTest {
 		API_PATH_FILE_VAR, MOCK_FILENAME_ETY, null, MOCK_FILE_NEW_CONTENT_ETY
 	);
 
-	@SpyBean
+	@MockitoSpyBean
 	protected MongoTemplate mongo;
 
 	public final String FAKE_INVALID_DTO_ID = "||----test";

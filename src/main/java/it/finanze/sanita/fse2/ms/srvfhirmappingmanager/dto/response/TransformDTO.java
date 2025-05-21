@@ -21,12 +21,12 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.repository.entity.TransformETY;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
@@ -52,10 +52,10 @@ public class TransformDTO {
     @Schema(minLength = 1, maxLength = 100)
     @Size(min = 1, max = 100)
     private List<
-            @Size(max = 255)
-            @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Template ID must contain only alphanumeric, dashes, or underscores")
-                    String
-            > templateIdRoot;
+                @Size(max = 255)
+                @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Template ID must contain only alphanumeric, dashes, or underscores")
+                        String
+                > templateIdRoot;
 
     @Schema(maxLength = 255)
     @Pattern(regexp = "^[a-zA-Z0-9-_]+$", message = "Content must contain only alphanumeric, dashes, or underscores")

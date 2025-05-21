@@ -40,7 +40,6 @@ public class NoFutureDateValidator implements ConstraintValidator<NoFutureDate, 
      */
     @Override
     public void initialize(NoFutureDate constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     /**
