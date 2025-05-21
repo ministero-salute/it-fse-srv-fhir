@@ -91,7 +91,29 @@ public final class MockRequests {
         return b.contentType(MediaType.MULTIPART_FORM_DATA);
     }
 
+    public static MockHttpServletRequestBuilder createTransformNullFile(TransformETY e) {
+        MockMultipartHttpServletRequestBuilder b = multipart(API_TRANSFORM_MAPPER);
 
+        if (e.getUri() != null) {
+            b.part(new MockPart(API_PATH_URI_VAR, e.getUri().getBytes()));
+        }
+        if (e.getVersion() != null) {
+            b.part(new MockPart(API_PATH_VERSION_VAR, e.getVersion().getBytes()));
+        }
+
+        b.part(new MockPart(API_PATH_TYPE_VAR,  e.getType().getName().getBytes()));
+        b.part(new MockPart(API_PATH_ROOTS_VAR, e.getTemplateIdRoot().toString().getBytes()));
+
+        MockMultipartFile nullFile = new MockMultipartFile(
+                API_PATH_FILE_VAR,
+                null,
+                null,
+                (byte[]) null
+        );
+        b.file(nullFile);
+
+        return b.contentType(MediaType.MULTIPART_FORM_DATA);
+    }
 
 
     public static MockHttpServletRequestBuilder updateTransform(TransformETY e) {

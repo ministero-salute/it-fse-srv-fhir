@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -105,11 +104,11 @@ class TransformControllerTest extends AbstractTest {
 		e.setUri(MOCK_URI_ETY);
 		// version missing
 		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
-		e.setVersion(MOCK_FILENAME_ETY);
+		e.setVersion("1.0");
 		// wrong version
 		e.setContent(null);
 		// map missing
-		mvc.perform(createTransform(e)).andExpect(status().is4xxClientError());
+		mvc.perform(createTransformNullFile(e)).andExpect(status().is4xxClientError());
 	}
 
 	@Test
