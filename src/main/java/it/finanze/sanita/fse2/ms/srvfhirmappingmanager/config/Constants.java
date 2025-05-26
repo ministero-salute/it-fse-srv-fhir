@@ -40,6 +40,15 @@ public final class Constants {
 
 	}
 
+	public static final class Microservices{
+		private Microservices(){
+
+		}
+
+		public static final String SRV_FHIR_NAME = "srv-fhir";
+
+	}
+
 	public static final class Collections {
 		public static final String TRANSFORM = "transform_eds";
 

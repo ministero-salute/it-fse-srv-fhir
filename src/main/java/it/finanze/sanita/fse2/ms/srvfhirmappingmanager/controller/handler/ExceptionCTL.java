@@ -19,7 +19,9 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.handler;
 
 
 
-import io.micrometer.tracing.Tracer;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
@@ -182,16 +184,14 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * Generate a new {@link LogTraceInfoDTO} instance
      * @return The new instance
      */
-    private LogTraceInfoDTO getLogTraceInfo() {
-        // Create instance
+    protected LogTraceInfoDTO getLogTraceInfo() {
         LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        // Verify if context is available
-        if (tracer.currentSpan() != null) {
+        SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservices.SRV_FHIR_NAME);
+        if (spanbuilder != null) {
             out = new LogTraceInfoDTO(
-                tracer.currentSpan().context().spanId(),
-                tracer.currentSpan().context().traceId());
+                    spanbuilder.startSpan().getSpanContext().getSpanId(),
+                    spanbuilder.startSpan().getSpanContext().getTraceId());
         }
-        // Return the log trace
         return out;
     }
 
