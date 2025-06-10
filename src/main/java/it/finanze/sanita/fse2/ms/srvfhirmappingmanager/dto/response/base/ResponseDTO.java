@@ -26,7 +26,7 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTrac
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * Base response

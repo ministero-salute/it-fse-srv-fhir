@@ -22,8 +22,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.base.Respons
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 import lombok.Getter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 
 @Getter

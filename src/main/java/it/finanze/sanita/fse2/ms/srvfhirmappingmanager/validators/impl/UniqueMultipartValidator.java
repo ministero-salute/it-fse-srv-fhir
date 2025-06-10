@@ -20,8 +20,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.impl;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.UniqueMultipart;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;

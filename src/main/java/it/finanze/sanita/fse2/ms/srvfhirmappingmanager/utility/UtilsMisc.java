@@ -20,7 +20,7 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.Path;
+import jakarta.validation.Path;
 import java.util.Base64;
 
 @Slf4j

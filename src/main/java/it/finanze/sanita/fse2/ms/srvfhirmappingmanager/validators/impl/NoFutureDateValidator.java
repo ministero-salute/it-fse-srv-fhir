@@ -21,8 +21,8 @@ package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.impl;
 
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.validators.NoFutureDate;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Date;
 
 public class NoFutureDateValidator implements ConstraintValidator<NoFutureDate, Date> {

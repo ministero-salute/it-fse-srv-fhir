@@ -17,7 +17,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;

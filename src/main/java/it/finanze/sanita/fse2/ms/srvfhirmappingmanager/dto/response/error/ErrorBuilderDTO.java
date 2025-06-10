@@ -28,8 +28,8 @@ import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsMisc;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_UNABLE_CONVERT;
 import static org.apache.http.HttpStatus.*;
