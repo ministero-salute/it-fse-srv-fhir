@@ -23,8 +23,6 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.Validation
 
 import java.util.List;
 
-import javax.validation.constraints.Size;
-
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;

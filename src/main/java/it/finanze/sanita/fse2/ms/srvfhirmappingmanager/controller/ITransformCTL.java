@@ -42,9 +42,6 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtili
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
