@@ -17,28 +17,32 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.impl;
 
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller.ITransformCTL;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.TransformDTO.Options;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.enums.FhirTypeEnum;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DataProcessingException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentAlreadyPresentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidContentException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.service.ITransformSRV;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_FILES_INVALID;
 
 @RestController
 @Slf4j
@@ -48,12 +52,9 @@ public class TransformCTL extends AbstractCTL implements ITransformCTL {
 	private ITransformSRV service;
 
 	@Override
-	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, List<ChangeSetDTO.TemplateIdRootItem> root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
+	public PostDocsResDTO uploadTransform(String uri, String version, FhirTypeEnum type, List<String> root, MultipartFile file) throws OperationException, DocumentAlreadyPresentException, InvalidContentException, DataProcessingException {
 		if (!isValidFile(file)) throw new InvalidContentException(ERR_VAL_FILES_INVALID);
-		List<String> rootStrings = root.stream()
-				.map(ChangeSetDTO.TemplateIdRootItem::getValue)
-				.collect(Collectors.toList());
-		service.insertTransformByComponents(rootStrings, version, uri, file, type);
+		service.insertTransformByComponents(root, version, uri, file, type);
 		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
