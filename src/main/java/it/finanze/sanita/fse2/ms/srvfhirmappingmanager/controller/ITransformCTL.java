@@ -17,7 +17,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_ID_BLANK;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_ID_NOT_VALID;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_URI_BLANK;
@@ -25,7 +24,6 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.L
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.ERR_VAL_VERSION_INVALID;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Logs.VAL_DESC_ROOT;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Regex.REG_VERSION;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.*;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_GET_ONE_BY_ID;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_ALL_VAR;
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtility.API_PATH_FILE_VAR;
@@ -41,7 +39,6 @@ import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.RouteUtili
 
 import java.io.IOException;
 import java.util.List;
-
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

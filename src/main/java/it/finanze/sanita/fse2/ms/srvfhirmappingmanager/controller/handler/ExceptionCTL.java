@@ -42,7 +42,7 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.error.ErrorBuilderDTO.*;
-
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Properties.MS_NAME;
 /**
  *	Exceptions handler
  */
@@ -55,8 +55,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      */
     @Autowired
     private Tracer tracer;
-
-
 
     /**
      * Handle document not found exception.
@@ -186,7 +184,7 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      */
     protected LogTraceInfoDTO getLogTraceInfo() {
         LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservices.SRV_FHIR_NAME);
+        SpanBuilder spanbuilder = tracer.spanBuilder(MS_NAME);
         if (spanbuilder != null) {
             out = new LogTraceInfoDTO(
                     spanbuilder.startSpan().getSpanContext().getSpanId(),

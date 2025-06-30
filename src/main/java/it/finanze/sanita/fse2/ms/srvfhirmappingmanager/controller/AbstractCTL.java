@@ -17,13 +17,14 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.controller;
 
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.Tracer;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.config.Constants.Properties.MS_NAME;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
+import it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.info.LogTraceInfoDTO;
 /**
  *	Abstract controller.
  */
@@ -34,7 +35,7 @@ public abstract class AbstractCTL {
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-		SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservices.SRV_FHIR_NAME);
+		SpanBuilder spanbuilder = tracer.spanBuilder(MS_NAME);
 		if (spanbuilder != null) {
 			out = new LogTraceInfoDTO(
 					spanbuilder.startSpan().getSpanContext().getSpanId(),
