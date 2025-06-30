@@ -17,53 +17,42 @@
  */
 package it.finanze.sanita.fse2.ms.srvfhirmappingmanager.dto.response.changes;
 
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ANY_STRING_MAX;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ANY_STRING_MIN;
+import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
 
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.*;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.UtilsOA.OA_ARRAY_FILES_MAX;
-import static it.finanze.sanita.fse2.ms.srvfhirmappingmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import javax.validation.constraints.Size;
+
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangeSetDTO {
 
-	@Size(min = 0, max = DEFAULT_STRING_MAX_SIZE)
-	@Pattern(regexp = "^[a-zA-Z0-9-_]+$")
+	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private String id;
 
 	Payload description;
 
 	@Value
 	public static class Payload {
-
-		@ArraySchema(
-				minItems = OA_ARRAY_FILES_MIN,
-				maxItems = OA_ARRAY_FILES_MAX,
-				schema = @Schema(implementation = TemplateIdRootItem.class)  // ✅ Uses wrapper class
-		)
-		List<TemplateIdRootItem> templateIdRoot;
-
+		/**
+		 * The resource extension identifier
+		 */
+		@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX)
+		List<String> templateIdRoot;
 		/**
 		 * The resource filename
 		 */
 		@Size(min = OA_ANY_STRING_MIN, max = OA_ANY_STRING_MAX)
-		@Schema(minLength = OA_ANY_STRING_MIN, maxLength = OA_ANY_STRING_MAX)  // ✅ Explicit constraints
-				String version;
+		String version;
 	}
 
-	@Value
-	@AllArgsConstructor
-	public static class TemplateIdRootItem {
-
-		@Getter
-		@Schema(maxLength = 1000)
-		String value;
-	}
 }
